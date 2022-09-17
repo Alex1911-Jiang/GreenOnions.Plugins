@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.RandomLocalPict
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.Interface", "..\GreenOnions\GreenOnions.Interface\GreenOnions.Interface.csproj", "{0503C020-3FD4-4238-837D-45C6E69A248B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.ReplierWindows", "GreenOnions.ReplierWindows\GreenOnions.ReplierWindows.csproj", "{E9F47B9C-06E4-437F-BC27-B4ED4CB438CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.ReplierWindows", "GreenOnions.ReplierWindows\GreenOnions.ReplierWindows.csproj", "{E9F47B9C-06E4-437F-BC27-B4ED4CB438CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

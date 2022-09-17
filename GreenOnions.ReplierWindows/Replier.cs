@@ -15,6 +15,8 @@ namespace GreenOnions.ReplierWindows
 
         public string Description => "自定义回复插件";
 
+        public string? HelpMessage => null;
+
         public void ConsoleSetting()
         {
             Console.WriteLine("本插件没有设计Console设置功能，请使用Windows端加载。");

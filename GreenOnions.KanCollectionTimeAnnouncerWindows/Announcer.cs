@@ -21,6 +21,8 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
 
         public string Description => "舰队Collection整点语音报时插件";
 
+        public string? HelpMessage => null;
+
         public void ConsoleSetting()
         {
             Console.WriteLine("本插件没有设计Console设置功能，请使用Windows端加载。");

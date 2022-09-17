@@ -1,14 +1,17 @@
-﻿using GreenOnions.Interface;
+﻿using System.Diagnostics;
+using GreenOnions.Interface;
 using Newtonsoft.Json;
 
 namespace GreenOnions.RandomLocalPictures
 {
     public class PicutreSender : IPlugin
     {
-        private List<SourcesInfo> _sourcesInfos;
+        private Dictionary<string,string> _cmdToPath = new Dictionary<string,string>();
         public string Name => "本地随机色图";
 
         public string Description => "通过命令随机发送本地指定目录的图片";
+
+        public string? HelpMessage => null;
 
         public void ConsoleSetting()
         {
@@ -27,24 +30,46 @@ namespace GreenOnions.RandomLocalPictures
 
         public void OnLoad(string pluginPath)
         {
+            Debugger.Launch();
             string configPath = Path.Combine(pluginPath, "config.json");
+            List<SourcesInfo> sourcesInfos;
             if (File.Exists(configPath))
-                _sourcesInfos = JsonConvert.DeserializeObject<List<SourcesInfo>>(File.ReadAllText(configPath))!;
+            {
+                sourcesInfos = JsonConvert.DeserializeObject<List<SourcesInfo>>(File.ReadAllText(configPath))!;
+            }
             else
             {
                 //配置文件例子
-                _sourcesInfos = new List<SourcesInfo>();
-                _sourcesInfos.Add(new SourcesInfo() 
-                { 
+                sourcesInfos = new List<SourcesInfo>();
+                sourcesInfos.Add(new SourcesInfo()
+                {
                     Cmds = new List<string>() { "setu", "色图来" },
-                    PictureSourcePath = @"C:\图库1" 
+                    PictureSourcePath = @"C:\图库1"
                 });
-                _sourcesInfos.Add(new SourcesInfo()
+                sourcesInfos.Add(new SourcesInfo()
                 {
                     Cmds = new List<string>() { "本地第二个图库命令" },
                     PictureSourcePath = @"D:\图库2"
                 });
-                File.WriteAllText(configPath, JsonConvert.SerializeObject(_sourcesInfos));
+                File.WriteAllText(configPath, JsonConvert.SerializeObject(sourcesInfos));
+            }
+            CreateCmdToPathDic(sourcesInfos);
+        }
+
+        private void CreateCmdToPathDic(List<SourcesInfo> sourcesInfos)
+        {
+            if (sourcesInfos != null)
+            {
+                for (int i = 0; i < sourcesInfos.Count; i++)
+                {
+                    for (int j = 0; j < sourcesInfos[i].Cmds.Count; j++)
+                    {
+                        if (_cmdToPath.ContainsKey(sourcesInfos[i].Cmds[j]))
+                            _cmdToPath[sourcesInfos[i].Cmds[j]] = sourcesInfos[i].PictureSourcePath;
+                        else
+                            _cmdToPath.Add(sourcesInfos[i].Cmds[j], sourcesInfos[i].PictureSourcePath);
+                    }
+                }
             }
         }
 
@@ -52,21 +77,17 @@ namespace GreenOnions.RandomLocalPictures
         {
             if (msgs.FirstOrDefault() is GreenOnionsTextMessage textMsg)
             {
-                for (int i = 0; i < _sourcesInfos?.Count; i++)
+                if (_cmdToPath.ContainsKey(textMsg.Text))
                 {
-                    for (int j = 0; j < _sourcesInfos[i].Cmds?.Count; j++)
+                    if (!Directory.Exists(_cmdToPath[textMsg.Text]))
                     {
-                        if (textMsg.Text == _sourcesInfos[i].Cmds[j])
-                        {
-                            if (Directory.Exists(_sourcesInfos[i].PictureSourcePath))
-                            {
-                                string[] imgs = Directory.GetFiles(_sourcesInfos[i].PictureSourcePath);
-                                Random rdm = new Random(Guid.NewGuid().GetHashCode());
-                                Response(new GreenOnionsMessages(new GreenOnionsImageMessage(imgs[rdm.Next(0, imgs.Length)])) { Reply = false});
-                                return true;
-                            }
-                        }
+                        Response($"图库<{textMsg.Text}>不存在");
+                        return true;
                     }
+                    string[] imgs = Directory.GetFiles(_cmdToPath[textMsg.Text]);
+                    Random rdm = new Random(Guid.NewGuid().GetHashCode());
+                    Response(new GreenOnionsMessages(new GreenOnionsImageMessage(imgs[rdm.Next(0, imgs.Length)])) { Reply = false });
+                    return true;
                 }
             }
             return false;
