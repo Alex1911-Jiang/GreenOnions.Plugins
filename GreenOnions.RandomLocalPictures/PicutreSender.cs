@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using GreenOnions.Interface;
+﻿using GreenOnions.Interface;
 using Newtonsoft.Json;
 
 namespace GreenOnions.RandomLocalPictures
@@ -30,7 +29,6 @@ namespace GreenOnions.RandomLocalPictures
 
         public void OnLoad(string pluginPath)
         {
-            Debugger.Launch();
             string configPath = Path.Combine(pluginPath, "config.json");
             List<SourcesInfo> sourcesInfos;
             if (File.Exists(configPath))
