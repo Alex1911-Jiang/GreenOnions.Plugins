@@ -1,6 +1,6 @@
-﻿using GreenOnions.Interface;
+﻿using System.Text.RegularExpressions;
+using GreenOnions.Interface;
 using Newtonsoft.Json;
-using System.Text.RegularExpressions;
 
 namespace GreenOnions.ReplierWindows
 {
@@ -86,7 +86,7 @@ namespace GreenOnions.ReplierWindows
                 Regex regex = new Regex(comm.Message);
                 Match match = regex.Match(textMsg.Text);
                 if (match.Value == textMsg.Text)
-                    return RandomSamePriority(textMsg.Text, comm.Priority);
+                    return RandomSamePriority(regex.ToString(), comm.Priority);
             }
             else if (comm.MatchMode == MatchModes.包含 && textMsg.Text.Contains(comm.Message))
                 return RandomSamePriority(textMsg.Text, comm.Priority);
