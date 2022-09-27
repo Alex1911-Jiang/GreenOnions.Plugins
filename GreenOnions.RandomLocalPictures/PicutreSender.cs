@@ -10,16 +10,16 @@ namespace GreenOnions.RandomLocalPictures
 
         public string Description => "通过命令随机发送本地指定目录的图片";
 
-        public string? HelpMessage => null;
+        public GreenOnionsMessages? HelpMessage => null;
 
         public void ConsoleSetting()
         {
             Console.WriteLine("本插件不通过运行中设置功能, 请手动修改插件目录下的config.json后重启机器人");
         }
 
-        public void OnConnected(long selfId, Func<long, GreenOnionsMessages, Task<int>> SendFriendMessage, Func<long, GreenOnionsMessages, Task<int>> SendGroupMessage, Func<long, long, GreenOnionsMessages, Task<int>> SendTempMessage, Func<Task<List<GreenOnionsFriendInfo>>> GetFriendListAsync, Func<Task<List<GreenOnionsGroupInfo>>> GetGroupListAsync, Func<long, Task<List<long>>> GetMemberListAsync, Func<long, long, Task<GreenOnionsMemberInfo>> GetMemberInfoAsync)
+        public void OnConnected(long selfId, GreenOnionsApi api)
         {
-
+            throw new NotImplementedException();
         }
 
         public void OnDisconnected()

@@ -21,7 +21,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
 
         public string Description => "舰队Collection整点语音报时插件";
 
-        public string? HelpMessage => null;
+        public GreenOnionsMessages? HelpMessage => null;
 
         public void ConsoleSetting()
         {
@@ -272,6 +272,11 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
             File.WriteAllText(configFileName, JsonConvert.SerializeObject(_settings));
             RestartWorker();
             return true;
+        }
+
+        public void OnConnected(long selfId, GreenOnionsApi api)
+        {
+            throw new NotImplementedException();
         }
     }
 }

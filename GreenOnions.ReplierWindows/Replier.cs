@@ -6,25 +6,24 @@ namespace GreenOnions.ReplierWindows
 {
     public class Replier : IPlugin
     {
-        private string _pluginPath;
-        private string _configFileName;
-        private string _imagePath;
+        private string? _pluginPath;
+        private string? _configFileName;
+        private string? _imagePath;
         private List<CommandSetting> _commandTable = new List<CommandSetting>();
 
         public string Name => "自定义回复";
 
         public string Description => "自定义回复插件";
 
-        public string? HelpMessage => null;
+        public GreenOnionsMessages? HelpMessage => null;
 
         public void ConsoleSetting()
         {
             Console.WriteLine("本插件没有设计Console设置功能，请使用Windows端加载。");
         }
 
-        public void OnConnected(long selfId, Func<long, GreenOnionsMessages, Task<int>> SendFriendMessage, Func<long, GreenOnionsMessages, Task<int>> SendGroupMessage, Func<long, long, GreenOnionsMessages, Task<int>> SendTempMessage, Func<Task<List<GreenOnionsFriendInfo>>> GetFriendListAsync, Func<Task<List<GreenOnionsGroupInfo>>> GetGroupListAsync, Func<long, Task<List<long>>> GetMemberListAsync, Func<long, long, Task<GreenOnionsMemberInfo>> GetMemberInfoAsync)
+        public void OnConnected(long selfId, GreenOnionsApi api)
         {
-
         }
 
         public void OnDisconnected()
@@ -107,7 +106,7 @@ namespace GreenOnions.ReplierWindows
             List<string> splitedText = new List<string>();
             splitedText.Add(textMessage);
 
-            string[] imgs = Directory.GetFiles(_imagePath);
+            string[] imgs = Directory.GetFiles(_imagePath!);
             for (int i = 0; i < imgs.Length; i++)
             {
                 string imgTag = $"<{Path.GetFileName(imgs[i])}>";
@@ -143,9 +142,9 @@ namespace GreenOnions.ReplierWindows
 
         public bool WindowSetting()
         {
-            new FrmSetting(_commandTable, _pluginPath).ShowDialog();
+            new FrmSetting(_commandTable, _pluginPath!).ShowDialog();
             string jsonValue = JsonConvert.SerializeObject(_commandTable);
-            File.WriteAllText(Path.Combine(_pluginPath, "config.json"), jsonValue);
+            File.WriteAllText(Path.Combine(_pluginPath!, "config.json"), jsonValue);
             return true;
         }
     }
