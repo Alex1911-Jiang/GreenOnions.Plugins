@@ -4,9 +4,10 @@
 GreenOnions.KanCollectionTimeAnnouncerWindows #舰C语音报时插件(仅限Windows)<br>
 GreenOnions.RandomLocalPictures #随机本地图片插件<br>
 GreenOnions.ReplierWindows #自定义回复插件(仅限Windows) [查看示例](https://github.com/Alex1911-Jiang/GreenOnions.Plugins/tree/main/GreenOnions.ReplierWindows)<br>
+GreenOnions.TicTacToe_Windows #井字棋插件(仅限Windows)<br>
 
 #### 使用方法:
-把构建好的插件**文件夹**放在 GreenOnions\net6.0-windows\Plugins 或 GreenOnions\net6.0\Plugins 下<br>
+下载 [Release](https://github.com/Alex1911-Jiang/GreenOnions.Plugins/releases) 解压到同名文件夹中, 把插件**文件夹**放在 GreenOnions\net6.0-windows\Plugins 或 GreenOnions\net6.0\Plugins 下<br>
 启动 GreenOnions 后插件列表中有列出即为加载成功<br>
 
 #### 开发插件:
