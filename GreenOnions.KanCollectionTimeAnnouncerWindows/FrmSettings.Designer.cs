@@ -33,16 +33,21 @@
             this.txbDesignatedGroups = new System.Windows.Forms.TextBox();
             this.pnlGroup = new System.Windows.Forms.Panel();
             this.pnlKanGirl = new System.Windows.Forms.Panel();
+            this.btnRefreshKanGirlList = new System.Windows.Forms.Button();
             this.cboDesignatedKanGirl = new System.Windows.Forms.ComboBox();
             this.rdoRandomKanGirl = new System.Windows.Forms.RadioButton();
             this.rdoDesignateKanGirl = new System.Windows.Forms.RadioButton();
             this.pnlTime = new System.Windows.Forms.Panel();
             this.pnlDesignatedTime = new System.Windows.Forms.FlowLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lblGroup = new System.Windows.Forms.Label();
+            this.lblKanGirl = new System.Windows.Forms.Label();
+            this.lblTime = new System.Windows.Forms.Label();
             this.chkSendChineseText = new System.Windows.Forms.CheckBox();
             this.chkSendJapaneseText = new System.Windows.Forms.CheckBox();
+            this.chkSelectAll = new System.Windows.Forms.CheckBox();
+            this.lblGoCqhttpInfoFront = new System.Windows.Forms.Label();
+            this.lblGoCqhttpInfoBack = new System.Windows.Forms.Label();
+            this.lnkFFMPEG = new System.Windows.Forms.LinkLabel();
             this.pnlGroup.SuspendLayout();
             this.pnlKanGirl.SuspendLayout();
             this.pnlTime.SuspendLayout();
@@ -102,6 +107,7 @@
             this.pnlKanGirl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlKanGirl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlKanGirl.Controls.Add(this.btnRefreshKanGirlList);
             this.pnlKanGirl.Controls.Add(this.cboDesignatedKanGirl);
             this.pnlKanGirl.Controls.Add(this.rdoRandomKanGirl);
             this.pnlKanGirl.Controls.Add(this.rdoDesignateKanGirl);
@@ -109,6 +115,17 @@
             this.pnlKanGirl.Name = "pnlKanGirl";
             this.pnlKanGirl.Size = new System.Drawing.Size(390, 58);
             this.pnlKanGirl.TabIndex = 4;
+            // 
+            // btnRefreshKanGirlList
+            // 
+            this.btnRefreshKanGirlList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefreshKanGirlList.Location = new System.Drawing.Point(310, 30);
+            this.btnRefreshKanGirlList.Name = "btnRefreshKanGirlList";
+            this.btnRefreshKanGirlList.Size = new System.Drawing.Size(75, 23);
+            this.btnRefreshKanGirlList.TabIndex = 3;
+            this.btnRefreshKanGirlList.Text = "刷新";
+            this.btnRefreshKanGirlList.UseVisualStyleBackColor = true;
+            this.btnRefreshKanGirlList.Click += new System.EventHandler(this.btnRefreshKanGirlList_Click);
             // 
             // cboDesignatedKanGirl
             // 
@@ -121,7 +138,7 @@
             "获取中..."});
             this.cboDesignatedKanGirl.Location = new System.Drawing.Point(3, 30);
             this.cboDesignatedKanGirl.Name = "cboDesignatedKanGirl";
-            this.cboDesignatedKanGirl.Size = new System.Drawing.Size(382, 25);
+            this.cboDesignatedKanGirl.Size = new System.Drawing.Size(301, 25);
             this.cboDesignatedKanGirl.TabIndex = 2;
             // 
             // rdoRandomKanGirl
@@ -170,32 +187,32 @@
             this.pnlDesignatedTime.Size = new System.Drawing.Size(382, 103);
             this.pnlDesignatedTime.TabIndex = 2;
             // 
-            // label1
+            // lblGroup
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(83, 17);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "发送报时群组:";
+            this.lblGroup.AutoSize = true;
+            this.lblGroup.Location = new System.Drawing.Point(12, 9);
+            this.lblGroup.Name = "lblGroup";
+            this.lblGroup.Size = new System.Drawing.Size(83, 17);
+            this.lblGroup.TabIndex = 3;
+            this.lblGroup.Text = "发送报时群组:";
             // 
-            // label2
+            // lblKanGirl
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 141);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(83, 17);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "报时语音舰娘:";
+            this.lblKanGirl.AutoSize = true;
+            this.lblKanGirl.Location = new System.Drawing.Point(12, 141);
+            this.lblKanGirl.Name = "lblKanGirl";
+            this.lblKanGirl.Size = new System.Drawing.Size(83, 17);
+            this.lblKanGirl.TabIndex = 6;
+            this.lblKanGirl.Text = "报时语音舰娘:";
             // 
-            // label3
+            // lblTime
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 222);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(83, 17);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "报时时间过滤:";
+            this.lblTime.AutoSize = true;
+            this.lblTime.Location = new System.Drawing.Point(12, 222);
+            this.lblTime.Name = "lblTime";
+            this.lblTime.Size = new System.Drawing.Size(155, 17);
+            this.lblTime.TabIndex = 7;
+            this.lblTime.Text = "在勾选的时间发送报时消息:";
             // 
             // chkSendChineseText
             // 
@@ -219,19 +236,69 @@
             this.chkSendJapaneseText.Text = "发送日文文字";
             this.chkSendJapaneseText.UseVisualStyleBackColor = true;
             // 
+            // chkSelectAll
+            // 
+            this.chkSelectAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkSelectAll.AutoSize = true;
+            this.chkSelectAll.Location = new System.Drawing.Point(351, 222);
+            this.chkSelectAll.Name = "chkSelectAll";
+            this.chkSelectAll.Size = new System.Drawing.Size(51, 21);
+            this.chkSelectAll.TabIndex = 10;
+            this.chkSelectAll.Text = "全选";
+            this.chkSelectAll.UseVisualStyleBackColor = true;
+            this.chkSelectAll.CheckedChanged += new System.EventHandler(this.chkSelectAll_CheckedChanged);
+            // 
+            // lblGoCqhttpInfoFront
+            // 
+            this.lblGoCqhttpInfoFront.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblGoCqhttpInfoFront.AutoSize = true;
+            this.lblGoCqhttpInfoFront.Location = new System.Drawing.Point(12, 384);
+            this.lblGoCqhttpInfoFront.Name = "lblGoCqhttpInfoFront";
+            this.lblGoCqhttpInfoFront.Size = new System.Drawing.Size(241, 17);
+            this.lblGoCqhttpInfoFront.TabIndex = 11;
+            this.lblGoCqhttpInfoFront.Text = "如果您使用的是go-cqhttp平台, 需要先安装";
+            // 
+            // lblGoCqhttpInfoBack
+            // 
+            this.lblGoCqhttpInfoBack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblGoCqhttpInfoBack.AutoSize = true;
+            this.lblGoCqhttpInfoBack.Location = new System.Drawing.Point(295, 384);
+            this.lblGoCqhttpInfoBack.Name = "lblGoCqhttpInfoBack";
+            this.lblGoCqhttpInfoBack.Size = new System.Drawing.Size(116, 17);
+            this.lblGoCqhttpInfoBack.TabIndex = 12;
+            this.lblGoCqhttpInfoBack.Text = "才能支持发送语音。";
+            // 
+            // lnkFFMPEG
+            // 
+            this.lnkFFMPEG.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lnkFFMPEG.AutoSize = true;
+            this.lnkFFMPEG.LinkColor = System.Drawing.Color.Blue;
+            this.lnkFFMPEG.Location = new System.Drawing.Point(249, 384);
+            this.lnkFFMPEG.Name = "lnkFFMPEG";
+            this.lnkFFMPEG.Size = new System.Drawing.Size(50, 17);
+            this.lnkFFMPEG.TabIndex = 13;
+            this.lnkFFMPEG.TabStop = true;
+            this.lnkFFMPEG.Text = "ffmpeg";
+            this.lnkFFMPEG.VisitedLinkColor = System.Drawing.Color.Blue;
+            this.lnkFFMPEG.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkFFMPEG_LinkClicked);
+            // 
             // FrmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(414, 386);
+            this.ClientSize = new System.Drawing.Size(414, 410);
+            this.Controls.Add(this.lnkFFMPEG);
+            this.Controls.Add(this.lblGoCqhttpInfoFront);
             this.Controls.Add(this.chkSendJapaneseText);
             this.Controls.Add(this.chkSendChineseText);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lblTime);
+            this.Controls.Add(this.lblKanGirl);
+            this.Controls.Add(this.lblGroup);
             this.Controls.Add(this.pnlTime);
             this.Controls.Add(this.pnlKanGirl);
             this.Controls.Add(this.pnlGroup);
+            this.Controls.Add(this.chkSelectAll);
+            this.Controls.Add(this.lblGoCqhttpInfoBack);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmSettings";
@@ -253,16 +320,21 @@
         private RadioButton rdoAllGroup;
         private TextBox txbDesignatedGroups;
         private Panel pnlGroup;
-        private Label label1;
+        private Label lblGroup;
         private Panel pnlKanGirl;
         private ComboBox cboDesignatedKanGirl;
         private RadioButton rdoRandomKanGirl;
         private RadioButton rdoDesignateKanGirl;
         private Panel pnlTime;
         private FlowLayoutPanel pnlDesignatedTime;
-        private Label label2;
-        private Label label3;
+        private Label lblKanGirl;
+        private Label lblTime;
         private CheckBox chkSendChineseText;
         private CheckBox chkSendJapaneseText;
+        private CheckBox chkSelectAll;
+        private Button btnRefreshKanGirlList;
+        private Label lblGoCqhttpInfoFront;
+        private Label lblGoCqhttpInfoBack;
+        private LinkLabel lnkFFMPEG;
     }
 }

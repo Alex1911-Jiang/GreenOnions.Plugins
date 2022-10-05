@@ -1,18 +1,20 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 
 namespace GreenOnions.KanCollectionTimeAnnouncerWindows
 {
     internal partial class FrmSettings : Form
     {
         private AnnounceSetting Settings { get; set; }
-        private Task<List<string>> _getKanGrilNameListTask;
         private Dictionary<int, CheckBox> timeCheckboxes = new Dictionary<int, CheckBox>();
-        internal FrmSettings(AnnounceSetting originalSettings)
+        private MoeGirlHelper _moeGirlHelper;
+
+        internal FrmSettings(AnnounceSetting originalSettings, MoeGirlHelper moeGirlHelper)
         {
+            _moeGirlHelper = moeGirlHelper;
             Settings = originalSettings;
             InitializeComponent();
             cboDesignatedKanGirl.SelectedIndex = 0;
-            _getKanGrilNameListTask = MoeGirlHelper.GetKanGrilNameList();
 
             for (int i = 0; i < 24; i++)
             {
@@ -47,40 +49,39 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
             SetControlEnabled();
         }
 
+        private bool CheckList(List<string>? kanGirlList)
+        {
+            if (kanGirlList == null)
+            {
+                Clipboard.SetText("https://zh.moegirl.org.cn/舰队Collection/图鉴/舰娘");
+                MessageBox.Show("获取舰娘列表失败, 需要人机验证, \r\n请使用浏览器打开 https://zh.moegirl.org.cn/舰队Collection/图鉴/舰娘 \r\n进行滑动验证后重启葱葱(地址已拷贝到剪贴板)");
+                return false;
+            }
+
+            cboDesignatedKanGirl.DataSource = kanGirlList;
+            cboDesignatedKanGirl.SelectedIndex = kanGirlList.IndexOf(Settings.DesignatedKanGirl);
+            if (cboDesignatedKanGirl.SelectedIndex == -1)
+                cboDesignatedKanGirl.SelectedIndex = 0;
+
+            return true;
+        }
+
         protected override async void OnShown(EventArgs e)
         {
             base.OnShown(e);
-            if (!_getKanGrilNameListTask.IsCompleted && !_getKanGrilNameListTask.IsFaulted && !_getKanGrilNameListTask.IsCanceled)
-                await _getKanGrilNameListTask;
-
-            if (_getKanGrilNameListTask.IsCompleted)
-            {
-                if (_getKanGrilNameListTask.Result == null)
-                {
-                    Clipboard.SetText("https://zh.moegirl.org.cn/舰队Collection/图鉴/舰娘");
-                    MessageBox.Show("获取舰娘列表失败, 需要人机验证, \r\n请使用浏览器打开 https://zh.moegirl.org.cn/舰队Collection/图鉴/舰娘 \r\n进行滑动验证后重启葱葱(地址已拷贝到剪贴板)");
-                    return;
-                }
-
-                cboDesignatedKanGirl.DataSource = _getKanGrilNameListTask.Result;
-                cboDesignatedKanGirl.SelectedIndex = _getKanGrilNameListTask.Result.IndexOf(Settings.DesignatedKanGirl);
-                if (cboDesignatedKanGirl.SelectedIndex == -1)
-                    cboDesignatedKanGirl.SelectedIndex = 0;
-
-                SetControlEnabled();
-            }
+            List<string> kanGirlList = await _moeGirlHelper.GetKanGrilNameListAsync();
+            CheckList(kanGirlList);
+            SetControlEnabled();
         }
 
-        protected override async void OnClosing(CancelEventArgs e)
+        protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
-            if (!_getKanGrilNameListTask.IsCompleted && !_getKanGrilNameListTask.IsFaulted && !_getKanGrilNameListTask.IsCanceled)
-                await _getKanGrilNameListTask;
 
-            if (_getKanGrilNameListTask.IsCompleted)
+            SetControlEnabled();
+
+            if (cboDesignatedKanGirl.DataSource != null)
             {
-                SetControlEnabled();
-
                 Settings.DesignateGroup = rdoDesignateGroup.Checked;
                 Settings.DesignatedGroups = new List<long>();
                 foreach (string strGroup in txbDesignatedGroups.Text.Split("\r\n"))
@@ -107,11 +108,30 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
         {
             txbDesignatedGroups.Enabled = rdoDesignateGroup.Checked;
             txbDesignatedGroups.Enabled = !rdoAllGroup.Checked;
-            if (_getKanGrilNameListTask.IsCompleted)
-            {
-                cboDesignatedKanGirl.Enabled = rdoDesignateKanGirl.Checked;
-                cboDesignatedKanGirl.Enabled = !rdoRandomKanGirl.Checked;
-            }
+            cboDesignatedKanGirl.Enabled = rdoDesignateKanGirl.Checked;
+            cboDesignatedKanGirl.Enabled = !rdoRandomKanGirl.Checked;
+        }
+
+        private void chkSelectAll_CheckedChanged(object sender, EventArgs e)
+        {
+            pnlDesignatedTime.Controls.OfType<CheckBox>().ToList().ForEach(c => c.Checked = chkSelectAll.Checked);
+        }
+
+        private async void btnRefreshKanGirlList_Click(object sender, EventArgs e)
+        {
+            cboDesignatedKanGirl.DataSource = null;
+            cboDesignatedKanGirl.Items.AddRange(new [] {"获取中..."});
+            cboDesignatedKanGirl.SelectedIndex = 0;
+            cboDesignatedKanGirl.Enabled = false;
+
+            List<string>? kanGirlList = await _moeGirlHelper.GetKanGrilNameListAsync(true);
+
+            CheckList(kanGirlList);
+        }
+
+        private void lnkFFMPEG_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("explorer.exe", "https://docs.go-cqhttp.org/guide/quick_start.html#安装-ffmpeg");
         }
     }
 }
