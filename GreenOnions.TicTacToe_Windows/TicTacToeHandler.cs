@@ -3,7 +3,6 @@ using System.Drawing.Imaging;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using GreenOnions.Interface;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace GreenOnions.TicTacToe_Windows
 {

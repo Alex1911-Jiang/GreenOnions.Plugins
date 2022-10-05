@@ -19,7 +19,7 @@ namespace GreenOnions.RandomLocalPictures
 
         public void OnConnected(long selfId, GreenOnionsApi api)
         {
-            throw new NotImplementedException();
+
         }
 
         public void OnDisconnected()
