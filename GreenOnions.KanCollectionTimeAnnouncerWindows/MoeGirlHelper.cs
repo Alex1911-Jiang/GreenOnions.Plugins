@@ -43,6 +43,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
             }
             using (HttpClient client = new HttpClient())
             {
+                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36");
                 string html;
                 try
                 {
@@ -51,7 +52,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
                 }
                 catch (OperationCanceledException ex)
                 {
-                    return null;
+                    return new List<string>();
                 }
 
                 HtmlDocument doc = new HtmlDocument();
@@ -62,6 +63,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
 
                 if (tables == null)
                 {
+                    File.WriteAllText(Path.Combine(_cachePath, "滑动验证html检查.html"), html);
                     return null;  //滑动验证
                 }
 

@@ -69,7 +69,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
         protected override async void OnShown(EventArgs e)
         {
             base.OnShown(e);
-            List<string> kanGirlList = await _moeGirlHelper.GetKanGrilNameListAsync();
+            List<string>? kanGirlList = await _moeGirlHelper.GetKanGrilNameListAsync();
             CheckList(kanGirlList);
             SetControlEnabled();
         }
