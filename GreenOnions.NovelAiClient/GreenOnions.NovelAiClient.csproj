@@ -13,6 +13,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NovelAIClient" Version="1.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\GreenOnions\GreenOnions.Interface\GreenOnions.Interface.csproj" />
   </ItemGroup>
 

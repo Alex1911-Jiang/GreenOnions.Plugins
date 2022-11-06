@@ -14,9 +14,9 @@ namespace GreenOnions.NovelAiClient
         private string _errorMsg = "";
         public string Name => "NovelAi画图";
 
-        public string Description => "通过QQ消息调用NovelAi画图插件";
+        public string Description => "NovelAi画图插件";
 
-        public GreenOnionsMessages? HelpMessage => "葱葱NovelAi画图插件";
+        public GreenOnionsMessages? HelpMessage => "发送 \"<机器人名称>画图：<关键词>\" 来绘制一张图片。";
 
         public void ConsoleSetting()
         {
@@ -45,7 +45,6 @@ namespace GreenOnions.NovelAiClient
 
         public void OnLoad(string pluginPath)
         {
-            Debugger.Launch();
             string configPath = Path.Combine(pluginPath, "config.json");
             if (File.Exists(configPath))
             {
@@ -69,7 +68,8 @@ namespace GreenOnions.NovelAiClient
                     DefaultUndesired = "lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, nsfw, r18, r-18, nude, nipple, nipples, breast, breasts, pussy, vaginal, asshole, penis, testicle, testicles, sex,",
                     StartDrawMessage = "开始绘制",
                     DrawEndMessage = "绘制完毕，耗时：<耗时>秒",
-                    DrawErrorMessage = "绘制错误(Ｔ▽Ｔ)"
+                    DrawErrorMessage = "绘制错误(Ｔ▽Ｔ)",
+                    RevokeSecond = 30,
                 };
                 File.WriteAllText(configPath, JsonConvert.SerializeObject(_config));
             }
@@ -105,7 +105,9 @@ namespace GreenOnions.NovelAiClient
                                     Response(_config.DrawErrorMessage.Replace("<耗时>", (sw.ElapsedMilliseconds / 1000f).ToString()));
                                 return;
                             }
-                            Response(new GreenOnionsImageMessage(new MemoryStream(task.Result)));
+                            GreenOnionsMessages msgs = new GreenOnionsImageMessage(new MemoryStream(task.Result));
+                            msgs.RevokeTime = _config.RevokeSecond;
+                            Response(msgs);
                             if (!string.IsNullOrWhiteSpace(_config!.DrawEndMessage))
                                 Response(_config.DrawEndMessage.Replace("<耗时>", (sw.ElapsedMilliseconds / 1000f).ToString()));
                         }
@@ -185,5 +187,9 @@ namespace GreenOnions.NovelAiClient
         /// 绘制错误提示
         /// </summary>
         public string DrawErrorMessage { get; set; }
+        /// <summary>
+        /// 撤回时间（秒）
+        /// </summary>
+        public int RevokeSecond { get; set; }
     }
 }

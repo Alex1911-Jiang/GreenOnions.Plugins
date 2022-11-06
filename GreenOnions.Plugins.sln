@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.ReplierWindows"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.TicTacToe_Windows", "GreenOnions.TicTacToe_Windows\GreenOnions.TicTacToe_Windows.csproj", "{A7EFB39A-F437-4CDE-A031-9AA9B15B2D38}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.NovelAiClient", "GreenOnions.NovelAiClient\GreenOnions.NovelAiClient.csproj", "{2EB707AA-0B8D-43BC-B4AF-FE3D52D0FA6D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.NovelAiClient", "GreenOnions.NovelAiClient\GreenOnions.NovelAiClient.csproj", "{2EB707AA-0B8D-43BC-B4AF-FE3D52D0FA6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
