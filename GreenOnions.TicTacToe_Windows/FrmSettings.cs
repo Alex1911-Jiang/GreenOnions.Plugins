@@ -1,52 +1,60 @@
 ﻿using System.ComponentModel;
+using System.Text.Json;
 
 namespace GreenOnions.TicTacToe_Windows
 {
     public partial class FrmSettings : Form
     {
-        public FrmSettings()
+        private TicTacToeConfig _config;
+        private string _configFileName;
+        public FrmSettings(TicTacToeConfig config, string _pluginPath)
         {
+            _config = config;
+            _configFileName = Path.Combine(_pluginPath, "config.json");
             InitializeComponent();
 
-            txbStartTicTacToeCmd.Text = TicTacToeConfig.StartTicTacToeCmd;
-            txbTicTacToeStartedReply.Text = TicTacToeConfig.TicTacToeStartedReply;
-            txbTicTacToeAlreadyStartReply.Text = TicTacToeConfig.TicTacToeAlreadyStartReply;
-            txbStopTicTacToeCmd.Text = TicTacToeConfig.StopTicTacToeCmd;
-            txbTicTacToeStoppedReply.Text = TicTacToeConfig.TicTacToeStoppedReply;
-            txbTicTacToeAlreadStopReply.Text = TicTacToeConfig.TicTacToeAlreadStopReply;
-            txbTicTacToeTimeoutReply.Text = TicTacToeConfig.TicTacToeTimeoutReply;
-            txbTicTacToePlayerWinReply.Text = TicTacToeConfig.TicTacToePlayerWinReply;
-            txbTicTacToeBotWinReply.Text = TicTacToeConfig.TicTacToeBotWinReply;
-            txbTicTacToeDrawReply.Text = TicTacToeConfig.TicTacToeDrawReply;
-            txbTicTacToeNoMoveReply.Text = TicTacToeConfig.TicTacToeNoMoveReply;
-            txbTicTacToeIllegalMoveReply.Text = TicTacToeConfig.TicTacToeIllegalMoveReply;
-            txbTicTacToeMoveFailReply.Text = TicTacToeConfig.TicTacToeMoveFailReply;
+            txbStartTicTacToeCmd.Text = _config.StartTicTacToeCmd;
+            txbTicTacToeStartedReply.Text = _config.TicTacToeStartedReply;
+            txbTicTacToeAlreadyStartReply.Text = _config.TicTacToeAlreadyStartReply;
+            txbStopTicTacToeCmd.Text = _config.StopTicTacToeCmd;
+            txbTicTacToeStoppedReply.Text = _config.TicTacToeStoppedReply;
+            txbTicTacToeAlreadStopReply.Text = _config.TicTacToeAlreadStopReply;
+            txbTicTacToeTimeoutReply.Text = _config.TicTacToeTimeoutReply;
+            txbTicTacToePlayerWinReply.Text = _config.TicTacToePlayerWinReply;
+            txbTicTacToeBotWinReply.Text = _config.TicTacToeBotWinReply;
+            txbTicTacToeDrawReply.Text = _config.TicTacToeDrawReply;
+            txbTicTacToeNoMoveReply.Text = _config.TicTacToeNoMoveReply;
+            txbTicTacToeIllegalMoveReply.Text = _config.TicTacToeIllegalMoveReply;
+            txbTicTacToeMoveFailReply.Text = _config.TicTacToeMoveFailReply;
             foreach (CheckBox moveMode in pnlTicTacToeMoveMode.Controls.OfType<CheckBox>())
-                moveMode.Checked = (TicTacToeConfig.TicTacToeMoveMode & Convert.ToInt32(moveMode.Tag)) != 0;
+                moveMode.Checked = (_config.TicTacToeMoveMode & (TicTacToeMoveMode)Convert.ToInt32(moveMode.Tag)) != 0;
         }
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            TicTacToeConfig.StartTicTacToeCmd = txbStartTicTacToeCmd.Text;
-            TicTacToeConfig.TicTacToeStartedReply = txbTicTacToeStartedReply.Text;
-            TicTacToeConfig.TicTacToeAlreadyStartReply = txbTicTacToeAlreadyStartReply.Text;
-            TicTacToeConfig.StopTicTacToeCmd = txbStopTicTacToeCmd.Text;
-            TicTacToeConfig.TicTacToeStoppedReply = txbTicTacToeStoppedReply.Text;
-            TicTacToeConfig.TicTacToeAlreadStopReply = txbTicTacToeAlreadStopReply.Text;
-            TicTacToeConfig.TicTacToeTimeoutReply = txbTicTacToeTimeoutReply.Text;
-            TicTacToeConfig.TicTacToePlayerWinReply = txbTicTacToePlayerWinReply.Text;
-            TicTacToeConfig.TicTacToeBotWinReply = txbTicTacToeBotWinReply.Text;
-            TicTacToeConfig.TicTacToeDrawReply = txbTicTacToeDrawReply.Text;
+            _config.StartTicTacToeCmd = txbStartTicTacToeCmd.Text;
+            _config.TicTacToeStartedReply = txbTicTacToeStartedReply.Text;
+            _config.TicTacToeAlreadyStartReply = txbTicTacToeAlreadyStartReply.Text;
+            _config.StopTicTacToeCmd = txbStopTicTacToeCmd.Text;
+            _config.TicTacToeStoppedReply = txbTicTacToeStoppedReply.Text;
+            _config.TicTacToeAlreadStopReply = txbTicTacToeAlreadStopReply.Text;
+            _config.TicTacToeTimeoutReply = txbTicTacToeTimeoutReply.Text;
+            _config.TicTacToePlayerWinReply = txbTicTacToePlayerWinReply.Text;
+            _config.TicTacToeBotWinReply = txbTicTacToeBotWinReply.Text;
+            _config.TicTacToeDrawReply = txbTicTacToeDrawReply.Text;
 
-            TicTacToeConfig.TicTacToeNoMoveReply = txbTicTacToeNoMoveReply.Text;
-            TicTacToeConfig.TicTacToeIllegalMoveReply = txbTicTacToeIllegalMoveReply.Text;
-            TicTacToeConfig.TicTacToeMoveFailReply = txbTicTacToeMoveFailReply.Text;
-            TicTacToeConfig.TicTacToeMoveMode = 0;
+            _config.TicTacToeNoMoveReply = txbTicTacToeNoMoveReply.Text;
+            _config.TicTacToeIllegalMoveReply = txbTicTacToeIllegalMoveReply.Text;
+            _config.TicTacToeMoveFailReply = txbTicTacToeMoveFailReply.Text;
+            _config.TicTacToeMoveMode = 0;
             foreach (CheckBox moveMode in pnlTicTacToeMoveMode.Controls.OfType<CheckBox>())
             {
                 if (moveMode.Checked)
-                    TicTacToeConfig.TicTacToeMoveMode |= Convert.ToInt32(moveMode.Tag);
+                    _config.TicTacToeMoveMode |= (TicTacToeMoveMode)Convert.ToInt32(moveMode.Tag);
             }
+
+            string strConfig = JsonSerializer.Serialize(_config);
+            File.WriteAllText(_configFileName, strConfig);
 
             base.OnClosing(e);
         }

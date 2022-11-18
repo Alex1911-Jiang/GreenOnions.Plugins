@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
 using GreenOnions.Interface;
+using GreenOnions.Interface.Configs;
 using Newtonsoft.Json;
 using NovelAIClient;
 
@@ -9,32 +10,34 @@ namespace GreenOnions.NovelAiClient
     public class NovelHandler : IPlugin
     {
         private Config? _config;
-        private GreenOnionsApi _api;
-        private string _strCmd;
+        private IBotConfig? _botConfig;
+        private IGreenOnionsApi? _api;
+        private string? _strCmd;
         private string _errorMsg = "";
         public string Name => "NovelAi画图";
 
         public string Description => "NovelAi画图插件";
 
-        public GreenOnionsMessages? HelpMessage => "发送 \"<机器人名称>画图：<关键词>\" 来绘制一张图片。";
+        public GreenOnionsMessages? HelpMessage => "发送 \"<机器人名称>画图：<关键词>\" 来绘制一张图片，多个关键词请用英文逗号分隔。";
+
+        public bool DisplayedInTheHelp => true;
 
         public void ConsoleSetting()
         {
 
         }
 
-        public void OnConnected(long selfId, GreenOnionsApi api)
+        public void OnConnected(long selfId, IGreenOnionsApi api)
         {
             _api = api;
             if (string.IsNullOrWhiteSpace(_errorMsg))
             {
-                _strCmd = _config!.Cmd.ReplaceGreenOnionsTags(_api.BotProperties);
+                _strCmd = _config!.Cmd;
             }
             else
             {
-                List<long> admins = (List<long>)_api.BotProperties["AdminQQ"];
-                for (int i = 0; i < admins.Count; i++)
-                    _api.SendFriendMessageAsync(admins[i], _errorMsg);
+                for (int i = 0; i < _botConfig!.AdminQQ.Count; i++)
+                    _api.SendFriendMessageAsync(_botConfig.AdminQQ.ToArray()[i], _errorMsg);
             }
         }
 
@@ -43,8 +46,9 @@ namespace GreenOnions.NovelAiClient
 
         }
 
-        public void OnLoad(string pluginPath)
+        public void OnLoad(string pluginPath, IBotConfig botConfig)
         {
+            _botConfig = botConfig;
             string configPath = Path.Combine(pluginPath, "config.json");
             if (File.Exists(configPath))
             {
@@ -79,19 +83,19 @@ namespace GreenOnions.NovelAiClient
         {
             if (_config != null)
             {
-                if (msgs.FirstOrDefault() is GreenOnionsTextMessage msg)
+                if (msgs.FirstOrDefault() is GreenOnionsTextMessage msg && _strCmd != null)
                 {
                     Regex regex = new Regex(_strCmd);
                     if (regex.IsMatch(msg.Text))
                     {
                         Match match = regex.Match(msg.Text);
                         string promptStr = msg.Text.Substring(match.Value.Length);
-                        string prompts = string.Join(',', promptStr.Split(',', '，').Select(s => s.Trim()).Where(p => !_config.DefaultUndesired.Contains(p)));
+                        string prompts = string.Join(',', promptStr.Split(',', '，').Select(s => s.Trim()).Where(p => !_config!.DefaultUndesired!.Contains(p)));
                         if (!string.IsNullOrWhiteSpace(_config.StartDrawMessage))
                             Response(_config.StartDrawMessage);
                         Stopwatch sw = new Stopwatch();
                         sw.Start();
-                        if (_config.ConnectFrontEnd.Equals("naifu", StringComparison.OrdinalIgnoreCase))
+                        if (_config!.ConnectFrontEnd!.Equals("naifu", StringComparison.OrdinalIgnoreCase))
                             GetNaifuImageBytes(prompts).ContinueWith(CallBack);
                         else if (_config.ConnectFrontEnd.Equals("webui", StringComparison.OrdinalIgnoreCase))
                             GetWebUIImageBytes(prompts).ContinueWith(CallBack);
@@ -102,7 +106,7 @@ namespace GreenOnions.NovelAiClient
                             if (task.IsFaulted || task.IsCanceled || task.Result == null)
                             {
                                 if (string.IsNullOrEmpty(_config!.DrawErrorMessage))
-                                    Response(_config.DrawErrorMessage.Replace("<耗时>", (sw.ElapsedMilliseconds / 1000f).ToString()));
+                                    Response(_config!.DrawErrorMessage!.Replace("<耗时>", (sw.ElapsedMilliseconds / 1000f).ToString()));
                                 return;
                             }
                             GreenOnionsMessages msgs = new GreenOnionsImageMessage(new MemoryStream(task.Result));
@@ -123,8 +127,8 @@ namespace GreenOnions.NovelAiClient
 
         private Task<byte[]?> GetNaifuImageBytes(string prompts)
         {
-            NaifuClient naifuClient = new NaifuClient(_config!.URL);
-            string defalutPrompt = _config!.DefaultPrompt.Trim();
+            NaifuClient naifuClient = new NaifuClient(_config!.URL!);
+            string defalutPrompt = _config!.DefaultPrompt!.Trim();
             if (!defalutPrompt.EndsWith(','))
                 defalutPrompt += ',';
             return naifuClient.PostAsync(defalutPrompt + prompts, _config!.DefaultUndesired, _config.ImageWidth, _config.ImageHeight);
@@ -132,8 +136,8 @@ namespace GreenOnions.NovelAiClient
 
         private Task<byte[]?> GetWebUIImageBytes(string prompts)
         {
-            WebUIClient webuiClient = new WebUIClient(_config!.URL);
-            string defalutPrompt = _config!.DefaultPrompt.Trim();
+            WebUIClient webuiClient = new WebUIClient(_config!.URL!);
+            string defalutPrompt = _config!.DefaultPrompt!.Trim();
             if (!defalutPrompt.EndsWith(','))
                 defalutPrompt += ',';
             return webuiClient.PostAsync(defalutPrompt + prompts, _config!.DefaultUndesired, _config.ImageWidth, _config.ImageHeight);
@@ -150,15 +154,15 @@ namespace GreenOnions.NovelAiClient
         /// <summary>
         /// 命令
         /// </summary>
-        public string Cmd { get; set; }
+        public string? Cmd { get; set; }
         /// <summary>
         /// 连接的前端（Naifu/WebUI）
         /// </summary>
-        public string ConnectFrontEnd { get; set; }
+        public string? ConnectFrontEnd { get; set; }
         /// <summary>
         /// 前端地址
         /// </summary>
-        public string URL { get; set; }
+        public string? URL { get; set; }
         /// <summary>
         /// 图片宽
         /// </summary>
@@ -170,23 +174,23 @@ namespace GreenOnions.NovelAiClient
         /// <summary>
         /// 默认添加提示词
         /// </summary>
-        public string DefaultPrompt { get; set; }
+        public string? DefaultPrompt { get; set; }
         /// <summary>
         /// 默认屏蔽词
         /// </summary>
-        public string DefaultUndesired { get; set; }
+        public string? DefaultUndesired { get; set; }
         /// <summary>
         /// 开始绘制提示
         /// </summary>
-        public string StartDrawMessage{ get; set; }
+        public string? StartDrawMessage{ get; set; }
         /// <summary>
         /// 绘制完成提示
         /// </summary>
-        public string DrawEndMessage { get; set; }
+        public string? DrawEndMessage { get; set; }
         /// <summary>
         /// 绘制错误提示
         /// </summary>
-        public string DrawErrorMessage { get; set; }
+        public string? DrawErrorMessage { get; set; }
         /// <summary>
         /// 撤回时间（秒）
         /// </summary>

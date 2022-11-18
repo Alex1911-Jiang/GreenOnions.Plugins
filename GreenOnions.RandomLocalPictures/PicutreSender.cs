@@ -1,4 +1,5 @@
 ﻿using GreenOnions.Interface;
+using GreenOnions.Interface.Configs;
 using Newtonsoft.Json;
 
 namespace GreenOnions.RandomLocalPictures
@@ -12,12 +13,14 @@ namespace GreenOnions.RandomLocalPictures
 
         public GreenOnionsMessages? HelpMessage => null;
 
+        public bool DisplayedInTheHelp => false;
+
         public void ConsoleSetting()
         {
             Console.WriteLine("本插件不通过运行中设置功能, 请手动修改插件目录下的config.json后重启机器人");
         }
 
-        public void OnConnected(long selfId, GreenOnionsApi api)
+        public void OnConnected(long selfId, IGreenOnionsApi api)
         {
 
         }
@@ -27,7 +30,7 @@ namespace GreenOnions.RandomLocalPictures
 
         }
 
-        public void OnLoad(string pluginPath)
+        public void OnLoad(string pluginPath, IBotConfig botConfig)
         {
             string configPath = Path.Combine(pluginPath, "config.json");
             List<SourcesInfo> sourcesInfos;
@@ -38,17 +41,19 @@ namespace GreenOnions.RandomLocalPictures
             else
             {
                 //配置文件例子
-                sourcesInfos = new List<SourcesInfo>();
-                sourcesInfos.Add(new SourcesInfo()
+                sourcesInfos = new List<SourcesInfo>
                 {
-                    Cmds = new List<string>() { "setu", "色图来" },
-                    PictureSourcePath = @"C:\图库1"
-                });
-                sourcesInfos.Add(new SourcesInfo()
-                {
-                    Cmds = new List<string>() { "本地第二个图库命令" },
-                    PictureSourcePath = @"D:\图库2"
-                });
+                    new SourcesInfo()
+                    {
+                        Cmds = new List<string>() { "setu", "色图来" },
+                        PictureSourcePath = @"C:\图库1"
+                    },
+                    new SourcesInfo()
+                    {
+                        Cmds = new List<string>() { "本地第二个图库命令" },
+                        PictureSourcePath = @"D:\图库2"
+                    }
+                };
                 File.WriteAllText(configPath, JsonConvert.SerializeObject(sourcesInfos));
             }
             CreateCmdToPathDic(sourcesInfos);

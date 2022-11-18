@@ -59,7 +59,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
             }
 
             cboDesignatedKanGirl.DataSource = kanGirlList;
-            cboDesignatedKanGirl.SelectedIndex = kanGirlList.IndexOf(Settings.DesignatedKanGirl);
+            cboDesignatedKanGirl.SelectedIndex = kanGirlList.IndexOf(Settings!.DesignatedKanGirl!);
             if (cboDesignatedKanGirl.SelectedIndex == -1)
                 cboDesignatedKanGirl.SelectedIndex = 0;
 

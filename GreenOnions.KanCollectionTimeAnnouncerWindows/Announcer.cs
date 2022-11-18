@@ -1,5 +1,6 @@
-﻿using GreenOnions.Interface;
-using Newtonsoft.Json;
+﻿using System.Text.Json;
+using GreenOnions.Interface;
+using GreenOnions.Interface.Configs;
 
 namespace GreenOnions.KanCollectionTimeAnnouncerWindows
 {
@@ -12,7 +13,8 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
         private CancellationTokenSource? _source;
         private KanGirlVoiceItem? _nextHourVoiceItem = null;
         private bool _connected = false;
-        private GreenOnionsApi? _api;
+        private IBotConfig? _botConfig;
+        private IGreenOnionsApi? _api;
 
         public string Name => "舰C报时";
 
@@ -20,18 +22,19 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
 
         public GreenOnionsMessages? HelpMessage => null;
 
+        public bool DisplayedInTheHelp => false;
+
         public void ConsoleSetting()
         {
             Console.WriteLine("本插件没有设计Console设置功能，请使用Windows端加载。");
         }
 
-        public void OnConnected(long selfId, GreenOnionsApi api)
+        public void OnConnected(long selfId, IGreenOnionsApi api)
         {
             _api = api;
             _connected = true;
             RestartWorker();
         }
-
 
         /// <summary>
         /// 报时
@@ -53,11 +56,9 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
                         {
                             _source.Cancel();
                             string errMsg = $"获取音频失败，所选舰娘没有报时语音或地址需要人机验证，请重新选择和检查人机验证( https://zh.moegirl.org.cn/舰队Collection )后重连葱葱。";
-                            if (_api!.BotProperties["AdminQQ"] is List<long> adminQQs)
-                            {
-                                for (int i = 0; i < adminQQs.Count; i++)
-                                    await _api.SendFriendMessageAsync(adminQQs[i], $"舰C报时插件错误:{errMsg}");
-                            }
+
+                            for (int i = 0; i < _botConfig!.AdminQQ.Count; i++)
+                                await _api!.SendFriendMessageAsync(_botConfig.AdminQQ.ToArray()[i], $"舰C报时插件错误:{errMsg}");
 
                             await File.AppendAllTextAsync(Path.Combine(_pluginPath!, "错误.log"), $"{errMsg}    ----{DateTime.Now}\r\n");
                             return;
@@ -71,12 +72,11 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
                         {
                             _source.Cancel();
                             string errMsg = $"获取舰娘列表失败，需要人机验证，请手动打开 https://zh.moegirl.org.cn/舰队Collection 通过验证并重启葱葱。";
-                            if (_api!.BotProperties["AdminQQ"] is List<long> adminQQs)
-                            {
-                                for (int i = 0; i < adminQQs.Count; i++)
-                                    await _api.SendFriendMessageAsync(adminQQs[i], $"舰C报时插件错误:{errMsg}");
-                            }
-                            await File.AppendAllTextAsync(Path.Combine(_pluginPath!, "错误.log"),$"{errMsg}     ----{DateTime.Now}\r\n");
+
+                            for (int i = 0; i < _botConfig!.AdminQQ.Count; i++)
+                                await _api!.SendFriendMessageAsync(_botConfig.AdminQQ.ToArray()[i], $"舰C报时插件错误:{errMsg}");
+
+                            await File.AppendAllTextAsync(Path.Combine(_pluginPath!, "错误.log"), $"{errMsg}     ----{DateTime.Now}\r\n");
                             return;
                         }
                     IL_Retry:;
@@ -127,7 +127,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
                         {
                             await Task.Delay(10 * 1000, _source.Token);
                         }
-                        catch (OperationCanceledException ex)
+                        catch (OperationCanceledException)
                         {
                             return;
                         }
@@ -163,7 +163,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
                 if (_worker != null)
                     await _worker;
 
-                CreateHelper(_pluginPath);
+                CreateHelper(_pluginPath!);
 
                 //没有指定报时时间
                 if (_settings!.DesignatedTime == null || _settings.DesignatedTime.Count == 0)
@@ -188,13 +188,14 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
             StopWorker();
         }
 
-        public void OnLoad(string pluginPath)
+        public void OnLoad(string pluginPath, IBotConfig botConfig)
         {
+            _botConfig = botConfig;
             _pluginPath = pluginPath;
             CreateHelper(pluginPath);
             string configFileName = Path.Combine(_pluginPath, "config.json");
             if (File.Exists(configFileName))
-                _settings = JsonConvert.DeserializeObject<AnnounceSetting>(File.ReadAllText(configFileName))!;
+                _settings = JsonSerializer.Deserialize<AnnounceSetting>(File.ReadAllText(configFileName))!;
             if (_settings == null)
                 _settings = new AnnounceSetting();
         }
@@ -209,7 +210,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
             FrmSettings frmSettings = new FrmSettings(_settings!, _moeGirlHelper!);
             frmSettings.ShowDialog();
             string configFileName = Path.Combine(_pluginPath!, "config.json");
-            File.WriteAllText(configFileName, JsonConvert.SerializeObject(_settings));
+            File.WriteAllText(configFileName, JsonSerializer.Serialize(_settings));
             RestartWorker();
             return true;
         }

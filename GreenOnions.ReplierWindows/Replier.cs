@@ -1,6 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text.Json;
+using System.Text.RegularExpressions;
 using GreenOnions.Interface;
-using Newtonsoft.Json;
+using GreenOnions.Interface.Configs;
 
 namespace GreenOnions.ReplierWindows
 {
@@ -15,6 +16,8 @@ namespace GreenOnions.ReplierWindows
 
         public string Description => "自定义回复插件";
 
+        public bool DisplayedInTheHelp => false;
+
         public GreenOnionsMessages? HelpMessage => null;
 
         public void ConsoleSetting()
@@ -22,7 +25,7 @@ namespace GreenOnions.ReplierWindows
             Console.WriteLine("本插件没有设计Console设置功能，请使用Windows端加载。");
         }
 
-        public void OnConnected(long selfId, GreenOnionsApi api)
+        public void OnConnected(long selfId, IGreenOnionsApi api)
         {
         }
 
@@ -31,13 +34,13 @@ namespace GreenOnions.ReplierWindows
 
         }
 
-        public void OnLoad(string pluginPath)
+        public void OnLoad(string pluginPath, IBotConfig botConfig)
         {
             _pluginPath = pluginPath;
             _imagePath = Path.Combine(_pluginPath, "Images");
             _configFileName = Path.Combine(_pluginPath, "config.json");
             if (File.Exists(_configFileName))
-                _commandTable = JsonConvert.DeserializeObject<List<CommandSetting>>(File.ReadAllText(_configFileName))!;
+                _commandTable = JsonSerializer.Deserialize<List<CommandSetting>>(File.ReadAllText(_configFileName))!;
         }
 
         public bool OnMessage(GreenOnionsMessages msgs, long? senderGroup, Action<GreenOnionsMessages> Response)
@@ -49,7 +52,7 @@ namespace GreenOnions.ReplierWindows
                 {
                     if ((comm.TriggerMode & TriggerModes.群组) != 0 && senderGroup != null)
                     {
-                        GreenOnionsMessages reply = CaeateReply(textMsg, comm);
+                        GreenOnionsMessages? reply = CaeateReply(textMsg, comm);
                         if (reply != null)
                         {
                             reply.Reply = comm.ReplyMode;
@@ -59,7 +62,7 @@ namespace GreenOnions.ReplierWindows
                     }
                     if ((comm.TriggerMode & TriggerModes.私聊) != 0 && senderGroup == null)
                     {
-                        GreenOnionsMessages reply = CaeateReply(textMsg, comm);
+                        GreenOnionsMessages? reply = CaeateReply(textMsg, comm);
                         if (reply != null)
                         {
                             reply.Reply = comm.ReplyMode;
@@ -72,7 +75,7 @@ namespace GreenOnions.ReplierWindows
             return false;
         }
 
-        private GreenOnionsMessages CaeateReply(GreenOnionsTextMessage textMsg, CommandSetting comm)
+        private GreenOnionsMessages? CaeateReply(GreenOnionsTextMessage textMsg, CommandSetting comm)
         {
             if (comm.MatchMode == MatchModes.完全 && textMsg.Text == comm.Message)
                 return RandomSamePriority(textMsg.Text, comm.Priority);
@@ -143,7 +146,7 @@ namespace GreenOnions.ReplierWindows
         public bool WindowSetting()
         {
             new FrmSetting(_commandTable, _pluginPath!).ShowDialog();
-            string jsonValue = JsonConvert.SerializeObject(_commandTable);
+            string jsonValue = JsonSerializer.Serialize(_commandTable);
             File.WriteAllText(Path.Combine(_pluginPath!, "config.json"), jsonValue);
             return true;
         }

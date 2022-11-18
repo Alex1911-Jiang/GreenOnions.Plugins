@@ -80,20 +80,21 @@ namespace GreenOnions.ReplierWindows
         protected override void OnClosing(CancelEventArgs e)
         {
             btnAddImage.Focus();
-            DataTable dt = dgvReplies.DataSource as DataTable;
-
-            _commandTable.Clear();
-            foreach (DataRow row in dt.Rows)
+            if (dgvReplies.DataSource is DataTable dt)
             {
-                _commandTable.Add(new CommandSetting
+                _commandTable.Clear();
+                foreach (DataRow row in dt.Rows)
                 {
-                    Message = row[0].ToString(),
-                    MatchMode = ToMatchMode(row[1]),
-                    TriggerMode = ToTriggerMode(row[2]),
-                    ReplyValue = row[3].ToString(),
-                    Priority = ToInt32(row[4]),
-                    ReplyMode = ToBoolean(row[5]),
-                });
+                    _commandTable.Add(new CommandSetting
+                    {
+                        Message = row[0].ToString()!,
+                        MatchMode = ToMatchMode(row[1]),
+                        TriggerMode = ToTriggerMode(row[2]),
+                        ReplyValue = row[3].ToString()!,
+                        Priority = ToInt32(row[4]),
+                        ReplyMode = ToBoolean(row[5]),
+                    });
+                }
             }
             base.OnClosing(e);
         }
@@ -127,7 +128,7 @@ namespace GreenOnions.ReplierWindows
             if (obj == null || obj == DBNull.Value)
                 return TriggerModes.私聊;
             TriggerModes triggerMode = 0;
-            string[] strValues = obj.ToString().Replace("消息", "").Split("/");
+            string[] strValues = obj.ToString()!.Replace("消息", "").Split("/");
             foreach (string strValue in strValues)
             {
                 if (Enum.TryParse(strValue, out TriggerModes result))
@@ -145,9 +146,11 @@ namespace GreenOnions.ReplierWindows
                 {
                     if (btnCol.HeaderText == "删除")
                     {
-                        DataTable dt = dgvReplies.DataSource as DataTable;
-                        dt.Rows.RemoveAt(e.RowIndex);
-                        dt.AcceptChanges();
+                        if (dgvReplies.DataSource is DataTable dt)
+                        {
+                            dt.Rows.RemoveAt(e.RowIndex);
+                            dt.AcceptChanges();
+                        }
                     }
                 }
             }

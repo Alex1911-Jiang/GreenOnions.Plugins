@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
+using GreenOnions.Interface.Configs;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
 
@@ -7,8 +8,8 @@ namespace GreenOnions.TicTacToe_Windows
 {
     public class TicTacToeSession
     {
-        private int[,] data = null;  //井字棋棋子位置数据, 0为未下子, 1为玩家下子, -1为机器人下子
-        private Bitmap lastStepBmp = null;
+        private int[,]? data = null;  //井字棋棋子位置数据, 0为未下子, 1为玩家下子, -1为机器人下子
+        private Bitmap? lastStepBmp = null;
 
         ~TicTacToeSession()
         {
@@ -21,6 +22,8 @@ namespace GreenOnions.TicTacToe_Windows
 
         public int IsBitmapSizeSame(int width, int height)
         {
+            if (lastStepBmp == null)
+                return -1;
             if (lastStepBmp.Width == width && lastStepBmp.Height == height)  //和原始图尺寸一样
                 return 1;
             if (width == height)  //长宽比一样, IOS端涂鸦后尺寸会等比例缩放到320*320, 需要先压缩回300*300
@@ -58,7 +61,7 @@ namespace GreenOnions.TicTacToe_Windows
                 {
                     for (int y = 0; y < 3; y++)
                     {
-                        switch (data[x, y])
+                        switch (data![x, y])
                         {
                             case -1:
                                 DrawO(x * 100 + 50, y * 100 + 50);
@@ -96,6 +99,9 @@ namespace GreenOnions.TicTacToe_Windows
             }
 
             Mat playStep = BitmapConverter.ToMat(playerStepBmp);
+
+            if (lastStepBmp == null)
+                lastStepBmp = CreateChessboard();
 
             if (playStep.Width != lastStepBmp.Width || playStep.Height != playStep.Height)
             {
@@ -157,12 +163,12 @@ namespace GreenOnions.TicTacToe_Windows
         /// <param name="y"></param>
         /// <param name="winOrLostType">-1为机器人获胜, 0为平局, 1为玩家获胜, null为对局尚未结束</param>
         /// <returns></returns>
-        public Bitmap PlayerMove(int x, int y, out int? winOrLostType)  //玩家下子
+        public Bitmap? PlayerMove(int x, int y, out int? winOrLostType)  //玩家下子
         {
             winOrLostType = null;
-            if (data[x, y] == 0)
+            if (data![x, y] == 0)
             {
-                data[x, y] = 1;
+                data![x, y] = 1;
 
                 (int? playerWinX, int? playerWinY) = CheckWin();
                 if (playerWinX != null || playerWinY != null)
@@ -172,7 +178,7 @@ namespace GreenOnions.TicTacToe_Windows
                 }
 
                 var computerStep = ComputerMove(x,y);
-                data[computerStep.X, computerStep.Y] = -1;
+                data![computerStep.X, computerStep.Y] = -1;
 
                 (int? computerWinX, int? computerWinY) = CheckWin();
                 if (computerWinX != null || computerWinY != null)
@@ -183,12 +189,12 @@ namespace GreenOnions.TicTacToe_Windows
 
                 if (OnlyLeftOneGrid(out int lastOneX, out int lastOneY))  //剩最后一个格子
                 {
-                    data[lastOneX, lastOneY] = 1;
+                    data![lastOneX, lastOneY] = 1;
                     (int? playerNextWinX, int? playerNextWinY) = CheckWin();
                     if (playerNextWinX == null && playerNextWinY == null)
                     {
                         winOrLostType = 0; //平局
-                        data[lastOneX, lastOneY] = 0;
+                        data![lastOneX, lastOneY] = 0;
                     }
                     else
                     {
@@ -212,9 +218,9 @@ namespace GreenOnions.TicTacToe_Windows
                 DrawPiece(lastStepBmp);
 
                 if (overY == null)
-                    DrawWinLine(overX.Value, -1);
+                    DrawWinLine(overX!.Value, -1);
                 else if (overX == null)
-                    DrawWinLine(-1, overY.Value);
+                    DrawWinLine(-1, overY!.Value);
                 else
                     DrawWinLine(overX.Value, overY.Value);
 
@@ -248,7 +254,7 @@ namespace GreenOnions.TicTacToe_Windows
             if (playerChance != null)
                 return (playerChance.Value.X, playerChance.Value.Y);  //随后查找阻止玩家获胜的机会
 
-            if (data[0, 0] == 0 && data[0, 2] == 0 && data[2, 0] == 0 && data[2, 2] == 0)  //优先抢四角
+            if (data![0, 0] == 0 && data![0, 2] == 0 && data![2, 0] == 0 && data![2, 2] == 0)  //优先抢四角
             {
                 return new Random(Guid.NewGuid().GetHashCode()).Next(0, 4) switch
                 {
@@ -258,7 +264,7 @@ namespace GreenOnions.TicTacToe_Windows
                     _ => (2, 2),
                 };
             }
-            if (data[1, 1] == 0)  //抢中间
+            if (data![1, 1] == 0)  //抢中间
                 return (1, 1);
             var diagonal = (playerMoveX, playerMoveY) switch  //玩家抢了中间并且占据了一个角落, 优先抢对角反制位
             {
@@ -268,7 +274,7 @@ namespace GreenOnions.TicTacToe_Windows
                 (2, 2) => ((0, 2), (2, 0)),
                 _ => default,
             };
-            if (diagonal != default && data[diagonal.Item1.Item1, diagonal.Item1.Item2] == 0 && data[diagonal.Item2.Item1, diagonal.Item2.Item2] == 0)
+            if (diagonal != default && data![diagonal.Item1.Item1, diagonal.Item1.Item2] == 0 && data![diagonal.Item2.Item1, diagonal.Item2.Item2] == 0)
             {
                 return new Random(Guid.NewGuid().GetHashCode()).Next(0, 2) switch
                 {
@@ -282,7 +288,7 @@ namespace GreenOnions.TicTacToe_Windows
                 Random random = new Random(Guid.NewGuid().GetHashCode());
                 int x = random.Next(0, 3);
                 int y = random.Next(0, 3);
-                if (data[x, y] == 0)
+                if (data![x, y] == 0)
                     return (x, y);
             }
         }
@@ -293,7 +299,7 @@ namespace GreenOnions.TicTacToe_Windows
             for (int y = 0; y < 3; y++)
             {
                 for (int x = 0; x < 3; x++)
-                    row[x] = data[x, y];
+                    row[x] = data![x, y];
                 if (Chance(row, computerChance))
                     return (Array.IndexOf(row, 0), y);
             }
@@ -302,7 +308,7 @@ namespace GreenOnions.TicTacToe_Windows
             for (int x = 0; x < 3; x++)
             {
                 for (int y = 0; y < 3; y++)
-                    column[y] = data[x, y];
+                    column[y] = data![x, y];
                 if (Chance(column, computerChance))
                     return (x, Array.IndexOf(column, 0));
             }
@@ -311,7 +317,7 @@ namespace GreenOnions.TicTacToe_Windows
             for (int i = 0; i < 3; i++)
             {
                 int x = 2 - i;
-                slash[i] = data[x, i];
+                slash[i] = data![x, i];
             }
             if (Chance(slash, computerChance))
             {
@@ -321,7 +327,7 @@ namespace GreenOnions.TicTacToe_Windows
 
             int[] backslash = new int[3]; // \
             for (int i = 0; i < 3; i++)
-                backslash[i] = data[i, i];
+                backslash[i] = data![i, i];
             if (Chance(backslash, computerChance))
             {
                 int index = Array.IndexOf(backslash, 0);
@@ -359,7 +365,7 @@ namespace GreenOnions.TicTacToe_Windows
             {
                 for (int y = 0; y < 3; y++)
                 {
-                    if (data[x, y] == 0)
+                    if (data![x, y] == 0)
                     {
                         zeroCount++;
                         lastOneX = x;
@@ -372,17 +378,20 @@ namespace GreenOnions.TicTacToe_Windows
 
         private void DrawWinLine(int x, int y)
         {
-            using (Graphics g = Graphics.FromImage(lastStepBmp))
+            if (lastStepBmp != null)
             {
-                Pen pen = new Pen(Brushes.Red, 6);
-                if (x == -1 && y == -1) //画/
-                    g.DrawLine(pen, 280, 20, 20, 280);
-                else if (x == -1)  //画竖线
-                    g.DrawLine(pen, y * 100 + 50, 10, y * 100 + 50, 290);
-                else if (y == -1)  //画横线
-                    g.DrawLine(pen, 10, x * 100 + 50, 290, x * 100 + 50);
-                else  //画\
-                    g.DrawLine(pen, 20, 20, 280, 280);
+                using (Graphics g = Graphics.FromImage(lastStepBmp))
+                {
+                    Pen pen = new Pen(Brushes.Red, 6);
+                    if (x == -1 && y == -1) //画/
+                        g.DrawLine(pen, 280, 20, 20, 280);
+                    else if (x == -1)  //画竖线
+                        g.DrawLine(pen, y * 100 + 50, 10, y * 100 + 50, 290);
+                    else if (y == -1)  //画横线
+                        g.DrawLine(pen, 10, x * 100 + 50, 290, x * 100 + 50);
+                    else  //画\
+                        g.DrawLine(pen, 20, 20, 280, 280);
+                }
             }
         }
 
@@ -394,8 +403,8 @@ namespace GreenOnions.TicTacToe_Windows
                 for (int x = 0; x < 3; x++)
                 {
                     if (x == 0)
-                        camp = data[x, y];
-                    else if (data[x, y] == 0 || data[x, y] != camp)
+                        camp = data![x, y];
+                    else if (data![x, y] == 0 || data![x, y] != camp)
                         goto IL_Next;
                 }
                 return (camp, y);
@@ -412,8 +421,8 @@ namespace GreenOnions.TicTacToe_Windows
                 for (int y = 0; y < 3; y++)
                 {
                     if (y == 0)
-                        camp = data[x, y];
-                    else if (data[x, y] == 0 || data[x, y] != camp)
+                        camp = data![x, y];
+                    else if (data![x, y] == 0 || data![x, y] != camp)
                         goto IL_Next;
                 }
                 return (camp, x);
@@ -428,8 +437,8 @@ namespace GreenOnions.TicTacToe_Windows
             for (int i = 0; i < 3; i++)
             {
                 if (i == 0)
-                    camp = data[i, i];
-                else if (data[i, i] == 0 || data[i, i] != camp)
+                    camp = data![i, i];
+                else if (data![i, i] == 0 || data![i, i] != camp)
                     goto IL_Next;
             }
             return (camp, 1);  // \
@@ -438,8 +447,8 @@ namespace GreenOnions.TicTacToe_Windows
             {
                 int x = 2 - i;
                 if (i == 0)
-                    camp = data[x, i];
-                else if (data[x, i] == 0 || data[x, i] != camp)
+                    camp = data![x, i];
+                else if (data![x, i] == 0 || data![x, i] != camp)
                     goto IL_0;
             }
             return (camp, -1);  // /

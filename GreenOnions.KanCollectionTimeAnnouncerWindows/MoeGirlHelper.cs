@@ -50,7 +50,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
                     HttpResponseMessage response = await client.GetAsync(@"https://zh.moegirl.org.cn/舰队Collection/图鉴/舰娘", _token);
                     html = await response.Content.ReadAsStringAsync(_token) + "</body></html>";
                 }
-                catch (OperationCanceledException ex)
+                catch (OperationCanceledException)
                 {
                     return new List<string>();
                 }
@@ -122,7 +122,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
                     HttpResponseMessage response = await client.GetAsync($@"https://zh.moegirl.org.cn/舰队Collection:{kanGirlName}", _token);
                     html = await response.Content.ReadAsStringAsync(_token) + "</body></html>";
                 }
-                catch (OperationCanceledException ex)
+                catch (OperationCanceledException)
                 {
                     return null;
                 }
@@ -198,7 +198,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
                         await File.WriteAllTextAsync(Path.Combine(mp3Path, $"{hour}_Chinese.txt"), item.ChineseText, _token);
                     }
                 }
-                catch (OperationCanceledException ex)
+                catch (OperationCanceledException)
                 {
                 }
             }
