@@ -3,12 +3,12 @@
 ~~其实这个文档是怕自己忘了要配什么参数才写的~~
 
 ### 注意: 
-GreenOnions 只能加载 .Net(.Net, .Net Core, .Net Framework) 框架 (C#, VB.NET, F#, Q# 语言) 的库作为插件, 但插件自身可以引用其他语言导出的的过程库
+GreenOnions 只能加载 .Net 框架的库作为插件, 但插件自身可以引用其他语言导出的的过程库
 
 ### 开发准备:
 1.创建一个 .Net 框架的项目<br>
 2.引用 GreenOnions.Interface<br>
-3.新建一个类, 继承 IPlugin 接口 (GreenOnions 会实例化所有实现了 IPlugin 接口的类)<br>
+3.新建一个类, 实现 IPlugin 接口 (GreenOnions 会实例化所有实现了 IPlugin 接口的类)<br>
 4.开始开发 (IPlugin 内有详细的方法和属性注释说明)<br>
 
 ### 提示: 
