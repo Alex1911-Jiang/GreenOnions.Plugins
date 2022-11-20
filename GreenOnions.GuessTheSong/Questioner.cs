@@ -124,6 +124,7 @@ namespace GreenOnions.GuessTheSong
                             _answers = null;
                         }
                     }
+                    return true;
                 }
                 else  //已经请求过获取歌曲
                 {
