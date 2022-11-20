@@ -100,11 +100,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
                 if (_settings.SendChineseText)
                     chineseTextMsg = new GreenOnionsTextMessage(_nextHourVoiceItem!.ChineseText + "\r\n");
 
-                GreenOnionsVoiceMessage voiceMsg;
-                if (File.Exists(_nextHourVoiceItem!.Mp3UrlOrFileName))
-                    voiceMsg = new GreenOnionsVoiceMessage(null, _nextHourVoiceItem!.Mp3UrlOrFileName);  //音频消息
-                else
-                    voiceMsg = new GreenOnionsVoiceMessage(_nextHourVoiceItem!.Mp3UrlOrFileName, null);  //音频消息
+                GreenOnionsVoiceMessage voiceMsg = new GreenOnionsVoiceMessage(_nextHourVoiceItem!.Mp3UrlOrFileName);  //音频消息
 
                 //报时的时间
                 for (int i = 0; i < _settings.DesignatedTime.Count; i++)
