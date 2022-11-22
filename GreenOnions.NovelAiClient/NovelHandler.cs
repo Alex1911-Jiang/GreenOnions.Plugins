@@ -85,7 +85,7 @@ namespace GreenOnions.NovelAiClient
             {
                 if (msgs.FirstOrDefault() is GreenOnionsTextMessage msg && _strCmd != null)
                 {
-                    Regex regex = new Regex(_strCmd);
+                    Regex regex = new Regex(_api!.ReplaceGreenOnionsStringTags(_strCmd));
                     if (regex.IsMatch(msg.Text))
                     {
                         Match match = regex.Match(msg.Text);
