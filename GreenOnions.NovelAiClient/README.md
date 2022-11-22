@@ -13,7 +13,7 @@
 ![配置文件参考](https://user-images.githubusercontent.com/50268952/203332679-71541d29-59b0-4b1b-a710-8020a4f30638.jpg)
 
 效果预览：
-![Naifu](https://user-images.githubusercontent.com/50268952/203338615-c1ebc195-852c-4213-b234-8ea6ef7a0edd.jpg)
+![Naifu](https://user-images.githubusercontent.com/50268952/203353603-a94af9cd-5e50-4369-b409-9745facd78be.jpg)
 ![WebUI](https://user-images.githubusercontent.com/50268952/203338626-80dc28ec-c5df-429c-ac15-367b17dea13c.jpg)
 
 食用方法: 下载Release并解压到GreenOnions\Plugins\下
