@@ -1,4 +1,5 @@
-﻿using GreenOnions.Interface;
+﻿using System.Linq;
+using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
 using NAudio.Wave;
 using Newtonsoft.Json;
@@ -11,8 +12,7 @@ namespace GreenOnions.GuessTheSong
         private Config? _config;
         private IBotConfig? _botConfig;
         private IGreenOnionsApi? _api;
-        private CancellationTokenSource? _ts = null;
-        private List<string>? _answers = new List<string>();
+        private Dictionary<long, List<string>> playerAndAnswers = new Dictionary<long, List<string>>();
 
         public string Name => "听歌猜曲名";
 
@@ -71,28 +71,37 @@ namespace GreenOnions.GuessTheSong
 
         public bool OnMessage(GreenOnionsMessages msgs, long? senderGroup, Action<GreenOnionsMessages> Response)
         {
-            if (msgs.FirstOrDefault() is GreenOnionsTextMessage msg)
+            long playerId = senderGroup == null ? msgs.SenderId : senderGroup.Value;
+            try
             {
-                if (_ts == null)  //开始请求歌曲
+                if (msgs.FirstOrDefault() is GreenOnionsTextMessage msg)
                 {
-                    if (msg.Text == _api!.ReplaceGreenOnionsStringTags("<机器人名称>猜歌"))
+                    if (playerAndAnswers.ContainsKey(playerId)) //已经请求过获取歌曲, 在答题状态中
                     {
-                        Random rdm = new Random(Guid.NewGuid().GetHashCode());
-                        _ts = new CancellationTokenSource();
-                        try
+                        if (playerAndAnswers[playerId].Any(an => an.StartsWith(msg.Text, StringComparison.OrdinalIgnoreCase)))  //回答了正确的答案
                         {
+                            playerAndAnswers.Remove(playerId);
+                            Response(_config!.RightAnswerReply);
+                        }
+                    }
+                    else //这个组或这个人不在正在游玩的状态
+                    {
+                        if (msg.Text == _api!.ReplaceGreenOnionsStringTags("<机器人名称>猜歌"))  //开始请求歌曲
+                        {
+                            Random rdm = new Random(Guid.NewGuid().GetHashCode());
+
                             if (_config!.MusicIDAndAnswers.Count > 0)  //自定义模式
                             {
                                 int musicIndex = rdm.Next(0, _config.MusicIDAndAnswers.Count);
                                 long musicID = _config.MusicIDAndAnswers.Keys.ToArray()[musicIndex];
-                                _answers = _config.MusicIDAndAnswers[musicID].ToList();
+                                playerAndAnswers.Add(playerId, _config.MusicIDAndAnswers[musicID].ToList());
                                 try
                                 {
                                     DownloadMusic(musicID).ContinueWith(originalMusic =>
                                     {
                                         try
                                         {
-                                            SendSongAndReceiveAnswers(originalMusic.Result);
+                                            SendSongAndReceiveAnswers(originalMusic.Result, _config.MusicIDAndAnswers[musicID].First());
                                         }
                                         catch (Exception ex)
                                         {
@@ -112,106 +121,76 @@ namespace GreenOnions.GuessTheSong
                             {
                                 int keywordIndex = rdm.Next(0, _config.SearchKeywords.Count);
                                 string searchKey = _config.SearchKeywords.ToArray()[keywordIndex];
-                                Search(searchKey);
+                                Search(searchKey, playerId);
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            Response($"发生错误，{ex.Message}");
-                            _ts?.Cancel();
-                            _ts = null;
-                            _answers?.Clear();
-                            _answers = null;
-                        }
                     }
-                    return true;
-                }
-                else  //已经请求过获取歌曲
-                {
-                    if (_answers != null)
-                    {
-                        if (_answers.Contains(msg.Text))  //回答了正确的答案
-                        {
-                            _ts?.Cancel();
-                            _ts = null;
-                            _answers?.Clear();
-                            _answers = null;
-                            Response(_config!.RightAnswerReply);
-                        }
-                    }
-                }
 
-                void Search(string searchKey)
-                {
-                    SearchMusic(searchKey).ContinueWith(async r =>
+                    void Search(string searchKey, long playerId)
                     {
-                        if (r.Result == -1)  //搜索失败
+                        SearchMusic(searchKey).ContinueWith(async r =>
                         {
-                            _ts?.Cancel();
-                            _ts = null;
-                            _answers?.Clear();
-                            _answers = null;
-                            Response("搜索歌曲失败，请联系机器人管理员");
-                            SendMessageToAdmin($"葱葱听歌猜曲名插件搜索失败，用户搜索词为：{searchKey}");
-                        }
-                        double duration = await GetSongDurationSeconds(r.Result);
-                        if (duration < _config.ClipLengthSecond * 2 + 2)  //歌曲总时长低于裁剪片段时长
-                        {
-                            Search(searchKey);
-                            return;
-                        }
-
-                        Stream originalMusic;
-                        try
-                        {
-                            originalMusic = await DownloadMusic(r.Result);
-                        }
-                        catch (Exception ex)
-                        {
-                            Response($"下载歌曲失败，请联系机器人管理员");
-                            SendMessageToAdmin($"葱葱听歌猜曲名插件下载歌曲失败，歌曲ID为：{r.Result}，错误信息为：{ex.Message}");
-                            return;
-                        }
-                        try
-                        {
-                            SendSongAndReceiveAnswers(originalMusic);
-                        }
-                        catch (Exception ex)
-                        {
-                            Response($"剪歌失败，请重试");
-                            SendMessageToAdmin($"葱葱听歌猜曲名插件剪歌失败，歌曲ID为：{r.Result}，错误信息为：{ex.Message}");
-                        }
-                    });
-                }
-
-                async void SendSongAndReceiveAnswers(Stream originalMusic)
-                {
-                    using MemoryStream? ms = await CutMp3(originalMusic);
-                    if (ms != null)
-                    {
-                        GreenOnionsMessages msgVoice = new GreenOnionsVoiceMessage(ms);
-                        msgVoice.Reply = false;
-                        Response(msgVoice);
-                        try
-                        {
-                            await Task.Delay(60 * 1000, _ts!.Token);
-                        }
-                        catch (TaskCanceledException)
-                        {
-                        }
-                        if (_ts != null)
-                        {
-                            if (!_ts.IsCancellationRequested)
+                            if (r.Result.MusicId == -1)  //搜索失败
                             {
-                                GreenOnionsMessages msgEnd = new GreenOnionsMessages(_config!.TimeOutReplyReply);
-                                msgEnd.Reply = false;
-                                Response(msgEnd);
+                                Response("搜索歌曲失败，请联系机器人管理员");
+                                SendMessageToAdmin($"葱葱听歌猜曲名插件搜索失败，用户搜索词为：{searchKey}");
                             }
-                            _ts.Dispose();
+                            double duration = await GetSongDurationSeconds(r.Result.MusicId);
+                            if (duration < _config.ClipLengthSecond * 2 + 2)  //歌曲总时长低于裁剪片段时长
+                            {
+                                Search(searchKey, playerId);
+                                return;
+                            }
+
+                            playerAndAnswers.Add(playerId, r.Result.Answers!);
+
+                            Stream originalMusic;
+                            try
+                            {
+                                originalMusic = await DownloadMusic(r.Result.MusicId);
+                            }
+                            catch (Exception ex)
+                            {
+                                Response($"下载歌曲失败，请联系机器人管理员");
+                                playerAndAnswers.Remove(playerId);
+                                SendMessageToAdmin($"葱葱听歌猜曲名插件下载歌曲失败，歌曲ID为：{r.Result.MusicId}，错误信息为：{ex.Message}");
+                                return;
+                            }
+                            try
+                            {
+                                SendSongAndReceiveAnswers(originalMusic, r.Result.Answers!.First());
+                            }
+                            catch (Exception ex)
+                            {
+                                Response($"剪歌失败，请重试");
+                                playerAndAnswers.Remove(playerId);
+                                SendMessageToAdmin($"葱葱听歌猜曲名插件剪歌失败，歌曲ID为：{r.Result.MusicId}，错误信息为：{ex.Message}");
+                            }
+                        });
+                    }
+
+                    async void SendSongAndReceiveAnswers(Stream originalMusic, string answer)
+                    {
+                        using MemoryStream? ms = await CutMp3(originalMusic);
+                        if (ms != null)
+                        {
+                            GreenOnionsMessages msgVoice = new GreenOnionsVoiceMessage(ms);
+                            msgVoice.Reply = false;
+                            Response(msgVoice);
+                            await Task.Delay(60 * 1000);
+                            GreenOnionsMessages msgEnd = new GreenOnionsMessages(_config!.TimeOutReplyReply.Replace("<歌曲名称>", answer));  //游戏结束，公布答案
+                            msgEnd.Reply = false;
+                            Response(msgEnd);
+                            playerAndAnswers.Remove(playerId);
                         }
-                        _ts = null;
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                playerAndAnswers.Remove(playerId);
+                Response($"发生错误，{ex.Message}");
+                SendMessageToAdmin($"葱葱听歌猜曲名插件错误：{ex.Message}");
             }
             return false;
         }
@@ -243,7 +222,7 @@ namespace GreenOnions.GuessTheSong
             return -1;
         }
 
-        private async Task<long> SearchMusic(string musicName)
+        private async Task<(long MusicId, List<string>? Answers)> SearchMusic(string musicName)
         {
             using HttpClient httpClient = new HttpClient();
             Random rdmOffset = new Random(Guid.NewGuid().GetHashCode());
@@ -270,11 +249,11 @@ namespace GreenOnions.GuessTheSong
                         if (transNames != null)
                             answers.AddRange(transNames);
                     }
-                    _answers = answers;
-                    return id;
+
+                    return (id, answers);
                 }
             }
-            return -1;
+            return (-1, null);
         }
 
 
