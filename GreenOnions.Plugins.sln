@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.TicTacToe_Windo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.NovelAiClient", "GreenOnions.NovelAiClient\GreenOnions.NovelAiClient.csproj", "{2EB707AA-0B8D-43BC-B4AF-FE3D52D0FA6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.GuessTheSong", "GreenOnions.GuessTheSong\GreenOnions.GuessTheSong.csproj", "{077CBFC0-A58E-40F9-858A-A360C16E7450}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.GuessTheSong", "GreenOnions.GuessTheSong\GreenOnions.GuessTheSong.csproj", "{077CBFC0-A58E-40F9-858A-A360C16E7450}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.CustomHttpApiInvoker", "GreenOnions.CustomHttpApiInvoker\GreenOnions.CustomHttpApiInvoker.csproj", "{DB5A7A68-66AE-40B7-BCFA-BFD180944094}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{077CBFC0-A58E-40F9-858A-A360C16E7450}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{077CBFC0-A58E-40F9-858A-A360C16E7450}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{077CBFC0-A58E-40F9-858A-A360C16E7450}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB5A7A68-66AE-40B7-BCFA-BFD180944094}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB5A7A68-66AE-40B7-BCFA-BFD180944094}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB5A7A68-66AE-40B7-BCFA-BFD180944094}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB5A7A68-66AE-40B7-BCFA-BFD180944094}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
