@@ -292,7 +292,7 @@ namespace GreenOnions.GuessTheSong
                 return null;
 
             Random rdm = new Random();
-            int startSecond = rdm.Next(6, (int)reader.TotalTime.TotalSeconds - 3 - _config!.ClipLengthSecond);
+            int startSecond = rdm.Next(6, (int)reader.TotalTime.TotalSeconds - 5 - _config!.ClipLengthSecond);
 
             var startTime = TimeSpan.FromSeconds(startSecond);
             var endTime = TimeSpan.FromSeconds(startSecond + _config!.ClipLengthSecond);
