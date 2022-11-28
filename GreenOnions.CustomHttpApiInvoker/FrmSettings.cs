@@ -36,7 +36,7 @@ namespace GreenOnions.CustomHttpApiInvoker
         private void DeleteItemControl(CtrlListItem item)
         {
             _config.ApiConfig.Remove(item.Cmd);
-            Controls.Remove(item);
+            pnlConfigList.Controls.Remove(item);
         }
 
         private void btnAddConfig_Click(object sender, EventArgs e)
