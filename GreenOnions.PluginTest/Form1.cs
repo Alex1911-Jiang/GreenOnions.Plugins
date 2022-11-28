@@ -11,7 +11,7 @@ namespace GreenOnions.PluginTest
 
         private void btnTest_Click(object sender, EventArgs e)
         {
-            Dictionary<string, HttpApiConfig> configs = new Dictionary<string, HttpApiConfig>();
+            MainConfig configs = new MainConfig();
             FrmSettings frmSettings = new FrmSettings("", configs);
             frmSettings.ShowDialog();
         }

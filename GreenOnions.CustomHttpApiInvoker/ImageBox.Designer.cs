@@ -32,12 +32,11 @@
             // 
             // ImageBox
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(514, 514);
-            this.Margin = new System.Windows.Forms.Padding(2);
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.ClientSize = new System.Drawing.Size(808, 726);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ImageBox";

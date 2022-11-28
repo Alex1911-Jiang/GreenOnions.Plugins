@@ -45,9 +45,10 @@
             this.pnlConfigList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnlConfigList.Controls.Add(this.btnAddConfig);
             this.pnlConfigList.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.pnlConfigList.Location = new System.Drawing.Point(12, 35);
+            this.pnlConfigList.Location = new System.Drawing.Point(19, 49);
+            this.pnlConfigList.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.pnlConfigList.Name = "pnlConfigList";
-            this.pnlConfigList.Size = new System.Drawing.Size(603, 558);
+            this.pnlConfigList.Size = new System.Drawing.Size(946, 787);
             this.pnlConfigList.TabIndex = 8;
             this.pnlConfigList.WrapContents = false;
             this.pnlConfigList.SizeChanged += new System.EventHandler(this.pnlConfigList_SizeChanged);
@@ -57,9 +58,10 @@
             // btnAddConfig
             // 
             this.btnAddConfig.Image = ((System.Drawing.Image)(resources.GetObject("btnAddConfig.Image")));
-            this.btnAddConfig.Location = new System.Drawing.Point(3, 3);
+            this.btnAddConfig.Location = new System.Drawing.Point(5, 4);
+            this.btnAddConfig.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.btnAddConfig.Name = "btnAddConfig";
-            this.btnAddConfig.Size = new System.Drawing.Size(592, 100);
+            this.btnAddConfig.Size = new System.Drawing.Size(930, 141);
             this.btnAddConfig.TabIndex = 0;
             this.btnAddConfig.UseVisualStyleBackColor = true;
             this.btnAddConfig.Click += new System.EventHandler(this.btnAddConfig_Click);
@@ -67,9 +69,10 @@
             // lblHelpCmd
             // 
             this.lblHelpCmd.AutoSize = true;
-            this.lblHelpCmd.Location = new System.Drawing.Point(12, 9);
+            this.lblHelpCmd.Location = new System.Drawing.Point(19, 13);
+            this.lblHelpCmd.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.lblHelpCmd.Name = "lblHelpCmd";
-            this.lblHelpCmd.Size = new System.Drawing.Size(183, 17);
+            this.lblHelpCmd.Size = new System.Drawing.Size(274, 24);
             this.lblHelpCmd.TabIndex = 9;
             this.lblHelpCmd.Text = "列出所有Api命令及说明的命令：";
             // 
@@ -77,21 +80,22 @@
             // 
             this.txbHelpCmd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txbHelpCmd.Location = new System.Drawing.Point(201, 6);
+            this.txbHelpCmd.Location = new System.Drawing.Point(316, 8);
+            this.txbHelpCmd.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.txbHelpCmd.Name = "txbHelpCmd";
-            this.txbHelpCmd.Size = new System.Drawing.Size(414, 23);
+            this.txbHelpCmd.Size = new System.Drawing.Size(648, 30);
             this.txbHelpCmd.TabIndex = 10;
             // 
             // FrmSettings
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(626, 602);
+            this.ClientSize = new System.Drawing.Size(984, 850);
             this.Controls.Add(this.txbHelpCmd);
             this.Controls.Add(this.lblHelpCmd);
             this.Controls.Add(this.pnlConfigList);
-            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "FrmSettings";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FrmSettings";
             this.pnlConfigList.ResumeLayout(false);
             this.ResumeLayout(false);

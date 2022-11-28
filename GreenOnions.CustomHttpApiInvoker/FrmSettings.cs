@@ -1,22 +1,25 @@
-﻿namespace GreenOnions.CustomHttpApiInvoker
+﻿using System.ComponentModel;
+
+namespace GreenOnions.CustomHttpApiInvoker
 {
     public partial class FrmSettings : Form
     {
         private string _path;
-        private Dictionary<string, HttpApiConfig> _config;
+        private MainConfig _config;
         private int _itemCtrlWidth = 592;
-        public FrmSettings(string path, Dictionary<string, HttpApiConfig> config)
+        public FrmSettings(string path, MainConfig config)
         {
             _path = path;
             _config = config;
             InitializeComponent();
+            txbHelpCmd.Text = config.HelpCmd;
         }
 
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
             pnlConfigList.Controls.Remove(btnAddConfig);
-            foreach (var item in _config)
+            foreach (var item in _config.ApiConfig)
             {
                 CtrlListItem ctrl = new CtrlListItem(_path, item.Key, item.Value, DeleteItemControl);
                 pnlConfigList.Controls.Add(ctrl);
@@ -24,9 +27,15 @@
             pnlConfigList.Controls.Add(btnAddConfig);
         }
 
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+            _config.HelpCmd = txbHelpCmd.Text;
+        }
+
         private void DeleteItemControl(CtrlListItem item)
         {
-            _config.Remove(item.Cmd);
+            _config.ApiConfig.Remove(item.Cmd);
             Controls.Remove(item);
         }
 
@@ -36,11 +45,11 @@
             frmEditor.ShowDialog();
             if (!string.IsNullOrEmpty(frmEditor.Cmd))
             {
-                if (_config.ContainsKey(frmEditor.Cmd))
+                if (_config.ApiConfig.ContainsKey(frmEditor.Cmd))
                     MessageBox.Show($"添加失败，命令\"{frmEditor.Cmd}\"已存在，请更换命令或改用编辑功能。","错误");
                 else
                 {
-                    _config.Add(frmEditor.Cmd, frmEditor.Config);
+                    _config.ApiConfig.Add(frmEditor.Cmd, frmEditor.Config);
 
                     pnlConfigList.Controls.Remove(btnAddConfig);
                     CtrlListItem ctrl = new CtrlListItem(_path, frmEditor.Cmd, frmEditor.Config, DeleteItemControl);

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -166,6 +167,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                             request.Content = form;
                         }
 
+                        string? requestUrl = request.RequestUri?.ToString();
                         HttpResponseMessage response;
                         try
                         {
@@ -173,9 +175,15 @@ namespace GreenOnions.CustomHttpApiInvoker
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show("请求异常。" + ex.Message, "请求失败");
+                            MessageBox.Show("发起请求异常。" + ex.Message, "请求失败");
                             return;
                         }
+                        if ((int)response.StatusCode >= 400)
+                        {
+                            MessageBox.Show($"{(int)response.StatusCode} {response.ReasonPhrase}{(response.RequestMessage?.RequestUri?.ToString() != requestUrl ? "\r\n请尝试使用POST进行请求。" : "")}", $"请求错误");
+                            return;
+                        }
+
                         //请求成功
                         string valueText = string.Empty;
                         Stream? valueStream = null;
@@ -194,7 +202,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                                 }
 
                                 text = text.Substring(startIndex);
-                                int endIndex = text.Length - 1;
+                                int endIndex = text.Length;
                                 if (!string.IsNullOrEmpty(txbSubTextTo.Text))
                                 {
                                     endIndex = text.IndexOf(txbSubTextTo.Text, chkSubTextWithPrefix.Checked ? txbSubTextFrom.Text.Length : 0);
@@ -202,7 +210,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                                         endIndex += txbSubTextTo.Text.Length;
                                 }
 
-                                valueText = text.Substring(0, endIndex);
+                                valueText = text.Substring(0, endIndex).TrimStart('\n').TrimStart('\r').TrimStart('\n');
                             }
                             else if (rdoParseJson.Checked)
                             {
@@ -261,13 +269,13 @@ namespace GreenOnions.CustomHttpApiInvoker
                         {
                             if (string.IsNullOrEmpty(valueText))
                             {
-                                MessageBox.Show(ex.Message, "请求成功，解析失败");
+                                MessageBox.Show(ex.Message, $"请求成功，解析失败 {(int)response.StatusCode}");
                             }
                             else
                             {
                                 string respFileName = Path.Combine(_path, "响应.txt");
                                 File.WriteAllText(respFileName, valueText);
-                                MessageBox.Show($"{ex.Message}\r\n响应文已保存在\r\n{respFileName}", "请求成功，解析失败");
+                                MessageBox.Show($"{ex.Message}\r\n响应文已保存在\r\n{respFileName}", $"请求成功，解析失败 {(int)response.StatusCode}");
                             }
                             return;
                         }
@@ -277,7 +285,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                             string saveMusicFileName = Path.Combine(_path, "msuic");
                             if (rdoSendText.Checked)
                             {
-                                MessageBox.Show(valueText, "成功");
+                                MessageBox.Show(valueText, "成功 {(int)response.StatusCode}");
                             }
                             else if (rdoSendImageByUrl.Checked)
                             {
@@ -320,7 +328,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                                 }
                                 else
                                 {
-                                    MessageBox.Show("流为空", "解析成功");
+                                    MessageBox.Show("流为空", $"解析成功 {(int)response.StatusCode}");
                                 }
                             }
                             else if (rdoSendVoiceByUrl.Checked)
@@ -331,13 +339,13 @@ namespace GreenOnions.CustomHttpApiInvoker
                                     byte[] data = await rep.Content.ReadAsByteArrayAsync();
                                     File.WriteAllBytes(saveMusicFileName, data);
                                 }
-                                MessageBox.Show($"音频文件已保存在{saveMusicFileName}", "成功");
+                                MessageBox.Show($"音频文件已保存在{saveMusicFileName}", $"成功 {(int)response.StatusCode}");
                             }
                             else if (rdoSendVoiceByBase64.Checked)
                             {
                                 byte[] data = Convert.FromBase64String(valueText);
                                 File.WriteAllBytes(saveMusicFileName, data);
-                                MessageBox.Show($"音频文件已保存在{saveMusicFileName}", "成功");
+                                MessageBox.Show($"音频文件已保存在{saveMusicFileName}", $"成功 {(int)response.StatusCode}");
                             }
                             else if (rdoSendVoiceStream.Checked)
                             {
@@ -347,17 +355,17 @@ namespace GreenOnions.CustomHttpApiInvoker
                                     {
                                         valueStream.CopyTo(outStream);
                                     }
-                                    MessageBox.Show($"音频文件已保存在{saveMusicFileName}", "成功");
+                                    MessageBox.Show($"音频文件已保存在{saveMusicFileName}", $"成功 {(int)response.StatusCode}");
                                 }
                                 else
                                 {
-                                    MessageBox.Show("流为空", "解析成功");
+                                    MessageBox.Show("流为空", $"解析成功 {(int)response.StatusCode}");
                                 }
                             }
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show($"{ex.Message}", "解析成功，转换失败");
+                            MessageBox.Show($"{ex.Message}\r\n{(int)response.StatusCode} {response.ReasonPhrase}", "解析成功，转换失败");
                             return;
                         }
                     }
@@ -474,6 +482,10 @@ namespace GreenOnions.CustomHttpApiInvoker
             else if (rdoSendVoiceByBase64.Checked)
             {
                 Config.SendMode = SendModeEnum.VoiceBase64;
+            }
+            else if (rdoSendImageStream.Checked)
+            {
+                Config.SendMode = SendModeEnum.ImageStream;
             }
             else if (rdoSendVoiceStream.Checked)
             {

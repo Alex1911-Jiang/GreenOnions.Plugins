@@ -9,7 +9,8 @@ namespace GreenOnions.CustomHttpApiInvoker
     public class ApiInvoker : IPlugin
     {
         private string? _path;
-        private Dictionary<string, HttpApiConfig> _config = new Dictionary<string, HttpApiConfig>();
+        private MainConfig _config = new MainConfig();
+        private IGreenOnionsApi? _botApi;
 
         public string Name => "自定义API客户端";
 
@@ -25,7 +26,7 @@ namespace GreenOnions.CustomHttpApiInvoker
 
         public void OnConnected(long selfId, IGreenOnionsApi api)
         {
-
+            _botApi = api;
         }
 
         public void OnDisconnected()
@@ -42,7 +43,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                 string strConfigJson = File.ReadAllText(configFileName);
                 if (!string.IsNullOrWhiteSpace(strConfigJson))
                 {
-                    _config = JsonConvert.DeserializeObject<Dictionary<string, HttpApiConfig>>(strConfigJson)!;
+                    _config = JsonConvert.DeserializeObject<MainConfig>(strConfigJson)!;
                 }
             }
         }
@@ -51,14 +52,30 @@ namespace GreenOnions.CustomHttpApiInvoker
         {
             if (msgs.FirstOrDefault() is GreenOnionsTextMessage msg)
             {
-                if (_config.ContainsKey(msg.Text))
+                if (_botApi!.ReplaceGreenOnionsStringTags(_config.HelpCmd) == msg)
                 {
-                    InvokeApi(_config[msg.Text]).ContinueWith(callback =>
+                    StringBuilder helpMessage = new StringBuilder();
+                    foreach (var item in _config.ApiConfig)
                     {
-                        if (callback.Result != null)
-                            Response(callback.Result);
-                    });
+                        helpMessage.AppendLine(item.Key + (string.IsNullOrEmpty(item.Value.HelpMessage) ? "" : $":{item.Value.HelpMessage}"));
+                    }
+                    Response(new GreenOnionsMessages(helpMessage.ToString()) { Reply = false });
                     return true;
+                }
+                else
+                {
+                    foreach (var item in _config.ApiConfig)
+                    {
+                        if (_botApi.ReplaceGreenOnionsStringTags(item.Key) == msg.Text)
+                        {
+                            InvokeApi(item.Value).ContinueWith(callback =>
+                            {
+                                if (callback.Result != null)
+                                    Response(callback.Result);
+                            });
+                            return true;
+                        }
+                    }
                 }
             }
             return false;
@@ -125,6 +142,12 @@ namespace GreenOnions.CustomHttpApiInvoker
                             msg.Add("请求失败，请联系机器人管理员");
                             return msg;
                         }
+                        if ((int)response.StatusCode >= 400)
+                        {
+                            msg.Add("请求被拒绝，请联系机器人管理员");
+                            return msg;
+                        }
+
                         //请求成功
                         string valueText = string.Empty;
                         Stream? valueStream = null;
@@ -147,7 +170,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                                     SubTextFromLength = api.SubTextFrom.Length;
 
                                 text = text.Substring(startIndex);
-                                int endIndex = text.Length - 1;
+                                int endIndex = text.Length;
                                 if (!string.IsNullOrEmpty(api.SubTextTo))
                                 {
                                     endIndex = text.IndexOf(api.SubTextTo, api.SubTextWithPrefix ? SubTextFromLength : 0);
@@ -155,7 +178,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                                         endIndex += api.SubTextTo.Length;
                                 }
 
-                                valueText = text.Substring(0, endIndex);
+                                valueText = text.Substring(0, endIndex).TrimStart('\n').TrimStart('\r').TrimStart('\n');
                             }
                             else if (api.ParseMode == ParseModeEnum.Json)
                             {
@@ -284,6 +307,9 @@ namespace GreenOnions.CustomHttpApiInvoker
         public bool WindowSetting()
         {
             new FrmSettings(_path!, _config).ShowDialog();
+            string configFileName = Path.Combine(_path, "config.json");
+            string jsonConfig = JsonConvert.SerializeObject(_config);
+            File.WriteAllText(configFileName, jsonConfig);
             return true;
         }
     }
