@@ -96,7 +96,7 @@
             this.Controls.Add(this.pnlConfigList);
             this.Name = "FrmSettings";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "FrmSettings";
+            this.Text = "自定义API设置";
             this.pnlConfigList.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
