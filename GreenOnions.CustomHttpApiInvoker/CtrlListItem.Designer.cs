@@ -34,7 +34,6 @@
             this.lbllblRemark = new System.Windows.Forms.Label();
             this.btnEdit = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
-            this.chkEnabled = new System.Windows.Forms.CheckBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.lblCmd = new System.Windows.Forms.Label();
             this.lblCmdTitle = new System.Windows.Forms.Label();
@@ -43,44 +42,50 @@
             // lblUrlTitle
             // 
             this.lblUrlTitle.AutoSize = true;
-            this.lblUrlTitle.Location = new System.Drawing.Point(17, 22);
+            this.lblUrlTitle.Location = new System.Drawing.Point(9, 12);
+            this.lblUrlTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblUrlTitle.Name = "lblUrlTitle";
-            this.lblUrlTitle.Size = new System.Drawing.Size(64, 24);
+            this.lblUrlTitle.Size = new System.Drawing.Size(44, 17);
             this.lblUrlTitle.TabIndex = 0;
             this.lblUrlTitle.Text = "地址：";
             // 
             // lblUrl
             // 
             this.lblUrl.AutoSize = true;
-            this.lblUrl.Location = new System.Drawing.Point(123, 22);
+            this.lblUrl.Location = new System.Drawing.Point(76, 12);
+            this.lblUrl.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblUrl.Name = "lblUrl";
-            this.lblUrl.Size = new System.Drawing.Size(47, 24);
+            this.lblUrl.Size = new System.Drawing.Size(33, 17);
             this.lblUrl.TabIndex = 1;
             this.lblUrl.Text = "{Url}";
             // 
             // lblRemarkTitle
             // 
             this.lblRemarkTitle.AutoSize = true;
-            this.lblRemarkTitle.Location = new System.Drawing.Point(17, 63);
+            this.lblRemarkTitle.Location = new System.Drawing.Point(9, 41);
+            this.lblRemarkTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblRemarkTitle.Name = "lblRemarkTitle";
-            this.lblRemarkTitle.Size = new System.Drawing.Size(64, 24);
+            this.lblRemarkTitle.Size = new System.Drawing.Size(44, 17);
             this.lblRemarkTitle.TabIndex = 2;
             this.lblRemarkTitle.Text = "备注：";
             // 
             // lbllblRemark
             // 
             this.lbllblRemark.AutoSize = true;
-            this.lbllblRemark.Location = new System.Drawing.Point(123, 63);
+            this.lbllblRemark.Location = new System.Drawing.Point(76, 41);
+            this.lbllblRemark.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lbllblRemark.Name = "lbllblRemark";
-            this.lbllblRemark.Size = new System.Drawing.Size(88, 24);
+            this.lbllblRemark.Size = new System.Drawing.Size(61, 17);
             this.lbllblRemark.TabIndex = 3;
             this.lbllblRemark.Text = "{Remark}";
             // 
             // btnEdit
             // 
-            this.btnEdit.Location = new System.Drawing.Point(289, 100);
+            this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnEdit.Location = new System.Drawing.Point(444, 74);
+            this.btnEdit.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnEdit.Name = "btnEdit";
-            this.btnEdit.Size = new System.Drawing.Size(112, 34);
+            this.btnEdit.Size = new System.Drawing.Size(71, 24);
             this.btnEdit.TabIndex = 6;
             this.btnEdit.Text = "编辑";
             this.btnEdit.UseVisualStyleBackColor = true;
@@ -88,57 +93,52 @@
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(407, 100);
+            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDelete.Location = new System.Drawing.Point(519, 74);
+            this.btnDelete.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(112, 34);
+            this.btnDelete.Size = new System.Drawing.Size(71, 24);
             this.btnDelete.TabIndex = 7;
             this.btnDelete.Text = "删除";
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
-            // chkEnabled
-            // 
-            this.chkEnabled.AutoSize = true;
-            this.chkEnabled.Location = new System.Drawing.Point(525, 104);
-            this.chkEnabled.Name = "chkEnabled";
-            this.chkEnabled.Size = new System.Drawing.Size(72, 28);
-            this.chkEnabled.TabIndex = 8;
-            this.chkEnabled.Text = "启用";
-            this.chkEnabled.UseVisualStyleBackColor = true;
-            // 
             // lblCmd
             // 
             this.lblCmd.AutoSize = true;
-            this.lblCmd.Location = new System.Drawing.Point(124, 105);
+            this.lblCmd.Location = new System.Drawing.Point(77, 70);
+            this.lblCmd.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblCmd.Name = "lblCmd";
-            this.lblCmd.Size = new System.Drawing.Size(63, 24);
+            this.lblCmd.Size = new System.Drawing.Size(43, 17);
             this.lblCmd.TabIndex = 10;
             this.lblCmd.Text = "{Cmd}";
             // 
             // lblCmdTitle
             // 
             this.lblCmdTitle.AutoSize = true;
-            this.lblCmdTitle.Location = new System.Drawing.Point(18, 105);
+            this.lblCmdTitle.Location = new System.Drawing.Point(9, 70);
+            this.lblCmdTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblCmdTitle.Name = "lblCmdTitle";
-            this.lblCmdTitle.Size = new System.Drawing.Size(64, 24);
+            this.lblCmdTitle.Size = new System.Drawing.Size(44, 17);
             this.lblCmdTitle.TabIndex = 9;
             this.lblCmdTitle.Text = "命令：";
             // 
             // CtrlListItem
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Controls.Add(this.lblCmd);
             this.Controls.Add(this.lblCmdTitle);
-            this.Controls.Add(this.chkEnabled);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.lbllblRemark);
             this.Controls.Add(this.lblRemarkTitle);
             this.Controls.Add(this.lblUrl);
             this.Controls.Add(this.lblUrlTitle);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "CtrlListItem";
-            this.Size = new System.Drawing.Size(600, 150);
+            this.Size = new System.Drawing.Size(592, 100);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -152,7 +152,6 @@
         private Label lbllblRemark;
         private Button btnEdit;
         private Button btnDelete;
-        private CheckBox chkEnabled;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private Label lblCmd;
         private Label lblCmdTitle;

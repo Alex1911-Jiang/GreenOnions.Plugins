@@ -6,12 +6,15 @@
         {
             InitializeComponent();
             Text = caption;
-            pic.Image = img;
+            BackgroundImage = img;
         }
 
         public static void Show(Image img, string caption = "")
         {
             ImageBox box = new ImageBox(img, caption);
+            int borderWidth = box.Width - box.ClientRectangle.Width;
+            int borderHeight = box.Height - box.ClientRectangle.Height;
+            box.Size = new Size(img.Width + borderWidth, img.Height + borderHeight);
             box.ShowDialog();
         }
     }

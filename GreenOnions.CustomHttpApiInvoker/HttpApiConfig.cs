@@ -4,10 +4,9 @@ using Newtonsoft.Json.Converters;
 
 namespace GreenOnions.CustomHttpApiInvoker
 {
-    public class Config
+    public class HttpApiConfig
     {
         public string? Url { get; set; }
-        public string? Cmd { get; set; }
         public string? Remark { get; set; }
         public string? HelpMessage { get; set; }
 
@@ -54,13 +53,12 @@ namespace GreenOnions.CustomHttpApiInvoker
     }
     public enum ParseModeEnum
     {
-        None = 0,
+        Text = 0,
         Json = 1,
         Xml = 2,
         XPath = 3,
         JavaScript = 4,
         Stream = 5,
-        Text = 6,
     }
     public enum SendModeEnum
     {

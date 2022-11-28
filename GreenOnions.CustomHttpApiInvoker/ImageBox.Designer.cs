@@ -28,37 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pic = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pic)).BeginInit();
             this.SuspendLayout();
-            // 
-            // pic
-            // 
-            this.pic.Location = new System.Drawing.Point(12, 12);
-            this.pic.Name = "pic";
-            this.pic.Size = new System.Drawing.Size(500, 500);
-            this.pic.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pic.TabIndex = 0;
-            this.pic.TabStop = false;
             // 
             // ImageBox
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(524, 525);
-            this.Controls.Add(this.pic);
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.ClientSize = new System.Drawing.Size(514, 514);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ImageBox";
-            ((System.ComponentModel.ISupportInitialize)(this.pic)).EndInit();
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
-
-        private PictureBox pic;
     }
 }

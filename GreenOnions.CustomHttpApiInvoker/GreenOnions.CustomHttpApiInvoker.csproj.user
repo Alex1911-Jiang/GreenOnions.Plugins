@@ -11,5 +11,8 @@
     <Compile Update="FrmSettings.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="ImageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
 </Project>

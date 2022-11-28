@@ -58,11 +58,10 @@
             this.pnlParseMode = new System.Windows.Forms.Panel();
             this.rdoParseJavaScript = new System.Windows.Forms.RadioButton();
             this.rdoParseStream = new System.Windows.Forms.RadioButton();
-            this.rdoDoNotParse = new System.Windows.Forms.RadioButton();
+            this.rdoParseText = new System.Windows.Forms.RadioButton();
             this.rdoParseJson = new System.Windows.Forms.RadioButton();
             this.rdoParseXml = new System.Windows.Forms.RadioButton();
             this.rdoParseXPath = new System.Windows.Forms.RadioButton();
-            this.rdoParseText = new System.Windows.Forms.RadioButton();
             this.lblSendMode = new System.Windows.Forms.Label();
             this.lblParseMode = new System.Windows.Forms.Label();
             this.txbCmd = new System.Windows.Forms.TextBox();
@@ -95,10 +94,11 @@
             // 
             // txbContentRaw
             // 
-            this.txbContentRaw.Location = new System.Drawing.Point(25, 440);
+            this.txbContentRaw.Location = new System.Drawing.Point(16, 312);
+            this.txbContentRaw.Margin = new System.Windows.Forms.Padding(2);
             this.txbContentRaw.Multiline = true;
             this.txbContentRaw.Name = "txbContentRaw";
-            this.txbContentRaw.Size = new System.Drawing.Size(898, 165);
+            this.txbContentRaw.Size = new System.Drawing.Size(573, 118);
             this.txbContentRaw.TabIndex = 60;
             // 
             // pnlContentType
@@ -106,34 +106,39 @@
             this.pnlContentType.AutoSize = true;
             this.pnlContentType.Controls.Add(this.rdoContentRaw);
             this.pnlContentType.Controls.Add(this.rdoContentFormData);
-            this.pnlContentType.Location = new System.Drawing.Point(184, 403);
+            this.pnlContentType.Location = new System.Drawing.Point(117, 285);
+            this.pnlContentType.Margin = new System.Windows.Forms.Padding(2);
             this.pnlContentType.Name = "pnlContentType";
-            this.pnlContentType.Size = new System.Drawing.Size(201, 34);
+            this.pnlContentType.Size = new System.Drawing.Size(140, 25);
             this.pnlContentType.TabIndex = 59;
             // 
             // rdoContentRaw
             // 
             this.rdoContentRaw.AutoSize = true;
             this.rdoContentRaw.Checked = true;
-            this.rdoContentRaw.Location = new System.Drawing.Point(3, 3);
+            this.rdoContentRaw.Location = new System.Drawing.Point(2, 2);
+            this.rdoContentRaw.Margin = new System.Windows.Forms.Padding(2);
             this.rdoContentRaw.Name = "rdoContentRaw";
-            this.rdoContentRaw.Size = new System.Drawing.Size(66, 28);
+            this.rdoContentRaw.Size = new System.Drawing.Size(47, 21);
             this.rdoContentRaw.TabIndex = 0;
             this.rdoContentRaw.TabStop = true;
             this.rdoContentRaw.Text = "raw";
             this.rdoContentRaw.UseVisualStyleBackColor = true;
             this.rdoContentRaw.AppearanceChanged += new System.EventHandler(this.rdoContentType_CheckedChanged);
+            this.rdoContentRaw.CheckedChanged += new System.EventHandler(this.rdoContentType_CheckedChanged);
             // 
             // rdoContentFormData
             // 
             this.rdoContentFormData.AutoSize = true;
-            this.rdoContentFormData.Location = new System.Drawing.Point(75, 3);
+            this.rdoContentFormData.Location = new System.Drawing.Point(53, 2);
+            this.rdoContentFormData.Margin = new System.Windows.Forms.Padding(2);
             this.rdoContentFormData.Name = "rdoContentFormData";
-            this.rdoContentFormData.Size = new System.Drawing.Size(123, 28);
+            this.rdoContentFormData.Size = new System.Drawing.Size(85, 21);
             this.rdoContentFormData.TabIndex = 1;
             this.rdoContentFormData.Text = "form-data";
             this.rdoContentFormData.UseVisualStyleBackColor = true;
             this.rdoContentFormData.AppearanceChanged += new System.EventHandler(this.rdoContentType_CheckedChanged);
+            this.rdoContentFormData.CheckedChanged += new System.EventHandler(this.rdoContentType_CheckedChanged);
             // 
             // dgvContentFormData
             // 
@@ -142,12 +147,13 @@
             this.dgvContentFormData.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dgvContentKeyColumn,
             this.dgvContentValueColumn});
-            this.dgvContentFormData.Location = new System.Drawing.Point(25, 440);
+            this.dgvContentFormData.Location = new System.Drawing.Point(16, 312);
+            this.dgvContentFormData.Margin = new System.Windows.Forms.Padding(2);
             this.dgvContentFormData.Name = "dgvContentFormData";
             this.dgvContentFormData.RowHeadersVisible = false;
             this.dgvContentFormData.RowHeadersWidth = 62;
             this.dgvContentFormData.RowTemplate.Height = 32;
-            this.dgvContentFormData.Size = new System.Drawing.Size(898, 165);
+            this.dgvContentFormData.Size = new System.Drawing.Size(573, 117);
             this.dgvContentFormData.TabIndex = 58;
             this.dgvContentFormData.Visible = false;
             // 
@@ -165,9 +171,10 @@
             // 
             // btnInvokeTest
             // 
-            this.btnInvokeTest.Location = new System.Drawing.Point(812, 55);
+            this.btnInvokeTest.Location = new System.Drawing.Point(517, 39);
+            this.btnInvokeTest.Margin = new System.Windows.Forms.Padding(2);
             this.btnInvokeTest.Name = "btnInvokeTest";
-            this.btnInvokeTest.Size = new System.Drawing.Size(112, 30);
+            this.btnInvokeTest.Size = new System.Drawing.Size(72, 23);
             this.btnInvokeTest.TabIndex = 57;
             this.btnInvokeTest.Text = "测试调用";
             this.btnInvokeTest.UseVisualStyleBackColor = true;
@@ -177,18 +184,21 @@
             // 
             this.pnlParse.Controls.Add(this.txbParseExpression);
             this.pnlParse.Controls.Add(this.lblParseExpression);
-            this.pnlParse.Location = new System.Drawing.Point(25, 648);
+            this.pnlParse.Enabled = false;
+            this.pnlParse.Location = new System.Drawing.Point(205, 464);
+            this.pnlParse.Margin = new System.Windows.Forms.Padding(2);
             this.pnlParse.Name = "pnlParse";
-            this.pnlParse.Size = new System.Drawing.Size(604, 150);
+            this.pnlParse.Size = new System.Drawing.Size(384, 106);
             this.pnlParse.TabIndex = 56;
             // 
             // txbParseExpression
             // 
             this.txbParseExpression.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txbParseExpression.Location = new System.Drawing.Point(0, 24);
+            this.txbParseExpression.Location = new System.Drawing.Point(0, 17);
+            this.txbParseExpression.Margin = new System.Windows.Forms.Padding(2);
             this.txbParseExpression.Multiline = true;
             this.txbParseExpression.Name = "txbParseExpression";
-            this.txbParseExpression.Size = new System.Drawing.Size(604, 126);
+            this.txbParseExpression.Size = new System.Drawing.Size(384, 89);
             this.txbParseExpression.TabIndex = 19;
             // 
             // lblParseExpression
@@ -196,8 +206,9 @@
             this.lblParseExpression.AutoSize = true;
             this.lblParseExpression.Dock = System.Windows.Forms.DockStyle.Top;
             this.lblParseExpression.Location = new System.Drawing.Point(0, 0);
+            this.lblParseExpression.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblParseExpression.Name = "lblParseExpression";
-            this.lblParseExpression.Size = new System.Drawing.Size(118, 24);
+            this.lblParseExpression.Size = new System.Drawing.Size(80, 17);
             this.lblParseExpression.TabIndex = 18;
             this.lblParseExpression.Text = "解析表达式：";
             // 
@@ -210,27 +221,29 @@
             this.pnlSubText.Controls.Add(this.txbSubTextFrom);
             this.pnlSubText.Controls.Add(this.txbSubTextTo);
             this.pnlSubText.Controls.Add(this.lblSubTextTo);
-            this.pnlSubText.Enabled = false;
-            this.pnlSubText.Location = new System.Drawing.Point(635, 648);
+            this.pnlSubText.Location = new System.Drawing.Point(16, 462);
+            this.pnlSubText.Margin = new System.Windows.Forms.Padding(2);
             this.pnlSubText.Name = "pnlSubText";
-            this.pnlSubText.Size = new System.Drawing.Size(288, 150);
+            this.pnlSubText.Size = new System.Drawing.Size(185, 106);
             this.pnlSubText.TabIndex = 55;
             // 
             // lblSubText
             // 
             this.lblSubText.AutoSize = true;
-            this.lblSubText.Location = new System.Drawing.Point(0, 119);
+            this.lblSubText.Location = new System.Drawing.Point(0, 86);
+            this.lblSubText.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblSubText.Name = "lblSubText";
-            this.lblSubText.Size = new System.Drawing.Size(46, 24);
+            this.lblSubText.Size = new System.Drawing.Size(32, 17);
             this.lblSubText.TabIndex = 30;
             this.lblSubText.Text = "之间";
             // 
             // chkSubTextWithSuffix
             // 
             this.chkSubTextWithSuffix.AutoSize = true;
-            this.chkSubTextWithSuffix.Location = new System.Drawing.Point(177, 118);
+            this.chkSubTextWithSuffix.Location = new System.Drawing.Point(109, 86);
+            this.chkSubTextWithSuffix.Margin = new System.Windows.Forms.Padding(2);
             this.chkSubTextWithSuffix.Name = "chkSubTextWithSuffix";
-            this.chkSubTextWithSuffix.Size = new System.Drawing.Size(108, 28);
+            this.chkSubTextWithSuffix.Size = new System.Drawing.Size(75, 21);
             this.chkSubTextWithSuffix.TabIndex = 29;
             this.chkSubTextWithSuffix.Text = "包含后缀";
             this.chkSubTextWithSuffix.UseVisualStyleBackColor = true;
@@ -238,9 +251,10 @@
             // chkSubTextWithPrefix
             // 
             this.chkSubTextWithPrefix.AutoSize = true;
-            this.chkSubTextWithPrefix.Location = new System.Drawing.Point(63, 118);
+            this.chkSubTextWithPrefix.Location = new System.Drawing.Point(36, 86);
+            this.chkSubTextWithPrefix.Margin = new System.Windows.Forms.Padding(2);
             this.chkSubTextWithPrefix.Name = "chkSubTextWithPrefix";
-            this.chkSubTextWithPrefix.Size = new System.Drawing.Size(108, 28);
+            this.chkSubTextWithPrefix.Size = new System.Drawing.Size(75, 21);
             this.chkSubTextWithPrefix.TabIndex = 28;
             this.chkSubTextWithPrefix.Text = "包含前缀";
             this.chkSubTextWithPrefix.UseVisualStyleBackColor = true;
@@ -249,31 +263,35 @@
             // 
             this.lblSubTextFrom.AutoSize = true;
             this.lblSubTextFrom.Location = new System.Drawing.Point(0, 0);
+            this.lblSubTextFrom.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblSubTextFrom.Name = "lblSubTextFrom";
-            this.lblSubTextFrom.Size = new System.Drawing.Size(46, 24);
+            this.lblSubTextFrom.Size = new System.Drawing.Size(32, 17);
             this.lblSubTextFrom.TabIndex = 24;
             this.lblSubTextFrom.Text = "从：";
             // 
             // txbSubTextFrom
             // 
-            this.txbSubTextFrom.Location = new System.Drawing.Point(0, 27);
+            this.txbSubTextFrom.Location = new System.Drawing.Point(0, 19);
+            this.txbSubTextFrom.Margin = new System.Windows.Forms.Padding(2);
             this.txbSubTextFrom.Name = "txbSubTextFrom";
-            this.txbSubTextFrom.Size = new System.Drawing.Size(288, 30);
+            this.txbSubTextFrom.Size = new System.Drawing.Size(185, 23);
             this.txbSubTextFrom.TabIndex = 23;
             // 
             // txbSubTextTo
             // 
-            this.txbSubTextTo.Location = new System.Drawing.Point(0, 87);
+            this.txbSubTextTo.Location = new System.Drawing.Point(0, 62);
+            this.txbSubTextTo.Margin = new System.Windows.Forms.Padding(2);
             this.txbSubTextTo.Name = "txbSubTextTo";
-            this.txbSubTextTo.Size = new System.Drawing.Size(288, 30);
+            this.txbSubTextTo.Size = new System.Drawing.Size(185, 23);
             this.txbSubTextTo.TabIndex = 25;
             // 
             // lblSubTextTo
             // 
             this.lblSubTextTo.AutoSize = true;
-            this.lblSubTextTo.Location = new System.Drawing.Point(0, 60);
+            this.lblSubTextTo.Location = new System.Drawing.Point(0, 42);
+            this.lblSubTextTo.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblSubTextTo.Name = "lblSubTextTo";
-            this.lblSubTextTo.Size = new System.Drawing.Size(46, 24);
+            this.lblSubTextTo.Size = new System.Drawing.Size(32, 17);
             this.lblSubTextTo.TabIndex = 26;
             this.lblSubTextTo.Text = "到：";
             // 
@@ -287,18 +305,20 @@
             this.pnlSendMode.Controls.Add(this.rdoSendImageByBase64);
             this.pnlSendMode.Controls.Add(this.rdoSendImageByUrl);
             this.pnlSendMode.Controls.Add(this.rdoSendText);
-            this.pnlSendMode.Location = new System.Drawing.Point(149, 797);
+            this.pnlSendMode.Location = new System.Drawing.Point(94, 574);
+            this.pnlSendMode.Margin = new System.Windows.Forms.Padding(2);
             this.pnlSendMode.Name = "pnlSendMode";
-            this.pnlSendMode.Size = new System.Drawing.Size(775, 34);
+            this.pnlSendMode.Size = new System.Drawing.Size(495, 25);
             this.pnlSendMode.TabIndex = 54;
             // 
             // rdoSendImageStream
             // 
             this.rdoSendImageStream.AutoSize = true;
             this.rdoSendImageStream.Enabled = false;
-            this.rdoSendImageStream.Location = new System.Drawing.Point(582, 3);
+            this.rdoSendImageStream.Location = new System.Drawing.Point(370, 2);
+            this.rdoSendImageStream.Margin = new System.Windows.Forms.Padding(2);
             this.rdoSendImageStream.Name = "rdoSendImageStream";
-            this.rdoSendImageStream.Size = new System.Drawing.Size(89, 28);
+            this.rdoSendImageStream.Size = new System.Drawing.Size(62, 21);
             this.rdoSendImageStream.TabIndex = 5;
             this.rdoSendImageStream.TabStop = true;
             this.rdoSendImageStream.Text = "图片流";
@@ -308,9 +328,10 @@
             // 
             this.rdoSendVoiceStream.AutoSize = true;
             this.rdoSendVoiceStream.Enabled = false;
-            this.rdoSendVoiceStream.Location = new System.Drawing.Point(677, 3);
+            this.rdoSendVoiceStream.Location = new System.Drawing.Point(431, 2);
+            this.rdoSendVoiceStream.Margin = new System.Windows.Forms.Padding(2);
             this.rdoSendVoiceStream.Name = "rdoSendVoiceStream";
-            this.rdoSendVoiceStream.Size = new System.Drawing.Size(89, 28);
+            this.rdoSendVoiceStream.Size = new System.Drawing.Size(62, 21);
             this.rdoSendVoiceStream.TabIndex = 6;
             this.rdoSendVoiceStream.TabStop = true;
             this.rdoSendVoiceStream.Text = "音频流";
@@ -319,9 +340,10 @@
             // rdoSendVoiceByUrl
             // 
             this.rdoSendVoiceByUrl.AutoSize = true;
-            this.rdoSendVoiceByUrl.Location = new System.Drawing.Point(331, 3);
+            this.rdoSendVoiceByUrl.Location = new System.Drawing.Point(211, 2);
+            this.rdoSendVoiceByUrl.Margin = new System.Windows.Forms.Padding(2);
             this.rdoSendVoiceByUrl.Name = "rdoSendVoiceByUrl";
-            this.rdoSendVoiceByUrl.Size = new System.Drawing.Size(107, 28);
+            this.rdoSendVoiceByUrl.Size = new System.Drawing.Size(74, 21);
             this.rdoSendVoiceByUrl.TabIndex = 3;
             this.rdoSendVoiceByUrl.Text = "音频地址";
             this.rdoSendVoiceByUrl.UseVisualStyleBackColor = true;
@@ -329,9 +351,10 @@
             // rdoSendVoiceByBase64
             // 
             this.rdoSendVoiceByBase64.AutoSize = true;
-            this.rdoSendVoiceByBase64.Location = new System.Drawing.Point(444, 3);
+            this.rdoSendVoiceByBase64.Location = new System.Drawing.Point(283, 2);
+            this.rdoSendVoiceByBase64.Margin = new System.Windows.Forms.Padding(2);
             this.rdoSendVoiceByBase64.Name = "rdoSendVoiceByBase64";
-            this.rdoSendVoiceByBase64.Size = new System.Drawing.Size(132, 28);
+            this.rdoSendVoiceByBase64.Size = new System.Drawing.Size(92, 21);
             this.rdoSendVoiceByBase64.TabIndex = 4;
             this.rdoSendVoiceByBase64.Text = "音频Base64";
             this.rdoSendVoiceByBase64.UseVisualStyleBackColor = true;
@@ -339,9 +362,10 @@
             // rdoSendImageByBase64
             // 
             this.rdoSendImageByBase64.AutoSize = true;
-            this.rdoSendImageByBase64.Location = new System.Drawing.Point(193, 3);
+            this.rdoSendImageByBase64.Location = new System.Drawing.Point(123, 2);
+            this.rdoSendImageByBase64.Margin = new System.Windows.Forms.Padding(2);
             this.rdoSendImageByBase64.Name = "rdoSendImageByBase64";
-            this.rdoSendImageByBase64.Size = new System.Drawing.Size(132, 28);
+            this.rdoSendImageByBase64.Size = new System.Drawing.Size(92, 21);
             this.rdoSendImageByBase64.TabIndex = 2;
             this.rdoSendImageByBase64.Text = "图片Base64";
             this.rdoSendImageByBase64.UseVisualStyleBackColor = true;
@@ -349,9 +373,10 @@
             // rdoSendImageByUrl
             // 
             this.rdoSendImageByUrl.AutoSize = true;
-            this.rdoSendImageByUrl.Location = new System.Drawing.Point(80, 3);
+            this.rdoSendImageByUrl.Location = new System.Drawing.Point(51, 2);
+            this.rdoSendImageByUrl.Margin = new System.Windows.Forms.Padding(2);
             this.rdoSendImageByUrl.Name = "rdoSendImageByUrl";
-            this.rdoSendImageByUrl.Size = new System.Drawing.Size(107, 28);
+            this.rdoSendImageByUrl.Size = new System.Drawing.Size(74, 21);
             this.rdoSendImageByUrl.TabIndex = 1;
             this.rdoSendImageByUrl.Text = "图片地址";
             this.rdoSendImageByUrl.UseVisualStyleBackColor = true;
@@ -360,9 +385,10 @@
             // 
             this.rdoSendText.AutoSize = true;
             this.rdoSendText.Checked = true;
-            this.rdoSendText.Location = new System.Drawing.Point(3, 3);
+            this.rdoSendText.Location = new System.Drawing.Point(2, 2);
+            this.rdoSendText.Margin = new System.Windows.Forms.Padding(2);
             this.rdoSendText.Name = "rdoSendText";
-            this.rdoSendText.Size = new System.Drawing.Size(71, 28);
+            this.rdoSendText.Size = new System.Drawing.Size(50, 21);
             this.rdoSendText.TabIndex = 0;
             this.rdoSendText.TabStop = true;
             this.rdoSendText.Text = "文本";
@@ -373,23 +399,24 @@
             this.pnlParseMode.AutoSize = true;
             this.pnlParseMode.Controls.Add(this.rdoParseJavaScript);
             this.pnlParseMode.Controls.Add(this.rdoParseStream);
-            this.pnlParseMode.Controls.Add(this.rdoDoNotParse);
+            this.pnlParseMode.Controls.Add(this.rdoParseText);
             this.pnlParseMode.Controls.Add(this.rdoParseJson);
             this.pnlParseMode.Controls.Add(this.rdoParseXml);
             this.pnlParseMode.Controls.Add(this.rdoParseXPath);
-            this.pnlParseMode.Controls.Add(this.rdoParseText);
-            this.pnlParseMode.Location = new System.Drawing.Point(131, 611);
+            this.pnlParseMode.Location = new System.Drawing.Point(88, 434);
+            this.pnlParseMode.Margin = new System.Windows.Forms.Padding(2);
             this.pnlParseMode.Name = "pnlParseMode";
-            this.pnlParseMode.Size = new System.Drawing.Size(603, 34);
+            this.pnlParseMode.Size = new System.Drawing.Size(501, 26);
             this.pnlParseMode.TabIndex = 53;
             // 
             // rdoParseJavaScript
             // 
             this.rdoParseJavaScript.AutoSize = true;
             this.rdoParseJavaScript.Enabled = false;
-            this.rdoParseJavaScript.Location = new System.Drawing.Point(343, 3);
+            this.rdoParseJavaScript.Location = new System.Drawing.Point(228, 3);
+            this.rdoParseJavaScript.Margin = new System.Windows.Forms.Padding(2);
             this.rdoParseJavaScript.Name = "rdoParseJavaScript";
-            this.rdoParseJavaScript.Size = new System.Drawing.Size(121, 28);
+            this.rdoParseJavaScript.Size = new System.Drawing.Size(84, 21);
             this.rdoParseJavaScript.TabIndex = 24;
             this.rdoParseJavaScript.Text = "JavaScript";
             this.rdoParseJavaScript.UseVisualStyleBackColor = true;
@@ -398,33 +425,36 @@
             // rdoParseStream
             // 
             this.rdoParseStream.AutoSize = true;
-            this.rdoParseStream.Location = new System.Drawing.Point(470, 3);
+            this.rdoParseStream.Location = new System.Drawing.Point(316, 3);
+            this.rdoParseStream.Margin = new System.Windows.Forms.Padding(2);
             this.rdoParseStream.Name = "rdoParseStream";
-            this.rdoParseStream.Size = new System.Drawing.Size(53, 28);
+            this.rdoParseStream.Size = new System.Drawing.Size(38, 21);
             this.rdoParseStream.TabIndex = 23;
             this.rdoParseStream.Text = "流";
             this.rdoParseStream.UseVisualStyleBackColor = true;
             this.rdoParseStream.CheckedChanged += new System.EventHandler(this.rdoContentParseMode_CheckedChanged);
             // 
-            // rdoDoNotParse
+            // rdoParseText
             // 
-            this.rdoDoNotParse.AutoSize = true;
-            this.rdoDoNotParse.Checked = true;
-            this.rdoDoNotParse.Location = new System.Drawing.Point(3, 3);
-            this.rdoDoNotParse.Name = "rdoDoNotParse";
-            this.rdoDoNotParse.Size = new System.Drawing.Size(89, 28);
-            this.rdoDoNotParse.TabIndex = 14;
-            this.rdoDoNotParse.TabStop = true;
-            this.rdoDoNotParse.Text = "不解析";
-            this.rdoDoNotParse.UseVisualStyleBackColor = true;
-            this.rdoDoNotParse.CheckedChanged += new System.EventHandler(this.rdoContentParseMode_CheckedChanged);
+            this.rdoParseText.AutoSize = true;
+            this.rdoParseText.Checked = true;
+            this.rdoParseText.Location = new System.Drawing.Point(3, 3);
+            this.rdoParseText.Margin = new System.Windows.Forms.Padding(2);
+            this.rdoParseText.Name = "rdoParseText";
+            this.rdoParseText.Size = new System.Drawing.Size(50, 21);
+            this.rdoParseText.TabIndex = 14;
+            this.rdoParseText.TabStop = true;
+            this.rdoParseText.Text = "文本";
+            this.rdoParseText.UseVisualStyleBackColor = true;
+            this.rdoParseText.CheckedChanged += new System.EventHandler(this.rdoContentParseMode_CheckedChanged);
             // 
             // rdoParseJson
             // 
             this.rdoParseJson.AutoSize = true;
-            this.rdoParseJson.Location = new System.Drawing.Point(98, 3);
+            this.rdoParseJson.Location = new System.Drawing.Point(57, 3);
+            this.rdoParseJson.Margin = new System.Windows.Forms.Padding(2);
             this.rdoParseJson.Name = "rdoParseJson";
-            this.rdoParseJson.Size = new System.Drawing.Size(72, 28);
+            this.rdoParseJson.Size = new System.Drawing.Size(52, 21);
             this.rdoParseJson.TabIndex = 15;
             this.rdoParseJson.Text = "Json";
             this.rdoParseJson.UseVisualStyleBackColor = true;
@@ -434,9 +464,10 @@
             // 
             this.rdoParseXml.AutoSize = true;
             this.rdoParseXml.Enabled = false;
-            this.rdoParseXml.Location = new System.Drawing.Point(176, 3);
+            this.rdoParseXml.Location = new System.Drawing.Point(113, 3);
+            this.rdoParseXml.Margin = new System.Windows.Forms.Padding(2);
             this.rdoParseXml.Name = "rdoParseXml";
-            this.rdoParseXml.Size = new System.Drawing.Size(69, 28);
+            this.rdoParseXml.Size = new System.Drawing.Size(48, 21);
             this.rdoParseXml.TabIndex = 19;
             this.rdoParseXml.Text = "Xml";
             this.rdoParseXml.UseVisualStyleBackColor = true;
@@ -446,56 +477,50 @@
             // 
             this.rdoParseXPath.AutoSize = true;
             this.rdoParseXPath.Enabled = false;
-            this.rdoParseXPath.Location = new System.Drawing.Point(251, 3);
+            this.rdoParseXPath.Location = new System.Drawing.Point(165, 3);
+            this.rdoParseXPath.Margin = new System.Windows.Forms.Padding(2);
             this.rdoParseXPath.Name = "rdoParseXPath";
-            this.rdoParseXPath.Size = new System.Drawing.Size(86, 28);
+            this.rdoParseXPath.Size = new System.Drawing.Size(59, 21);
             this.rdoParseXPath.TabIndex = 20;
             this.rdoParseXPath.Text = "XPath";
             this.rdoParseXPath.UseVisualStyleBackColor = true;
             this.rdoParseXPath.CheckedChanged += new System.EventHandler(this.rdoContentParseMode_CheckedChanged);
             // 
-            // rdoParseText
-            // 
-            this.rdoParseText.AutoSize = true;
-            this.rdoParseText.Location = new System.Drawing.Point(529, 3);
-            this.rdoParseText.Name = "rdoParseText";
-            this.rdoParseText.Size = new System.Drawing.Size(71, 28);
-            this.rdoParseText.TabIndex = 22;
-            this.rdoParseText.Text = "文本";
-            this.rdoParseText.UseVisualStyleBackColor = true;
-            this.rdoParseText.CheckedChanged += new System.EventHandler(this.rdoContentParseMode_CheckedChanged);
-            // 
             // lblSendMode
             // 
             this.lblSendMode.AutoSize = true;
-            this.lblSendMode.Location = new System.Drawing.Point(25, 802);
+            this.lblSendMode.Location = new System.Drawing.Point(16, 577);
+            this.lblSendMode.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblSendMode.Name = "lblSendMode";
-            this.lblSendMode.Size = new System.Drawing.Size(118, 24);
+            this.lblSendMode.Size = new System.Drawing.Size(80, 17);
             this.lblSendMode.TabIndex = 52;
             this.lblSendMode.Text = "解析后视为：";
             // 
             // lblParseMode
             // 
             this.lblParseMode.AutoSize = true;
-            this.lblParseMode.Location = new System.Drawing.Point(25, 616);
+            this.lblParseMode.Location = new System.Drawing.Point(16, 439);
+            this.lblParseMode.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblParseMode.Name = "lblParseMode";
-            this.lblParseMode.Size = new System.Drawing.Size(100, 24);
+            this.lblParseMode.Size = new System.Drawing.Size(68, 17);
             this.lblParseMode.TabIndex = 51;
             this.lblParseMode.Text = "解析方式：";
             // 
             // txbCmd
             // 
-            this.txbCmd.Location = new System.Drawing.Point(131, 55);
+            this.txbCmd.Location = new System.Drawing.Point(83, 39);
+            this.txbCmd.Margin = new System.Windows.Forms.Padding(2);
             this.txbCmd.Name = "txbCmd";
-            this.txbCmd.Size = new System.Drawing.Size(674, 30);
+            this.txbCmd.Size = new System.Drawing.Size(430, 23);
             this.txbCmd.TabIndex = 50;
             // 
             // lblCmdTitle
             // 
             this.lblCmdTitle.AutoSize = true;
-            this.lblCmdTitle.Location = new System.Drawing.Point(25, 58);
+            this.lblCmdTitle.Location = new System.Drawing.Point(16, 41);
+            this.lblCmdTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblCmdTitle.Name = "lblCmdTitle";
-            this.lblCmdTitle.Size = new System.Drawing.Size(64, 24);
+            this.lblCmdTitle.Size = new System.Drawing.Size(44, 17);
             this.lblCmdTitle.TabIndex = 49;
             this.lblCmdTitle.Text = "命令：";
             // 
@@ -506,12 +531,13 @@
             this.dgvHeader.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dgvHeaderKeyColumn,
             this.dgvHeaderValueColumn});
-            this.dgvHeader.Location = new System.Drawing.Point(25, 225);
+            this.dgvHeader.Location = new System.Drawing.Point(16, 159);
+            this.dgvHeader.Margin = new System.Windows.Forms.Padding(2);
             this.dgvHeader.Name = "dgvHeader";
             this.dgvHeader.RowHeadersVisible = false;
             this.dgvHeader.RowHeadersWidth = 62;
             this.dgvHeader.RowTemplate.Height = 32;
-            this.dgvHeader.Size = new System.Drawing.Size(898, 175);
+            this.dgvHeader.Size = new System.Drawing.Size(573, 124);
             this.dgvHeader.TabIndex = 48;
             // 
             // dgvHeaderKeyColumn
@@ -537,17 +563,19 @@
             "UTF-32",
             "ASCII",
             "GBK(GB2312)"});
-            this.cboEncoding.Location = new System.Drawing.Point(438, 163);
+            this.cboEncoding.Location = new System.Drawing.Point(278, 115);
+            this.cboEncoding.Margin = new System.Windows.Forms.Padding(2);
             this.cboEncoding.Name = "cboEncoding";
-            this.cboEncoding.Size = new System.Drawing.Size(182, 32);
+            this.cboEncoding.Size = new System.Drawing.Size(117, 25);
             this.cboEncoding.TabIndex = 47;
             // 
             // lblEncodeTitle
             // 
             this.lblEncodeTitle.AutoSize = true;
-            this.lblEncodeTitle.Location = new System.Drawing.Point(332, 166);
+            this.lblEncodeTitle.Location = new System.Drawing.Point(210, 118);
+            this.lblEncodeTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblEncodeTitle.Name = "lblEncodeTitle";
-            this.lblEncodeTitle.Size = new System.Drawing.Size(100, 24);
+            this.lblEncodeTitle.Size = new System.Drawing.Size(68, 17);
             this.lblEncodeTitle.TabIndex = 46;
             this.lblEncodeTitle.Text = "编码格式：";
             // 
@@ -559,26 +587,29 @@
             "application/text",
             "application/json",
             "application/xml"});
-            this.cboMediaType.Location = new System.Drawing.Point(741, 163);
+            this.cboMediaType.Location = new System.Drawing.Point(472, 115);
+            this.cboMediaType.Margin = new System.Windows.Forms.Padding(2);
             this.cboMediaType.Name = "cboMediaType";
-            this.cboMediaType.Size = new System.Drawing.Size(182, 32);
+            this.cboMediaType.Size = new System.Drawing.Size(117, 25);
             this.cboMediaType.TabIndex = 45;
             // 
             // lblMediaTypeTitle
             // 
             this.lblMediaTypeTitle.AutoSize = true;
-            this.lblMediaTypeTitle.Location = new System.Drawing.Point(635, 166);
+            this.lblMediaTypeTitle.Location = new System.Drawing.Point(404, 118);
+            this.lblMediaTypeTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblMediaTypeTitle.Name = "lblMediaTypeTitle";
-            this.lblMediaTypeTitle.Size = new System.Drawing.Size(100, 24);
+            this.lblMediaTypeTitle.Size = new System.Drawing.Size(68, 17);
             this.lblMediaTypeTitle.TabIndex = 44;
             this.lblMediaTypeTitle.Text = "媒体类型：";
             // 
             // lblContent
             // 
             this.lblContent.AutoSize = true;
-            this.lblContent.Location = new System.Drawing.Point(25, 408);
+            this.lblContent.Location = new System.Drawing.Point(16, 289);
+            this.lblContent.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblContent.Name = "lblContent";
-            this.lblContent.Size = new System.Drawing.Size(153, 24);
+            this.lblContent.Size = new System.Drawing.Size(103, 17);
             this.lblContent.TabIndex = 43;
             this.lblContent.Text = "Content(Body)：";
             // 
@@ -589,82 +620,91 @@
             this.cboHttpMethod.Items.AddRange(new object[] {
             "GET",
             "POST"});
-            this.cboHttpMethod.Location = new System.Drawing.Point(131, 163);
+            this.cboHttpMethod.Location = new System.Drawing.Point(83, 115);
+            this.cboHttpMethod.Margin = new System.Windows.Forms.Padding(2);
             this.cboHttpMethod.Name = "cboHttpMethod";
-            this.cboHttpMethod.Size = new System.Drawing.Size(182, 32);
+            this.cboHttpMethod.Size = new System.Drawing.Size(117, 25);
             this.cboHttpMethod.TabIndex = 42;
             // 
             // lblHeader
             // 
             this.lblHeader.AutoSize = true;
-            this.lblHeader.Location = new System.Drawing.Point(25, 198);
+            this.lblHeader.Location = new System.Drawing.Point(16, 140);
+            this.lblHeader.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblHeader.Name = "lblHeader";
-            this.lblHeader.Size = new System.Drawing.Size(91, 24);
+            this.lblHeader.Size = new System.Drawing.Size(63, 17);
             this.lblHeader.TabIndex = 41;
             this.lblHeader.Text = "Header：";
             // 
             // lblHttpMethodTitle
             // 
             this.lblHttpMethodTitle.AutoSize = true;
-            this.lblHttpMethodTitle.Location = new System.Drawing.Point(25, 166);
+            this.lblHttpMethodTitle.Location = new System.Drawing.Point(16, 118);
+            this.lblHttpMethodTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblHttpMethodTitle.Name = "lblHttpMethodTitle";
-            this.lblHttpMethodTitle.Size = new System.Drawing.Size(100, 24);
+            this.lblHttpMethodTitle.Size = new System.Drawing.Size(68, 17);
             this.lblHttpMethodTitle.TabIndex = 40;
             this.lblHttpMethodTitle.Text = "请求方法：";
             // 
             // txbUrl
             // 
-            this.txbUrl.Location = new System.Drawing.Point(131, 19);
+            this.txbUrl.Location = new System.Drawing.Point(83, 13);
+            this.txbUrl.Margin = new System.Windows.Forms.Padding(2);
             this.txbUrl.Name = "txbUrl";
-            this.txbUrl.Size = new System.Drawing.Size(792, 30);
+            this.txbUrl.Size = new System.Drawing.Size(506, 23);
             this.txbUrl.TabIndex = 39;
             // 
             // lblUrlTitle
             // 
             this.lblUrlTitle.AutoSize = true;
-            this.lblUrlTitle.Location = new System.Drawing.Point(25, 22);
+            this.lblUrlTitle.Location = new System.Drawing.Point(16, 16);
+            this.lblUrlTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblUrlTitle.Name = "lblUrlTitle";
-            this.lblUrlTitle.Size = new System.Drawing.Size(64, 24);
+            this.lblUrlTitle.Size = new System.Drawing.Size(44, 17);
             this.lblUrlTitle.TabIndex = 38;
             this.lblUrlTitle.Text = "地址：";
             // 
             // txbRemark
             // 
-            this.txbRemark.Location = new System.Drawing.Point(131, 91);
+            this.txbRemark.Location = new System.Drawing.Point(83, 64);
+            this.txbRemark.Margin = new System.Windows.Forms.Padding(2);
             this.txbRemark.Name = "txbRemark";
-            this.txbRemark.Size = new System.Drawing.Size(793, 30);
+            this.txbRemark.Size = new System.Drawing.Size(506, 23);
             this.txbRemark.TabIndex = 62;
             // 
             // lblRemarkTitle
             // 
             this.lblRemarkTitle.AutoSize = true;
-            this.lblRemarkTitle.Location = new System.Drawing.Point(25, 94);
+            this.lblRemarkTitle.Location = new System.Drawing.Point(16, 67);
+            this.lblRemarkTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblRemarkTitle.Name = "lblRemarkTitle";
-            this.lblRemarkTitle.Size = new System.Drawing.Size(64, 24);
+            this.lblRemarkTitle.Size = new System.Drawing.Size(44, 17);
             this.lblRemarkTitle.TabIndex = 61;
             this.lblRemarkTitle.Text = "备注：";
             // 
             // txbHelpMessage
             // 
-            this.txbHelpMessage.Location = new System.Drawing.Point(131, 127);
+            this.txbHelpMessage.Location = new System.Drawing.Point(83, 90);
+            this.txbHelpMessage.Margin = new System.Windows.Forms.Padding(2);
             this.txbHelpMessage.Name = "txbHelpMessage";
-            this.txbHelpMessage.Size = new System.Drawing.Size(793, 30);
+            this.txbHelpMessage.Size = new System.Drawing.Size(506, 23);
             this.txbHelpMessage.TabIndex = 64;
             // 
             // lblHelpMessageTitle
             // 
             this.lblHelpMessageTitle.AutoSize = true;
-            this.lblHelpMessageTitle.Location = new System.Drawing.Point(25, 130);
+            this.lblHelpMessageTitle.Location = new System.Drawing.Point(16, 92);
+            this.lblHelpMessageTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblHelpMessageTitle.Name = "lblHelpMessageTitle";
-            this.lblHelpMessageTitle.Size = new System.Drawing.Size(100, 24);
+            this.lblHelpMessageTitle.Size = new System.Drawing.Size(68, 17);
             this.lblHelpMessageTitle.TabIndex = 63;
             this.lblHelpMessageTitle.Text = "帮助信息：";
             // 
             // FrmEditor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(949, 886);
+            this.ClientSize = new System.Drawing.Size(604, 604);
             this.Controls.Add(this.txbHelpMessage);
             this.Controls.Add(this.lblHelpMessageTitle);
             this.Controls.Add(this.txbRemark);
@@ -692,6 +732,7 @@
             this.Controls.Add(this.lblHttpMethodTitle);
             this.Controls.Add(this.txbUrl);
             this.Controls.Add(this.lblUrlTitle);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmEditor";
@@ -744,7 +785,6 @@
         private Panel pnlParseMode;
         private RadioButton rdoParseJavaScript;
         private RadioButton rdoParseStream;
-        private RadioButton rdoDoNotParse;
         private RadioButton rdoParseJson;
         private RadioButton rdoParseXml;
         private RadioButton rdoParseXPath;

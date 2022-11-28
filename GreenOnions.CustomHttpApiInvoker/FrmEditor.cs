@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.ComponentModel;
+using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -7,30 +8,40 @@ namespace GreenOnions.CustomHttpApiInvoker
     public partial class FrmEditor : Form
     {
         private string _path;
-        private Config? _config;
-        public FrmEditor(string path, Config? config)
+
+        public string Cmd { get; private set; }
+        public HttpApiConfig Config { get; private set; }
+
+        public FrmEditor(string path, string? cmd = null, HttpApiConfig? config = null)
         {
-            InitializeComponent();
             _path = path;
-            _config = config;
+            Cmd = cmd ?? string.Empty;
+            Config = config ?? new HttpApiConfig();
+            InitializeComponent();
 
-            if (_config != null)
+            if (config == null)
             {
-                txbUrl.Text = _config.Url;
-                txbCmd.Text = _config.Cmd;
-                txbRemark.Text = _config.Remark;
-                txbHelpMessage.Text = _config.HelpMessage;
-                cboHttpMethod.SelectedIndex = (int)_config.HttpMethod;
-                cboEncoding.SelectedIndex = (int)_config.Encoding;
-                cboMediaType.SelectedIndex = cboMediaType.Items.IndexOf(_config.MediaType);
+                cboHttpMethod.SelectedIndex = 0;
+                cboEncoding.SelectedIndex = 0;
+                cboMediaType.SelectedIndex = 0;
+            }
+            else
+            {
+                txbUrl.Text = Config.Url;
+                txbCmd.Text = cmd;
+                txbRemark.Text = Config.Remark;
+                txbHelpMessage.Text = Config.HelpMessage;
+                cboHttpMethod.SelectedIndex = (int)Config.HttpMethod;
+                cboEncoding.SelectedIndex = (int)Config.Encoding;
+                cboMediaType.SelectedIndex = cboMediaType.Items.IndexOf(Config.MediaType);
 
-                if (_config.Headers != null)
+                if (Config.Headers != null)
                 {
-                    foreach (var item in _config.Headers)
+                    foreach (var item in Config.Headers)
                         dgvHeader.Rows.Add(item.Key, item.Value);
                 }
 
-                switch (_config.ContentType)
+                switch (Config.ContentType)
                 {
                     case ContentTypeEnum.raw:
                         rdoContentRaw.Checked = true;
@@ -39,16 +50,16 @@ namespace GreenOnions.CustomHttpApiInvoker
                         rdoContentFormData.Checked = true;
                         break;
                 }
-                txbContentRaw.Text = _config.RowContent;
-                if (_config.FormDataContent != null)
+                txbContentRaw.Text = Config.RowContent;
+                if (Config.FormDataContent != null)
                 {
-                    foreach (var item in _config.FormDataContent)
+                    foreach (var item in Config.FormDataContent)
                         dgvContentFormData.Rows.Add(item.Key, item.Value);
                 }
-                switch (_config.ParseMode)
+                switch (Config.ParseMode)
                 {
-                    case ParseModeEnum.None:
-                        rdoDoNotParse.Checked = true;
+                    case ParseModeEnum.Text:
+                        rdoParseText.Checked = true;
                         break;
                     case ParseModeEnum.Json:
                         rdoParseJson.Checked = true;
@@ -65,16 +76,13 @@ namespace GreenOnions.CustomHttpApiInvoker
                     case ParseModeEnum.Stream:
                         rdoParseStream.Checked = true;
                         break;
-                    case ParseModeEnum.Text:
-                        rdoParseText.Checked = true;
-                        break;
                 }
-                txbParseExpression.Text = _config.ParseExpression;
-                txbSubTextFrom.Text = _config.SubTextFrom;
-                txbSubTextTo.Text = _config.SubTextTo;
-                chkSubTextWithPrefix.Checked = _config.SubTextWithPrefix;
-                chkSubTextWithSuffix.Checked = _config.SubTextWithSuffix;
-                switch (_config.SendMode)
+                txbParseExpression.Text = Config.ParseExpression;
+                txbSubTextFrom.Text = Config.SubTextFrom;
+                txbSubTextTo.Text = Config.SubTextTo;
+                chkSubTextWithPrefix.Checked = Config.SubTextWithPrefix;
+                chkSubTextWithSuffix.Checked = Config.SubTextWithSuffix;
+                switch (Config.SendMode)
                 {
                     case SendModeEnum.Text:
                         rdoSendText.Checked = true;
@@ -105,7 +113,7 @@ namespace GreenOnions.CustomHttpApiInvoker
         {
             if (string.IsNullOrEmpty(txbUrl.Text))
             {
-                MessageBox.Show("请先输入地址","错误");
+                MessageBox.Show("请先输入地址", "错误");
                 return;
             }
             try
@@ -119,9 +127,12 @@ namespace GreenOnions.CustomHttpApiInvoker
                         //Header
                         for (int i = 0; i < dgvHeader.Rows.Count; i++)
                         {
-                            string? headerKey = dgvHeader.Rows[i].Cells[0].Value.ToString();
-                            if (headerKey != null)
-                                request.Headers.Add(headerKey, dgvHeader.Rows[i].Cells[1].Value.ToString());
+                            string? headerKey = dgvHeader.Rows[i].Cells[0].Value?.ToString();
+                            if (!string.IsNullOrWhiteSpace(headerKey))
+                            {
+                                string? headerValue = dgvHeader.Rows[i].Cells[1].Value?.ToString();
+                                request.Headers.Add(headerKey, headerValue ?? string.Empty);
+                            }
                         }
 
                         Encoding encoding = cboEncoding.SelectedIndex switch
@@ -145,20 +156,11 @@ namespace GreenOnions.CustomHttpApiInvoker
                             var form = new MultipartFormDataContent();
                             for (int i = 0; i < dgvContentFormData.Rows.Count; i++)
                             {
-                                if (dgvContentFormData.Rows[i].Cells[0].Value != null && dgvContentFormData.Rows[i].Cells[0].Value != DBNull.Value)
+                                string? conentKey = dgvContentFormData.Rows[i].Cells[0].Value?.ToString();
+                                if (!string.IsNullOrWhiteSpace(conentKey))
                                 {
-                                    string? conentKey = dgvContentFormData.Rows[i].Cells[0].Value.ToString();
-                                    if (!string.IsNullOrWhiteSpace(conentKey))
-                                    {
-                                        string contentValue = string.Empty;
-                                        if (dgvContentFormData.Rows[i].Cells[1].Value != null && dgvContentFormData.Rows[i].Cells[1].Value != DBNull.Value)
-                                        {
-                                            string? tempContentValue = dgvContentFormData.Rows[i].Cells[1].Value.ToString();
-                                            if (tempContentValue != null)
-                                                contentValue = tempContentValue;
-                                        }
-                                        form.Add(new StringContent(contentValue, encoding, cboMediaType.Text), conentKey.ToString()!);
-                                    }
+                                    string? contentValue = dgvContentFormData.Rows[i].Cells[1].Value?.ToString();
+                                    form.Add(new StringContent(contentValue ?? string.Empty, encoding, cboMediaType.Text), conentKey);
                                 }
                             }
                             request.Content = form;
@@ -179,10 +181,28 @@ namespace GreenOnions.CustomHttpApiInvoker
                         Stream? valueStream = null;
                         try
                         {
-                            if (rdoContentFormData.Checked)
+                            if (rdoParseText.Checked)
                             {
                                 string text = await response.Content.ReadAsStringAsync();
-                                valueText= text;
+
+                                int startIndex = 0;
+                                if (!string.IsNullOrEmpty(txbSubTextFrom.Text))
+                                {
+                                    startIndex = text.IndexOf(txbSubTextFrom.Text);
+                                    if (!chkSubTextWithPrefix.Checked)
+                                        startIndex += txbSubTextFrom.Text.Length;
+                                }
+
+                                text = text.Substring(startIndex);
+                                int endIndex = text.Length - 1;
+                                if (!string.IsNullOrEmpty(txbSubTextTo.Text))
+                                {
+                                    endIndex = text.IndexOf(txbSubTextTo.Text, chkSubTextWithPrefix.Checked ? txbSubTextFrom.Text.Length : 0);
+                                    if (chkSubTextWithSuffix.Checked)
+                                        endIndex += txbSubTextTo.Text.Length;
+                                }
+
+                                valueText = text.Substring(0, endIndex);
                             }
                             else if (rdoParseJson.Checked)
                             {
@@ -235,25 +255,6 @@ namespace GreenOnions.CustomHttpApiInvoker
                             else if (rdoParseStream.Checked)
                             {
                                 valueStream = await response.Content.ReadAsStreamAsync();
-                            }
-                            else if (rdoParseText.Checked)
-                            {
-                                string text = await response.Content.ReadAsStringAsync();
-
-                                int startIndex = 0;
-                                if (!string.IsNullOrEmpty(txbSubTextFrom.Text))
-                                    startIndex = text.IndexOf(txbSubTextFrom.Text);
-                                if (!chkSubTextWithPrefix.Checked)
-                                    startIndex += txbSubTextFrom.Text.Length;
-
-                                text = text.Substring(startIndex);
-                                int endIndex = text.Length - 1;
-                                if (!string.IsNullOrEmpty(txbSubTextTo.Text))
-                                    endIndex = text.IndexOf(txbSubTextTo.Text);
-                                if (chkSubTextWithSuffix.Checked)
-                                    endIndex += txbSubTextTo.Text.Length;
-
-                                valueText = text.Substring(0, endIndex);
                             }
                         }
                         catch (Exception ex)
@@ -330,7 +331,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                                     byte[] data = await rep.Content.ReadAsByteArrayAsync();
                                     File.WriteAllBytes(saveMusicFileName, data);
                                 }
-                                MessageBox.Show($"音频文件已保存在{saveMusicFileName}","成功");
+                                MessageBox.Show($"音频文件已保存在{saveMusicFileName}", "成功");
                             }
                             else if (rdoSendVoiceByBase64.Checked)
                             {
@@ -392,6 +393,91 @@ namespace GreenOnions.CustomHttpApiInvoker
                 rdoSendText.Enabled = rdoSendImageByUrl.Enabled = rdoSendImageByBase64.Enabled = rdoSendVoiceByUrl.Enabled = rdoSendVoiceByBase64.Enabled = true;
                 if (rdoSendImageStream.Checked || rdoSendVoiceStream.Checked)
                     rdoSendText.Checked = true;
+            }
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+
+            Config.Url = txbUrl.Text;
+            Cmd = txbCmd.Text;
+            Config.Remark = txbRemark.Text;
+            Config.HelpMessage = txbHelpMessage.Text;
+            Config.HttpMethod = (HttpMethodEnum)cboHttpMethod.SelectedIndex;
+            Config.Encoding = (EncodingEnum)cboEncoding.SelectedIndex;
+            Config.MediaType = cboMediaType.Text;
+
+            for (int i = 0; i < dgvHeader.Rows.Count; i++)
+            {
+                string? headerKey = dgvHeader.Rows[i].Cells[0].Value?.ToString();
+                if (headerKey != null)
+                {
+                    if (Config.Headers == null)
+                        Config.Headers = new Dictionary<string, string>();
+                    string? headerValue = dgvHeader.Rows[i].Cells[1].Value?.ToString();
+                    Config.Headers.Add(headerKey, headerValue ?? string.Empty);
+                }
+            }
+
+            Config.ContentType = rdoContentRaw.Checked ? ContentTypeEnum.raw : ContentTypeEnum.form_data;
+
+            Config.RowContent = txbContentRaw.Text;
+
+            for (int i = 0; i < dgvContentFormData.Rows.Count; i++)
+            {
+                string? conentKey = dgvContentFormData.Rows[i].Cells[0].Value?.ToString();
+                if (!string.IsNullOrWhiteSpace(conentKey))
+                {
+                    if (Config.FormDataContent == null)
+                        Config.FormDataContent = new Dictionary<string, string>();
+                    string? contentValue = dgvContentFormData.Rows[i].Cells[1].Value?.ToString();
+                    Config.FormDataContent.Add(conentKey, contentValue ?? string.Empty);
+                }
+            }
+
+            if (rdoParseText.Checked)
+                Config.ParseMode = ParseModeEnum.Text;
+            else if (rdoParseJson.Checked)
+                Config.ParseMode = ParseModeEnum.Json;
+            else if (rdoParseXml.Checked)
+                Config.ParseMode = ParseModeEnum.Xml;
+            else if (rdoParseXPath.Checked)
+                Config.ParseMode = ParseModeEnum.XPath;
+            else if (rdoParseJavaScript.Checked)
+                Config.ParseMode = ParseModeEnum.JavaScript;
+            else if (rdoParseStream.Checked)
+                Config.ParseMode = ParseModeEnum.Stream;
+
+            Config.ParseExpression = txbParseExpression.Text;
+            Config.SubTextFrom = txbSubTextFrom.Text;
+            Config.SubTextTo = txbSubTextTo.Text;
+            Config.SubTextWithPrefix = chkSubTextWithPrefix.Checked;
+            Config.SubTextWithSuffix = chkSubTextWithSuffix.Checked;
+
+            if (rdoSendText.Checked)
+            {
+                Config.SendMode = SendModeEnum.Text;
+            }
+            else if (rdoSendImageByUrl.Checked)
+            {
+                Config.SendMode = SendModeEnum.ImageUrl;
+            }
+            else if (rdoSendImageByBase64.Checked)
+            {
+                Config.SendMode = SendModeEnum.ImageBase64;
+            }
+            else if (rdoSendVoiceByUrl.Checked)
+            {
+                Config.SendMode = SendModeEnum.VoiceUrl;
+            }
+            else if (rdoSendVoiceByBase64.Checked)
+            {
+                Config.SendMode = SendModeEnum.VoiceBase64;
+            }
+            else if (rdoSendVoiceStream.Checked)
+            {
+                Config.SendMode = SendModeEnum.VoiceStream;
             }
         }
     }
