@@ -6,7 +6,6 @@ namespace GreenOnions.CustomHttpApiInvoker
     {
         private string _path;
         private MainConfig _config;
-        private int _itemCtrlWidth = 592;
         public FrmSettings(string path, MainConfig config)
         {
             _path = path;
@@ -19,9 +18,9 @@ namespace GreenOnions.CustomHttpApiInvoker
         {
             base.OnShown(e);
             pnlConfigList.Controls.Remove(btnAddConfig);
-            foreach (var item in _config.ApiConfig)
+            for (int i = 0; i < _config.ApiConfig.Count; i++)
             {
-                CtrlListItem ctrl = new CtrlListItem(_path, item.Key, item.Value, DeleteItemControl);
+                CtrlListItem ctrl = new CtrlListItem(_path, _config.ApiConfig[i], DeleteItemControl);
                 pnlConfigList.Controls.Add(ctrl);
             }
             pnlConfigList.Controls.Add(btnAddConfig);
@@ -35,7 +34,7 @@ namespace GreenOnions.CustomHttpApiInvoker
 
         private void DeleteItemControl(CtrlListItem item)
         {
-            _config.ApiConfig.Remove(item.Cmd);
+            _config.ApiConfig.RemoveAll(c => c == item.Config);
             pnlConfigList.Controls.Remove(item);
         }
 
@@ -43,30 +42,20 @@ namespace GreenOnions.CustomHttpApiInvoker
         {
             FrmEditor frmEditor = new FrmEditor(_path);
             frmEditor.ShowDialog();
-            if (!string.IsNullOrEmpty(frmEditor.Cmd))
+            if (!string.IsNullOrEmpty(frmEditor.Config.Cmd))
             {
-                if (_config.ApiConfig.ContainsKey(frmEditor.Cmd))
-                    MessageBox.Show($"添加失败，命令\"{frmEditor.Cmd}\"已存在，请更换命令或改用编辑功能。","错误");
+                if (_config.ApiConfig.Any(c => c.Cmd == frmEditor.Config.Cmd))
+                    MessageBox.Show($"添加失败，命令\"{frmEditor.Config.Cmd}\"已存在，请更换命令或改用编辑功能。","错误");
                 else
                 {
-                    _config.ApiConfig.Add(frmEditor.Cmd, frmEditor.Config);
+                    _config.ApiConfig.Add(frmEditor.Config);
 
                     pnlConfigList.Controls.Remove(btnAddConfig);
-                    CtrlListItem ctrl = new CtrlListItem(_path, frmEditor.Cmd, frmEditor.Config, DeleteItemControl);
+                    CtrlListItem ctrl = new CtrlListItem(_path, frmEditor.Config, DeleteItemControl);
                     pnlConfigList.Controls.Add(ctrl);
                     pnlConfigList.Controls.Add(btnAddConfig);
                 }
             }
-        }
-
-        private void pnlConfigList_SizeChanged(object sender, EventArgs e) => ComputeRssItemWidth();
-        private void pnlConfigList_ControlChanged(object sender, ControlEventArgs e) => ComputeRssItemWidth();
-
-        private void ComputeRssItemWidth()
-        {
-            _itemCtrlWidth = pnlConfigList.Controls.Count * pnlConfigList.Height + pnlConfigList.Controls.Count * pnlConfigList.Margin.Top * 2 + pnlConfigList.Margin.Top - 1 > pnlConfigList.Height ? pnlConfigList.Width - 25 : pnlConfigList.Width - 8;
-            foreach (Control item in pnlConfigList.Controls)
-                item.Width = _itemCtrlWidth;
         }
     }
 }

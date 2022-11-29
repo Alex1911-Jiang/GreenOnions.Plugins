@@ -199,9 +199,9 @@
             this.lblParseExpression.Dock = System.Windows.Forms.DockStyle.Top;
             this.lblParseExpression.Location = new System.Drawing.Point(0, 0);
             this.lblParseExpression.Name = "lblParseExpression";
-            this.lblParseExpression.Size = new System.Drawing.Size(118, 24);
+            this.lblParseExpression.Size = new System.Drawing.Size(608, 24);
             this.lblParseExpression.TabIndex = 18;
-            this.lblParseExpression.Text = "解析表达式：";
+            this.lblParseExpression.Text = "解析表达式：（特殊表达式<random>含尖括号，随机取数组中一个元素）";
             // 
             // pnlSubText
             // 

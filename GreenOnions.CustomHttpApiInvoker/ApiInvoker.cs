@@ -52,28 +52,31 @@ namespace GreenOnions.CustomHttpApiInvoker
         {
             if (msgs.FirstOrDefault() is GreenOnionsTextMessage msg)
             {
-                if (_botApi!.ReplaceGreenOnionsStringTags(_config.HelpCmd) == msg)
+                if (string.Equals(_botApi!.ReplaceGreenOnionsStringTags(_config.HelpCmd), msg.Text, StringComparison.OrdinalIgnoreCase))
                 {
                     StringBuilder helpMessage = new StringBuilder();
-                    foreach (var item in _config.ApiConfig)
+                    for (int i = 0; i < _config.ApiConfig.Count; i++)
                     {
-                        helpMessage.AppendLine(item.Key + (string.IsNullOrEmpty(item.Value.HelpMessage) ? "" : $":{item.Value.HelpMessage}"));
+                        helpMessage.AppendLine(_config.ApiConfig[i].Cmd + (string.IsNullOrEmpty(_config.ApiConfig[i].HelpMessage) ? "" : $":{_config.ApiConfig[i].HelpMessage}"));
                     }
                     Response(new GreenOnionsMessages(helpMessage.ToString()) { Reply = false });
                     return true;
                 }
                 else
                 {
-                    foreach (var item in _config.ApiConfig)
+                    for (int i = 0; i < _config.ApiConfig.Count; i++)
                     {
-                        if (_botApi.ReplaceGreenOnionsStringTags(item.Key) == msg.Text)
+                        if (!string.IsNullOrEmpty(_config.ApiConfig[i].Cmd))
                         {
-                            InvokeApi(item.Value).ContinueWith(callback =>
+                            if (string.Equals(_botApi.ReplaceGreenOnionsStringTags(_config.ApiConfig[i].Cmd!), msg.Text, StringComparison.OrdinalIgnoreCase))
                             {
-                                if (callback.Result != null)
-                                    Response(callback.Result);
-                            });
-                            return true;
+                                InvokeApi(_config.ApiConfig[i]).ContinueWith(callback =>
+                                {
+                                    if (callback.Result != null)
+                                        Response(callback.Result);
+                                });
+                                return true;
+                            }
                         }
                     }
                 }
@@ -229,9 +232,9 @@ namespace GreenOnions.CustomHttpApiInvoker
                                 valueStream = await response.Content.ReadAsStreamAsync();
                             }
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
-                            string respFileName = Path.Combine(_path, "响应.txt");
+                            string respFileName = Path.Combine(_path!, "响应.txt");
                             await File.WriteAllTextAsync(respFileName, valueText);
                             msg.Add("解析失败，请联系机器人管理员");
                             return msg;
@@ -287,7 +290,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                         }
                         catch (Exception ex)
                         {
-                            string respFileName = Path.Combine(_path, "响应.txt");
+                            string respFileName = Path.Combine(_path!, "响应.txt");
                             await File.WriteAllTextAsync(respFileName, valueText);
 
                             msg.Add("Api响应成功，但不是图片或音频，请联系机器人管理员");
@@ -307,7 +310,7 @@ namespace GreenOnions.CustomHttpApiInvoker
         public bool WindowSetting()
         {
             new FrmSettings(_path!, _config).ShowDialog();
-            string configFileName = Path.Combine(_path, "config.json");
+            string configFileName = Path.Combine(_path!, "config.json");
             string jsonConfig = JsonConvert.SerializeObject(_config);
             File.WriteAllText(configFileName, jsonConfig);
             return true;

@@ -51,9 +51,6 @@
             this.pnlConfigList.Size = new System.Drawing.Size(946, 787);
             this.pnlConfigList.TabIndex = 8;
             this.pnlConfigList.WrapContents = false;
-            this.pnlConfigList.SizeChanged += new System.EventHandler(this.pnlConfigList_SizeChanged);
-            this.pnlConfigList.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.pnlConfigList_ControlChanged);
-            this.pnlConfigList.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.pnlConfigList_ControlChanged);
             // 
             // btnAddConfig
             // 
@@ -61,7 +58,7 @@
             this.btnAddConfig.Location = new System.Drawing.Point(5, 4);
             this.btnAddConfig.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.btnAddConfig.Name = "btnAddConfig";
-            this.btnAddConfig.Size = new System.Drawing.Size(930, 141);
+            this.btnAddConfig.Size = new System.Drawing.Size(900, 141);
             this.btnAddConfig.TabIndex = 0;
             this.btnAddConfig.UseVisualStyleBackColor = true;
             this.btnAddConfig.Click += new System.EventHandler(this.btnAddConfig_Click);

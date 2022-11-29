@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using System.Text;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -10,26 +10,25 @@ namespace GreenOnions.CustomHttpApiInvoker
     {
         private string _path;
 
-        public string Cmd { get; private set; }
         public HttpApiConfig Config { get; private set; }
 
-        public FrmEditor(string path, string? cmd = null, HttpApiConfig? config = null)
+        public FrmEditor(string path, HttpApiConfig? config = null)
         {
             _path = path;
-            Cmd = cmd ?? string.Empty;
-            Config = config ?? new HttpApiConfig();
             InitializeComponent();
 
             if (config == null)
             {
+                Config = new HttpApiConfig();
                 cboHttpMethod.SelectedIndex = 0;
                 cboEncoding.SelectedIndex = 0;
                 cboMediaType.SelectedIndex = 0;
             }
             else
             {
+                Config = config;
                 txbUrl.Text = Config.Url;
-                txbCmd.Text = cmd;
+                txbCmd.Text = Config.Cmd;
                 txbRemark.Text = Config.Remark;
                 txbHelpMessage.Text = Config.HelpMessage;
                 cboHttpMethod.SelectedIndex = (int)Config.HttpMethod;
@@ -225,8 +224,14 @@ namespace GreenOnions.CustomHttpApiInvoker
                                         if (txbParseExpression.Text[i] == ']')
                                         {
                                             bOpen = false;
-                                            if (long.TryParse(indexName.ToString(), out long numberIndex))
-                                                jt = jt[numberIndex]!;
+                                            if (string.Equals(indexName.ToString(), "<random>", StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                var arr = jt.ToArray();
+                                                Random rdm = new Random(Guid.NewGuid().GetHashCode());
+                                                jt = arr[rdm.Next(0, arr.Length)];
+                                            }
+                                            else if (long.TryParse(indexName.ToString(), out long numberIndex))
+                                                jt = jt.ToArray()[numberIndex]!;
                                             else
                                                 jt = jt[indexName.ToString()]!;
                                             indexName.Clear();
@@ -409,7 +414,7 @@ namespace GreenOnions.CustomHttpApiInvoker
             base.OnClosing(e);
 
             Config.Url = txbUrl.Text;
-            Cmd = txbCmd.Text;
+            Config.Cmd = txbCmd.Text;
             Config.Remark = txbRemark.Text;
             Config.HelpMessage = txbHelpMessage.Text;
             Config.HttpMethod = (HttpMethodEnum)cboHttpMethod.SelectedIndex;

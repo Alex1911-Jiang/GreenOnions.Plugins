@@ -7,6 +7,7 @@ namespace GreenOnions.CustomHttpApiInvoker
     public class HttpApiConfig
     {
         public string? Url { get; set; }
+        public string? Cmd { get; set; }
         public string? Remark { get; set; }
         public string? HelpMessage { get; set; }
 
