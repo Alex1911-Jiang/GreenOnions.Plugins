@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Text;
-using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -147,7 +146,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                         };
 
                         //Content
-                        if (rdoContentFormData.Checked)
+                        if (rdoContentRaw.Checked)
                         {
                             request.Content = new StringContent(txbContentRaw.Text, encoding, cboMediaType.Text);
                         }
@@ -179,7 +178,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                         }
                         if ((int)response.StatusCode >= 400)
                         {
-                            MessageBox.Show($"{(int)response.StatusCode} {response.ReasonPhrase}{(response.RequestMessage?.RequestUri?.ToString() != requestUrl ? "\r\n请尝试使用POST进行请求。" : "")}", $"请求错误");
+                            MessageBox.Show($"{(int)response.StatusCode} {response.ReasonPhrase}{(response.RequestMessage?.RequestUri?.ToString() != requestUrl ? "\r\n发生链接跳转，请尝试使用POST进行请求。" : "")}", $"请求错误");
                             return;
                         }
 
@@ -290,7 +289,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                             string saveMusicFileName = Path.Combine(_path, "msuic");
                             if (rdoSendText.Checked)
                             {
-                                MessageBox.Show(valueText, "成功 {(int)response.StatusCode}");
+                                MessageBox.Show(valueText, $"成功 {(int)response.StatusCode}");
                             }
                             else if (rdoSendImageByUrl.Checked)
                             {

@@ -83,6 +83,7 @@
             this.lblRemarkTitle = new System.Windows.Forms.Label();
             this.txbHelpMessage = new System.Windows.Forms.TextBox();
             this.lblHelpMessageTitle = new System.Windows.Forms.Label();
+            this.lblInfo = new System.Windows.Forms.Label();
             this.pnlContentType.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvContentFormData)).BeginInit();
             this.pnlParse.SuspendLayout();
@@ -94,7 +95,7 @@
             // 
             // txbContentRaw
             // 
-            this.txbContentRaw.Location = new System.Drawing.Point(25, 440);
+            this.txbContentRaw.Location = new System.Drawing.Point(24, 458);
             this.txbContentRaw.Multiline = true;
             this.txbContentRaw.Name = "txbContentRaw";
             this.txbContentRaw.Size = new System.Drawing.Size(898, 165);
@@ -105,7 +106,7 @@
             this.pnlContentType.AutoSize = true;
             this.pnlContentType.Controls.Add(this.rdoContentRaw);
             this.pnlContentType.Controls.Add(this.rdoContentFormData);
-            this.pnlContentType.Location = new System.Drawing.Point(184, 402);
+            this.pnlContentType.Location = new System.Drawing.Point(183, 420);
             this.pnlContentType.Name = "pnlContentType";
             this.pnlContentType.Size = new System.Drawing.Size(220, 35);
             this.pnlContentType.TabIndex = 59;
@@ -143,7 +144,7 @@
             this.dgvContentFormData.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dgvContentKeyColumn,
             this.dgvContentValueColumn});
-            this.dgvContentFormData.Location = new System.Drawing.Point(25, 440);
+            this.dgvContentFormData.Location = new System.Drawing.Point(24, 458);
             this.dgvContentFormData.Name = "dgvContentFormData";
             this.dgvContentFormData.RowHeadersVisible = false;
             this.dgvContentFormData.RowHeadersWidth = 62;
@@ -166,7 +167,7 @@
             // 
             // btnInvokeTest
             // 
-            this.btnInvokeTest.Location = new System.Drawing.Point(812, 55);
+            this.btnInvokeTest.Location = new System.Drawing.Point(811, 73);
             this.btnInvokeTest.Name = "btnInvokeTest";
             this.btnInvokeTest.Size = new System.Drawing.Size(113, 32);
             this.btnInvokeTest.TabIndex = 57;
@@ -179,7 +180,7 @@
             this.pnlParse.Controls.Add(this.txbParseExpression);
             this.pnlParse.Controls.Add(this.lblParseExpression);
             this.pnlParse.Enabled = false;
-            this.pnlParse.Location = new System.Drawing.Point(322, 655);
+            this.pnlParse.Location = new System.Drawing.Point(321, 673);
             this.pnlParse.Name = "pnlParse";
             this.pnlParse.Size = new System.Drawing.Size(603, 150);
             this.pnlParse.TabIndex = 56;
@@ -212,7 +213,7 @@
             this.pnlSubText.Controls.Add(this.txbSubTextFrom);
             this.pnlSubText.Controls.Add(this.txbSubTextTo);
             this.pnlSubText.Controls.Add(this.lblSubTextTo);
-            this.pnlSubText.Location = new System.Drawing.Point(25, 652);
+            this.pnlSubText.Location = new System.Drawing.Point(24, 670);
             this.pnlSubText.Name = "pnlSubText";
             this.pnlSubText.Size = new System.Drawing.Size(291, 150);
             this.pnlSubText.TabIndex = 55;
@@ -288,7 +289,7 @@
             this.pnlSendMode.Controls.Add(this.rdoSendImageByBase64);
             this.pnlSendMode.Controls.Add(this.rdoSendImageByUrl);
             this.pnlSendMode.Controls.Add(this.rdoSendText);
-            this.pnlSendMode.Location = new System.Drawing.Point(148, 810);
+            this.pnlSendMode.Location = new System.Drawing.Point(147, 828);
             this.pnlSendMode.Name = "pnlSendMode";
             this.pnlSendMode.Size = new System.Drawing.Size(778, 35);
             this.pnlSendMode.TabIndex = 54;
@@ -378,7 +379,7 @@
             this.pnlParseMode.Controls.Add(this.rdoParseJson);
             this.pnlParseMode.Controls.Add(this.rdoParseXml);
             this.pnlParseMode.Controls.Add(this.rdoParseXPath);
-            this.pnlParseMode.Location = new System.Drawing.Point(138, 613);
+            this.pnlParseMode.Location = new System.Drawing.Point(137, 631);
             this.pnlParseMode.Name = "pnlParseMode";
             this.pnlParseMode.Size = new System.Drawing.Size(787, 37);
             this.pnlParseMode.TabIndex = 53;
@@ -457,7 +458,7 @@
             // lblSendMode
             // 
             this.lblSendMode.AutoSize = true;
-            this.lblSendMode.Location = new System.Drawing.Point(25, 815);
+            this.lblSendMode.Location = new System.Drawing.Point(24, 833);
             this.lblSendMode.Name = "lblSendMode";
             this.lblSendMode.Size = new System.Drawing.Size(118, 24);
             this.lblSendMode.TabIndex = 52;
@@ -466,7 +467,7 @@
             // lblParseMode
             // 
             this.lblParseMode.AutoSize = true;
-            this.lblParseMode.Location = new System.Drawing.Point(25, 620);
+            this.lblParseMode.Location = new System.Drawing.Point(24, 638);
             this.lblParseMode.Name = "lblParseMode";
             this.lblParseMode.Size = new System.Drawing.Size(100, 24);
             this.lblParseMode.TabIndex = 51;
@@ -474,7 +475,7 @@
             // 
             // txbCmd
             // 
-            this.txbCmd.Location = new System.Drawing.Point(130, 55);
+            this.txbCmd.Location = new System.Drawing.Point(129, 73);
             this.txbCmd.Name = "txbCmd";
             this.txbCmd.Size = new System.Drawing.Size(673, 30);
             this.txbCmd.TabIndex = 50;
@@ -482,7 +483,7 @@
             // lblCmdTitle
             // 
             this.lblCmdTitle.AutoSize = true;
-            this.lblCmdTitle.Location = new System.Drawing.Point(25, 58);
+            this.lblCmdTitle.Location = new System.Drawing.Point(24, 76);
             this.lblCmdTitle.Name = "lblCmdTitle";
             this.lblCmdTitle.Size = new System.Drawing.Size(64, 24);
             this.lblCmdTitle.TabIndex = 49;
@@ -495,7 +496,7 @@
             this.dgvHeader.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dgvHeaderKeyColumn,
             this.dgvHeaderValueColumn});
-            this.dgvHeader.Location = new System.Drawing.Point(25, 224);
+            this.dgvHeader.Location = new System.Drawing.Point(24, 242);
             this.dgvHeader.Name = "dgvHeader";
             this.dgvHeader.RowHeadersVisible = false;
             this.dgvHeader.RowHeadersWidth = 62;
@@ -526,7 +527,7 @@
             "UTF-32",
             "ASCII",
             "GBK(GB2312)"});
-            this.cboEncoding.Location = new System.Drawing.Point(437, 162);
+            this.cboEncoding.Location = new System.Drawing.Point(436, 180);
             this.cboEncoding.Name = "cboEncoding";
             this.cboEncoding.Size = new System.Drawing.Size(182, 32);
             this.cboEncoding.TabIndex = 47;
@@ -534,7 +535,7 @@
             // lblEncodeTitle
             // 
             this.lblEncodeTitle.AutoSize = true;
-            this.lblEncodeTitle.Location = new System.Drawing.Point(330, 167);
+            this.lblEncodeTitle.Location = new System.Drawing.Point(329, 185);
             this.lblEncodeTitle.Name = "lblEncodeTitle";
             this.lblEncodeTitle.Size = new System.Drawing.Size(100, 24);
             this.lblEncodeTitle.TabIndex = 46;
@@ -548,7 +549,7 @@
             "application/text",
             "application/json",
             "application/xml"});
-            this.cboMediaType.Location = new System.Drawing.Point(742, 162);
+            this.cboMediaType.Location = new System.Drawing.Point(741, 180);
             this.cboMediaType.Name = "cboMediaType";
             this.cboMediaType.Size = new System.Drawing.Size(182, 32);
             this.cboMediaType.TabIndex = 45;
@@ -556,7 +557,7 @@
             // lblMediaTypeTitle
             // 
             this.lblMediaTypeTitle.AutoSize = true;
-            this.lblMediaTypeTitle.Location = new System.Drawing.Point(635, 167);
+            this.lblMediaTypeTitle.Location = new System.Drawing.Point(634, 185);
             this.lblMediaTypeTitle.Name = "lblMediaTypeTitle";
             this.lblMediaTypeTitle.Size = new System.Drawing.Size(100, 24);
             this.lblMediaTypeTitle.TabIndex = 44;
@@ -565,7 +566,7 @@
             // lblContent
             // 
             this.lblContent.AutoSize = true;
-            this.lblContent.Location = new System.Drawing.Point(25, 408);
+            this.lblContent.Location = new System.Drawing.Point(24, 426);
             this.lblContent.Name = "lblContent";
             this.lblContent.Size = new System.Drawing.Size(153, 24);
             this.lblContent.TabIndex = 43;
@@ -578,7 +579,7 @@
             this.cboHttpMethod.Items.AddRange(new object[] {
             "GET",
             "POST"});
-            this.cboHttpMethod.Location = new System.Drawing.Point(130, 162);
+            this.cboHttpMethod.Location = new System.Drawing.Point(129, 180);
             this.cboHttpMethod.Name = "cboHttpMethod";
             this.cboHttpMethod.Size = new System.Drawing.Size(182, 32);
             this.cboHttpMethod.TabIndex = 42;
@@ -586,7 +587,7 @@
             // lblHeader
             // 
             this.lblHeader.AutoSize = true;
-            this.lblHeader.Location = new System.Drawing.Point(25, 198);
+            this.lblHeader.Location = new System.Drawing.Point(24, 216);
             this.lblHeader.Name = "lblHeader";
             this.lblHeader.Size = new System.Drawing.Size(91, 24);
             this.lblHeader.TabIndex = 41;
@@ -595,7 +596,7 @@
             // lblHttpMethodTitle
             // 
             this.lblHttpMethodTitle.AutoSize = true;
-            this.lblHttpMethodTitle.Location = new System.Drawing.Point(25, 167);
+            this.lblHttpMethodTitle.Location = new System.Drawing.Point(24, 185);
             this.lblHttpMethodTitle.Name = "lblHttpMethodTitle";
             this.lblHttpMethodTitle.Size = new System.Drawing.Size(100, 24);
             this.lblHttpMethodTitle.TabIndex = 40;
@@ -603,7 +604,7 @@
             // 
             // txbUrl
             // 
-            this.txbUrl.Location = new System.Drawing.Point(130, 18);
+            this.txbUrl.Location = new System.Drawing.Point(129, 36);
             this.txbUrl.Name = "txbUrl";
             this.txbUrl.Size = new System.Drawing.Size(793, 30);
             this.txbUrl.TabIndex = 39;
@@ -611,7 +612,7 @@
             // lblUrlTitle
             // 
             this.lblUrlTitle.AutoSize = true;
-            this.lblUrlTitle.Location = new System.Drawing.Point(25, 23);
+            this.lblUrlTitle.Location = new System.Drawing.Point(24, 41);
             this.lblUrlTitle.Name = "lblUrlTitle";
             this.lblUrlTitle.Size = new System.Drawing.Size(64, 24);
             this.lblUrlTitle.TabIndex = 38;
@@ -619,7 +620,7 @@
             // 
             // txbRemark
             // 
-            this.txbRemark.Location = new System.Drawing.Point(130, 90);
+            this.txbRemark.Location = new System.Drawing.Point(129, 108);
             this.txbRemark.Name = "txbRemark";
             this.txbRemark.Size = new System.Drawing.Size(793, 30);
             this.txbRemark.TabIndex = 62;
@@ -627,7 +628,7 @@
             // lblRemarkTitle
             // 
             this.lblRemarkTitle.AutoSize = true;
-            this.lblRemarkTitle.Location = new System.Drawing.Point(25, 95);
+            this.lblRemarkTitle.Location = new System.Drawing.Point(24, 113);
             this.lblRemarkTitle.Name = "lblRemarkTitle";
             this.lblRemarkTitle.Size = new System.Drawing.Size(64, 24);
             this.lblRemarkTitle.TabIndex = 61;
@@ -635,7 +636,7 @@
             // 
             // txbHelpMessage
             // 
-            this.txbHelpMessage.Location = new System.Drawing.Point(130, 127);
+            this.txbHelpMessage.Location = new System.Drawing.Point(129, 145);
             this.txbHelpMessage.Name = "txbHelpMessage";
             this.txbHelpMessage.Size = new System.Drawing.Size(793, 30);
             this.txbHelpMessage.TabIndex = 64;
@@ -643,17 +644,27 @@
             // lblHelpMessageTitle
             // 
             this.lblHelpMessageTitle.AutoSize = true;
-            this.lblHelpMessageTitle.Location = new System.Drawing.Point(25, 130);
+            this.lblHelpMessageTitle.Location = new System.Drawing.Point(24, 148);
             this.lblHelpMessageTitle.Name = "lblHelpMessageTitle";
             this.lblHelpMessageTitle.Size = new System.Drawing.Size(100, 24);
             this.lblHelpMessageTitle.TabIndex = 63;
             this.lblHelpMessageTitle.Text = "帮助信息：";
             // 
+            // lblInfo
+            // 
+            this.lblInfo.AutoSize = true;
+            this.lblInfo.Location = new System.Drawing.Point(39, 9);
+            this.lblInfo.Name = "lblInfo";
+            this.lblInfo.Size = new System.Drawing.Size(873, 24);
+            this.lblInfo.TabIndex = 65;
+            this.lblInfo.Text = "您可以在命令中添加\"(?<参数>)\"正则表达式提取子串，并在地址地址或参数栏中添加<参数>来进行带参调用";
+            // 
             // FrmEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(949, 853);
+            this.ClientSize = new System.Drawing.Size(949, 877);
+            this.Controls.Add(this.lblInfo);
             this.Controls.Add(this.txbHelpMessage);
             this.Controls.Add(this.lblHelpMessageTitle);
             this.Controls.Add(this.txbRemark);
@@ -760,5 +771,6 @@
         private Label lblRemarkTitle;
         private TextBox txbHelpMessage;
         private Label lblHelpMessageTitle;
+        private Label lblInfo;
     }
 }

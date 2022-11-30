@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.RegularExpressions;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
 using Newtonsoft.Json;
@@ -10,6 +11,7 @@ namespace GreenOnions.CustomHttpApiInvoker
     {
         private string? _path;
         private MainConfig _config = new MainConfig();
+        private Dictionary<HttpApiConfig, Regex> _regexs = new Dictionary<HttpApiConfig, Regex>();
         private IGreenOnionsApi? _botApi;
 
         public string Name => "自定义API客户端";
@@ -44,6 +46,12 @@ namespace GreenOnions.CustomHttpApiInvoker
                 if (!string.IsNullOrWhiteSpace(strConfigJson))
                 {
                     _config = JsonConvert.DeserializeObject<MainConfig>(strConfigJson)!;
+                    _regexs.Clear();
+                    foreach (var item in _config.ApiConfig)
+                    {
+                        if (item.Cmd!.Contains("(?<参数>"))
+                            _regexs.Add(item, new Regex(item.Cmd));
+                    }
                 }
             }
         }
@@ -68,15 +76,28 @@ namespace GreenOnions.CustomHttpApiInvoker
                     {
                         if (!string.IsNullOrEmpty(_config.ApiConfig[i].Cmd))
                         {
-                            if (string.Equals(_botApi.ReplaceGreenOnionsStringTags(_config.ApiConfig[i].Cmd!), msg.Text, StringComparison.OrdinalIgnoreCase))
+                            Task<GreenOnionsMessages?>? task = null;
+                            if (_regexs.ContainsKey(_config.ApiConfig[i]))
                             {
-                                InvokeApi(_config.ApiConfig[i]).ContinueWith(callback =>
+                                if (_regexs[_config.ApiConfig[i]].IsMatch(msg.Text))
                                 {
-                                    if (callback.Result != null)
-                                        Response(callback.Result);
-                                });
-                                return true;
+                                    Match match = _regexs[_config.ApiConfig[i]].Match(msg.Text);
+                                    string param = string.Empty;
+                                    if (match.Groups.Count > 1)
+                                        param = match.Groups[1].Value;
+                                    task = InvokeApi(_config.ApiConfig[i], param);
+                                }
                             }
+                            else if (string.Equals(_botApi.ReplaceGreenOnionsStringTags(_config.ApiConfig[i].Cmd!), msg.Text, StringComparison.OrdinalIgnoreCase))
+                            {
+                                task = InvokeApi(_config.ApiConfig[i]);
+                            }
+                            task?.ContinueWith(callback =>
+                             {
+                                 if (callback.Result != null)
+                                     Response(callback.Result);
+                             });
+                            return true;
                         }
                     }
                 }
@@ -84,7 +105,7 @@ namespace GreenOnions.CustomHttpApiInvoker
             return false;
         }
 
-        private async Task<GreenOnionsMessages?> InvokeApi(HttpApiConfig api)
+        private async Task<GreenOnionsMessages?> InvokeApi(HttpApiConfig api, string param = "")
         {
             GreenOnionsMessages msg = new GreenOnionsMessages() { Reply = false };
             if (string.IsNullOrEmpty(api.Url))
@@ -98,12 +119,12 @@ namespace GreenOnions.CustomHttpApiInvoker
                 {
                     HttpMethod httpMethod = api.HttpMethod == HttpMethodEnum.GET ? HttpMethod.Get : HttpMethod.Post;
 
-                    using (HttpRequestMessage request = new HttpRequestMessage(httpMethod, api.Url))
+                    using (HttpRequestMessage request = new HttpRequestMessage(httpMethod, api.Url.Replace("<参数>", param)))
                     {
                         if (api.Headers != null)
                         {
                             foreach (var item in api.Headers)
-                                request.Headers.Add(item.Key, item.Value);
+                                request.Headers.Add(item.Key, item.Value.Replace("<参数>", param));
                         }
 
                         Encoding encoding = api.Encoding switch
@@ -120,7 +141,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                         if (api.ContentType == ContentTypeEnum.raw)
                         {
                             if (!string.IsNullOrEmpty(api.RowContent))
-                                request.Content = new StringContent(api.RowContent, encoding, api.MediaType);
+                                request.Content = new StringContent(api.RowContent.Replace("<参数>", param), encoding, api.MediaType);
                         }
                         else
                         {
@@ -129,7 +150,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                                 var form = new MultipartFormDataContent();
                                 foreach (var item in api.FormDataContent)
                                 {
-                                    form.Add(new StringContent(item.Value, encoding, api.MediaType), item.Key);
+                                    form.Add(new StringContent(item.Value.Replace("<参数>", param), encoding, api.MediaType), item.Key);
                                 }
                                 request.Content = form;
                             }
@@ -140,7 +161,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                         {
                             response = await client.SendAsync(request);
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                             msg.Add("请求失败，请联系机器人管理员");
                             return msg;
@@ -234,8 +255,6 @@ namespace GreenOnions.CustomHttpApiInvoker
                         }
                         catch (Exception)
                         {
-                            string respFileName = Path.Combine(_path!, "响应.txt");
-                            await File.WriteAllTextAsync(respFileName, valueText);
                             msg.Add("解析失败，请联系机器人管理员");
                             return msg;
                         }
@@ -288,11 +307,8 @@ namespace GreenOnions.CustomHttpApiInvoker
                                 return msg;
                             }
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
-                            string respFileName = Path.Combine(_path!, "响应.txt");
-                            await File.WriteAllTextAsync(respFileName, valueText);
-
                             msg.Add("Api响应成功，但不是图片或音频，请联系机器人管理员");
                             return msg;
                         }
@@ -310,6 +326,12 @@ namespace GreenOnions.CustomHttpApiInvoker
         public bool WindowSetting()
         {
             new FrmSettings(_path!, _config).ShowDialog();
+            _regexs.Clear();
+            foreach (var item in _config.ApiConfig)
+            {
+                if (item.Cmd!.Contains("(?<参数>"))
+                    _regexs.Add(item, new Regex(item.Cmd));
+            }
             string configFileName = Path.Combine(_path!, "config.json");
             string jsonConfig = JsonConvert.SerializeObject(_config);
             File.WriteAllText(configFileName, jsonConfig);

@@ -61,7 +61,7 @@
             this.btnAddConfig.Size = new System.Drawing.Size(900, 141);
             this.btnAddConfig.TabIndex = 0;
             this.btnAddConfig.UseVisualStyleBackColor = true;
-            this.btnAddConfig.Click += new System.EventHandler(this.btnAddConfig_Click);
+            this.btnAddConfig.Click += new System.EventHandler(this.BtnAddConfig_Click);
             // 
             // lblHelpCmd
             // 
