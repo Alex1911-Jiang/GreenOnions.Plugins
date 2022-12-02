@@ -37,8 +37,4 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="MD &quot;D:\Project\Github\GreenOnions\bin\debug\net6.0-windows\Plugins\TicTacToe\&quot;&#xD;&#xA;COPY &quot;$(OutDir)&quot; &quot;D:\Project\Github\GreenOnions\bin\debug\net6.0-windows\Plugins\TicTacToe\&quot;" />
-  </Target>
-
 </Project>
