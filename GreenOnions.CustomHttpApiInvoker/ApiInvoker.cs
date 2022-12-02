@@ -223,8 +223,14 @@ namespace GreenOnions.CustomHttpApiInvoker
                                             if (api.ParseExpression[i] == ']')
                                             {
                                                 bOpen = false;
-                                                if (long.TryParse(indexName.ToString(), out long numberIndex))
-                                                    jt = jt[numberIndex]!;
+                                                if (string.Equals(indexName.ToString(), "<random>", StringComparison.OrdinalIgnoreCase))
+                                                {
+                                                    var arr = jt.ToArray();
+                                                    Random rdm = new Random(Guid.NewGuid().GetHashCode());
+                                                    jt = arr[rdm.Next(0, arr.Length)];
+                                                }
+                                                else if (long.TryParse(indexName.ToString(), out long numberIndex))
+                                                    jt = jt.ToArray()[numberIndex]!;
                                                 else
                                                     jt = jt[indexName.ToString()]!;
                                                 indexName.Clear();
