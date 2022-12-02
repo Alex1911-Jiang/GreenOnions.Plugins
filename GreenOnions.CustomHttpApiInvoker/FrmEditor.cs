@@ -260,6 +260,8 @@ namespace GreenOnions.CustomHttpApiInvoker
                                     valueLines.AppendLine(jt.ToString());
                                 }
                                 valueText = valueLines.ToString();
+                                if (valueText.EndsWith("\r\n"))
+                                    valueText = valueText.Substring(0, valueText.Length - "\r\n".Length);
                             }
                             //else if (rdoParseXml.Checked)
                             //{

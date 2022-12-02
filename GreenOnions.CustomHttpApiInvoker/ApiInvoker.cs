@@ -92,12 +92,15 @@ namespace GreenOnions.CustomHttpApiInvoker
                             {
                                 task = InvokeApi(_config.ApiConfig[i]);
                             }
-                            task?.ContinueWith(callback =>
-                             {
-                                 if (callback.Result != null)
-                                     Response(callback.Result);
-                             });
-                            return true;
+                            if (task != null)
+                            {
+                                task.ContinueWith(callback =>
+                                {
+                                    if (callback.Result != null)
+                                        Response(callback.Result);
+                                });
+                                return true;
+                            } 
                         }
                     }
                 }
@@ -213,45 +216,55 @@ namespace GreenOnions.CustomHttpApiInvoker
                                 }
                                 else
                                 {
-                                    JToken jt = JsonConvert.DeserializeObject<JToken>(json)!;
+                                    JToken topJt = JsonConvert.DeserializeObject<JToken>(json)!;
                                     bool bOpen = false;
                                     StringBuilder indexName = new StringBuilder();
-                                    for (int i = 0; i < api.ParseExpression.Length; i++)
+
+                                    string[] expression = api.ParseExpression.Split("\r\n");
+                                    StringBuilder valueLines = new StringBuilder();
+                                    for (int i = 0; i < expression.Length; i++)
                                     {
-                                        if (bOpen)
+                                        JToken jt = topJt;
+                                        for (int j = 0; j < expression[i].Length; j++)
                                         {
-                                            if (api.ParseExpression[i] == ']')
+                                            if (bOpen)
                                             {
-                                                bOpen = false;
-                                                if (string.Equals(indexName.ToString(), "<random>", StringComparison.OrdinalIgnoreCase))
+                                                if (expression[i][j] == ']')
                                                 {
-                                                    var arr = jt.ToArray();
-                                                    Random rdm = new Random(Guid.NewGuid().GetHashCode());
-                                                    jt = arr[rdm.Next(0, arr.Length)];
+                                                    bOpen = false;
+                                                    if (string.Equals(indexName.ToString(), "<random>", StringComparison.OrdinalIgnoreCase))
+                                                    {
+                                                        var arr = jt.ToArray();
+                                                        Random rdm = new Random(Guid.NewGuid().GetHashCode());
+                                                        jt = arr[rdm.Next(0, arr.Length)];
+                                                    }
+                                                    else if (long.TryParse(indexName.ToString(), out long numberIndex))
+                                                        jt = jt.ToArray()[numberIndex]!;
+                                                    else
+                                                        jt = jt[indexName.ToString()]!;
+                                                    indexName.Clear();
+                                                    continue;
                                                 }
-                                                else if (long.TryParse(indexName.ToString(), out long numberIndex))
-                                                    jt = jt.ToArray()[numberIndex]!;
-                                                else
-                                                    jt = jt[indexName.ToString()]!;
-                                                indexName.Clear();
-                                                continue;
+                                                if (expression[i][j] == '\'' || expression[i][j] == '\"')
+                                                {
+                                                    continue;
+                                                }
+                                                indexName.Append(expression[i][j]);
                                             }
-                                            if (api.ParseExpression[i] == '\'' || api.ParseExpression[i] == '\"')
+                                            else
                                             {
-                                                continue;
-                                            }
-                                            indexName.Append(api.ParseExpression[i]);
-                                        }
-                                        else
-                                        {
-                                            if (api.ParseExpression[i] == '[')
-                                            {
-                                                bOpen = true;
-                                                continue;
+                                                if (expression[i][j] == '[')
+                                                {
+                                                    bOpen = true;
+                                                    continue;
+                                                }
                                             }
                                         }
+                                        valueLines.AppendLine(jt.ToString());
                                     }
-                                    valueText = jt.ToString();
+                                    valueText = valueLines.ToString();
+                                    if (valueText.EndsWith("\r\n"))
+                                        valueText = valueText.Substring(0, valueText.Length - "\r\n".Length);
                                 }
                             }
                             else if (api.ParseMode == ParseModeEnum.Stream)
