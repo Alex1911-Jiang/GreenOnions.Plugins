@@ -1,5 +1,4 @@
-﻿using System.Text;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using Newtonsoft.Json.Converters;
 
 namespace GreenOnions.CustomHttpApiInvoker
@@ -32,6 +31,12 @@ namespace GreenOnions.CustomHttpApiInvoker
 
         [JsonConverter(typeof(StringEnumConverter))]
         public SendModeEnum SendMode { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public ChangeMessageTypeEnum ChangeAtTo { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public ChangeMessageTypeEnum ChangeMeTo { get; set; }
     }
     public enum HttpMethodEnum
     {
@@ -70,5 +75,13 @@ namespace GreenOnions.CustomHttpApiInvoker
         VoiceUrl = 4,
         VoiceBase64 = 5,
         VoiceStream = 6,
+    }
+
+    public enum ChangeMessageTypeEnum
+    {
+        None = 0,
+        QQId = 1,
+        Nick = 2,
+        ProfilePhotoUrl = 3,
     }
 }

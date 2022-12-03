@@ -84,6 +84,19 @@
             this.txbHelpMessage = new System.Windows.Forms.TextBox();
             this.lblHelpMessageTitle = new System.Windows.Forms.Label();
             this.lblInfo = new System.Windows.Forms.Label();
+            this.lblChangeAtTo = new System.Windows.Forms.Label();
+            this.lblChangeMeTo = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.rdoChangeAtToProfileUrl = new System.Windows.Forms.RadioButton();
+            this.rdoChangeAtToNick = new System.Windows.Forms.RadioButton();
+            this.rdoChangeAtToQQId = new System.Windows.Forms.RadioButton();
+            this.rdoDontChangeAt = new System.Windows.Forms.RadioButton();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.rdoChangeMeToProfileUrl = new System.Windows.Forms.RadioButton();
+            this.rdoChangeMeToNick = new System.Windows.Forms.RadioButton();
+            this.rdoChangeMeToQQId = new System.Windows.Forms.RadioButton();
+            this.rdoDontChangeMe = new System.Windows.Forms.RadioButton();
+            this.lblChangeTypeInfo = new System.Windows.Forms.Label();
             this.pnlContentType.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvContentFormData)).BeginInit();
             this.pnlParse.SuspendLayout();
@@ -91,11 +104,13 @@
             this.pnlSendMode.SuspendLayout();
             this.pnlParseMode.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvHeader)).BeginInit();
+            this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // txbContentRaw
             // 
-            this.txbContentRaw.Location = new System.Drawing.Point(24, 462);
+            this.txbContentRaw.Location = new System.Drawing.Point(25, 559);
             this.txbContentRaw.Multiline = true;
             this.txbContentRaw.Name = "txbContentRaw";
             this.txbContentRaw.Size = new System.Drawing.Size(898, 165);
@@ -106,7 +121,7 @@
             this.pnlContentType.AutoSize = true;
             this.pnlContentType.Controls.Add(this.rdoContentRaw);
             this.pnlContentType.Controls.Add(this.rdoContentFormData);
-            this.pnlContentType.Location = new System.Drawing.Point(182, 425);
+            this.pnlContentType.Location = new System.Drawing.Point(184, 522);
             this.pnlContentType.Name = "pnlContentType";
             this.pnlContentType.Size = new System.Drawing.Size(220, 35);
             this.pnlContentType.TabIndex = 59;
@@ -144,7 +159,7 @@
             this.dgvContentFormData.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dgvContentKeyColumn,
             this.dgvContentValueColumn});
-            this.dgvContentFormData.Location = new System.Drawing.Point(24, 462);
+            this.dgvContentFormData.Location = new System.Drawing.Point(25, 559);
             this.dgvContentFormData.Name = "dgvContentFormData";
             this.dgvContentFormData.RowHeadersVisible = false;
             this.dgvContentFormData.RowHeadersWidth = 62;
@@ -167,7 +182,7 @@
             // 
             // btnInvokeTest
             // 
-            this.btnInvokeTest.Location = new System.Drawing.Point(810, 73);
+            this.btnInvokeTest.Location = new System.Drawing.Point(809, 73);
             this.btnInvokeTest.Name = "btnInvokeTest";
             this.btnInvokeTest.Size = new System.Drawing.Size(113, 32);
             this.btnInvokeTest.TabIndex = 57;
@@ -180,7 +195,7 @@
             this.pnlParse.Controls.Add(this.txbParseExpression);
             this.pnlParse.Controls.Add(this.lblParseExpression);
             this.pnlParse.Enabled = false;
-            this.pnlParse.Location = new System.Drawing.Point(321, 678);
+            this.pnlParse.Location = new System.Drawing.Point(322, 775);
             this.pnlParse.Name = "pnlParse";
             this.pnlParse.Size = new System.Drawing.Size(603, 150);
             this.pnlParse.TabIndex = 56;
@@ -200,9 +215,9 @@
             this.lblParseExpression.Dock = System.Windows.Forms.DockStyle.Top;
             this.lblParseExpression.Location = new System.Drawing.Point(0, 0);
             this.lblParseExpression.Name = "lblParseExpression";
-            this.lblParseExpression.Size = new System.Drawing.Size(608, 24);
+            this.lblParseExpression.Size = new System.Drawing.Size(518, 24);
             this.lblParseExpression.TabIndex = 18;
-            this.lblParseExpression.Text = "解析表达式：（特殊表达式<random>含尖括号，随机取数组中一个元素）";
+            this.lblParseExpression.Text = "解析表达式：（特殊表达式<random>随机取数组中一个元素）";
             // 
             // pnlSubText
             // 
@@ -213,7 +228,7 @@
             this.pnlSubText.Controls.Add(this.txbSubTextFrom);
             this.pnlSubText.Controls.Add(this.txbSubTextTo);
             this.pnlSubText.Controls.Add(this.lblSubTextTo);
-            this.pnlSubText.Location = new System.Drawing.Point(24, 675);
+            this.pnlSubText.Location = new System.Drawing.Point(25, 772);
             this.pnlSubText.Name = "pnlSubText";
             this.pnlSubText.Size = new System.Drawing.Size(291, 150);
             this.pnlSubText.TabIndex = 55;
@@ -289,7 +304,7 @@
             this.pnlSendMode.Controls.Add(this.rdoSendImageByBase64);
             this.pnlSendMode.Controls.Add(this.rdoSendImageByUrl);
             this.pnlSendMode.Controls.Add(this.rdoSendText);
-            this.pnlSendMode.Location = new System.Drawing.Point(148, 832);
+            this.pnlSendMode.Location = new System.Drawing.Point(149, 929);
             this.pnlSendMode.Name = "pnlSendMode";
             this.pnlSendMode.Size = new System.Drawing.Size(778, 35);
             this.pnlSendMode.TabIndex = 54;
@@ -379,7 +394,7 @@
             this.pnlParseMode.Controls.Add(this.rdoParseJson);
             this.pnlParseMode.Controls.Add(this.rdoParseXml);
             this.pnlParseMode.Controls.Add(this.rdoParseXPath);
-            this.pnlParseMode.Location = new System.Drawing.Point(137, 635);
+            this.pnlParseMode.Location = new System.Drawing.Point(138, 733);
             this.pnlParseMode.Name = "pnlParseMode";
             this.pnlParseMode.Size = new System.Drawing.Size(787, 37);
             this.pnlParseMode.TabIndex = 53;
@@ -458,7 +473,7 @@
             // lblSendMode
             // 
             this.lblSendMode.AutoSize = true;
-            this.lblSendMode.Location = new System.Drawing.Point(24, 837);
+            this.lblSendMode.Location = new System.Drawing.Point(25, 935);
             this.lblSendMode.Name = "lblSendMode";
             this.lblSendMode.Size = new System.Drawing.Size(118, 24);
             this.lblSendMode.TabIndex = 52;
@@ -467,7 +482,7 @@
             // lblParseMode
             // 
             this.lblParseMode.AutoSize = true;
-            this.lblParseMode.Location = new System.Drawing.Point(24, 642);
+            this.lblParseMode.Location = new System.Drawing.Point(25, 740);
             this.lblParseMode.Name = "lblParseMode";
             this.lblParseMode.Size = new System.Drawing.Size(100, 24);
             this.lblParseMode.TabIndex = 51;
@@ -496,7 +511,7 @@
             this.dgvHeader.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dgvHeaderKeyColumn,
             this.dgvHeaderValueColumn});
-            this.dgvHeader.Location = new System.Drawing.Point(24, 246);
+            this.dgvHeader.Location = new System.Drawing.Point(25, 343);
             this.dgvHeader.Name = "dgvHeader";
             this.dgvHeader.RowHeadersVisible = false;
             this.dgvHeader.RowHeadersWidth = 62;
@@ -527,7 +542,7 @@
             "UTF-32",
             "ASCII",
             "GBK(GB2312)"});
-            this.cboEncoding.Location = new System.Drawing.Point(434, 185);
+            this.cboEncoding.Location = new System.Drawing.Point(435, 282);
             this.cboEncoding.Name = "cboEncoding";
             this.cboEncoding.Size = new System.Drawing.Size(182, 32);
             this.cboEncoding.TabIndex = 47;
@@ -535,7 +550,7 @@
             // lblEncodeTitle
             // 
             this.lblEncodeTitle.AutoSize = true;
-            this.lblEncodeTitle.Location = new System.Drawing.Point(327, 189);
+            this.lblEncodeTitle.Location = new System.Drawing.Point(328, 287);
             this.lblEncodeTitle.Name = "lblEncodeTitle";
             this.lblEncodeTitle.Size = new System.Drawing.Size(100, 24);
             this.lblEncodeTitle.TabIndex = 46;
@@ -549,7 +564,7 @@
             "application/text",
             "application/json",
             "application/xml"});
-            this.cboMediaType.Location = new System.Drawing.Point(740, 185);
+            this.cboMediaType.Location = new System.Drawing.Point(742, 282);
             this.cboMediaType.Name = "cboMediaType";
             this.cboMediaType.Size = new System.Drawing.Size(182, 32);
             this.cboMediaType.TabIndex = 45;
@@ -557,7 +572,7 @@
             // lblMediaTypeTitle
             // 
             this.lblMediaTypeTitle.AutoSize = true;
-            this.lblMediaTypeTitle.Location = new System.Drawing.Point(632, 189);
+            this.lblMediaTypeTitle.Location = new System.Drawing.Point(633, 287);
             this.lblMediaTypeTitle.Name = "lblMediaTypeTitle";
             this.lblMediaTypeTitle.Size = new System.Drawing.Size(100, 24);
             this.lblMediaTypeTitle.TabIndex = 44;
@@ -566,7 +581,7 @@
             // lblContent
             // 
             this.lblContent.AutoSize = true;
-            this.lblContent.Location = new System.Drawing.Point(24, 431);
+            this.lblContent.Location = new System.Drawing.Point(25, 528);
             this.lblContent.Name = "lblContent";
             this.lblContent.Size = new System.Drawing.Size(153, 24);
             this.lblContent.TabIndex = 43;
@@ -579,7 +594,7 @@
             this.cboHttpMethod.Items.AddRange(new object[] {
             "GET",
             "POST"});
-            this.cboHttpMethod.Location = new System.Drawing.Point(127, 185);
+            this.cboHttpMethod.Location = new System.Drawing.Point(129, 282);
             this.cboHttpMethod.Name = "cboHttpMethod";
             this.cboHttpMethod.Size = new System.Drawing.Size(182, 32);
             this.cboHttpMethod.TabIndex = 42;
@@ -587,7 +602,7 @@
             // lblHeader
             // 
             this.lblHeader.AutoSize = true;
-            this.lblHeader.Location = new System.Drawing.Point(24, 220);
+            this.lblHeader.Location = new System.Drawing.Point(25, 318);
             this.lblHeader.Name = "lblHeader";
             this.lblHeader.Size = new System.Drawing.Size(91, 24);
             this.lblHeader.TabIndex = 41;
@@ -596,7 +611,7 @@
             // lblHttpMethodTitle
             // 
             this.lblHttpMethodTitle.AutoSize = true;
-            this.lblHttpMethodTitle.Location = new System.Drawing.Point(24, 189);
+            this.lblHttpMethodTitle.Location = new System.Drawing.Point(25, 287);
             this.lblHttpMethodTitle.Name = "lblHttpMethodTitle";
             this.lblHttpMethodTitle.Size = new System.Drawing.Size(100, 24);
             this.lblHttpMethodTitle.TabIndex = 40;
@@ -653,17 +668,169 @@
             // lblInfo
             // 
             this.lblInfo.AutoSize = true;
-            this.lblInfo.Location = new System.Drawing.Point(17, 10);
+            this.lblInfo.Location = new System.Drawing.Point(38, 9);
             this.lblInfo.Name = "lblInfo";
             this.lblInfo.Size = new System.Drawing.Size(873, 24);
             this.lblInfo.TabIndex = 65;
             this.lblInfo.Text = "您可以在命令中添加\"(?<参数>)\"正则表达式提取子串，并在地址地址或参数栏中添加<参数>来进行带参调用";
             // 
+            // lblChangeAtTo
+            // 
+            this.lblChangeAtTo.AutoSize = true;
+            this.lblChangeAtTo.Location = new System.Drawing.Point(25, 196);
+            this.lblChangeAtTo.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.lblChangeAtTo.Name = "lblChangeAtTo";
+            this.lblChangeAtTo.Size = new System.Drawing.Size(137, 24);
+            this.lblChangeAtTo.TabIndex = 66;
+            this.lblChangeAtTo.Text = "转换@消息为：";
+            // 
+            // lblChangeMeTo
+            // 
+            this.lblChangeMeTo.AutoSize = true;
+            this.lblChangeMeTo.Location = new System.Drawing.Point(25, 244);
+            this.lblChangeMeTo.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.lblChangeMeTo.Name = "lblChangeMeTo";
+            this.lblChangeMeTo.Size = new System.Drawing.Size(132, 24);
+            this.lblChangeMeTo.TabIndex = 67;
+            this.lblChangeMeTo.Text = "转换“我”字为：";
+            // 
+            // panel1
+            // 
+            this.panel1.AutoSize = true;
+            this.panel1.Controls.Add(this.rdoChangeAtToProfileUrl);
+            this.panel1.Controls.Add(this.rdoChangeAtToNick);
+            this.panel1.Controls.Add(this.rdoChangeAtToQQId);
+            this.panel1.Controls.Add(this.rdoDontChangeAt);
+            this.panel1.Location = new System.Drawing.Point(179, 189);
+            this.panel1.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(526, 38);
+            this.panel1.TabIndex = 68;
+            // 
+            // rdoChangeAtToProfileUrl
+            // 
+            this.rdoChangeAtToProfileUrl.AutoSize = true;
+            this.rdoChangeAtToProfileUrl.Location = new System.Drawing.Point(340, 4);
+            this.rdoChangeAtToProfileUrl.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.rdoChangeAtToProfileUrl.Name = "rdoChangeAtToProfileUrl";
+            this.rdoChangeAtToProfileUrl.Size = new System.Drawing.Size(107, 28);
+            this.rdoChangeAtToProfileUrl.TabIndex = 4;
+            this.rdoChangeAtToProfileUrl.Text = "头像地址";
+            this.rdoChangeAtToProfileUrl.UseVisualStyleBackColor = true;
+            // 
+            // rdoChangeAtToNick
+            // 
+            this.rdoChangeAtToNick.AutoSize = true;
+            this.rdoChangeAtToNick.Location = new System.Drawing.Point(197, 4);
+            this.rdoChangeAtToNick.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.rdoChangeAtToNick.Name = "rdoChangeAtToNick";
+            this.rdoChangeAtToNick.Size = new System.Drawing.Size(133, 28);
+            this.rdoChangeAtToNick.TabIndex = 3;
+            this.rdoChangeAtToNick.Text = "群名片/昵称";
+            this.rdoChangeAtToNick.UseVisualStyleBackColor = true;
+            // 
+            // rdoChangeAtToQQId
+            // 
+            this.rdoChangeAtToQQId.AutoSize = true;
+            this.rdoChangeAtToQQId.Location = new System.Drawing.Point(104, 4);
+            this.rdoChangeAtToQQId.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.rdoChangeAtToQQId.Name = "rdoChangeAtToQQId";
+            this.rdoChangeAtToQQId.Size = new System.Drawing.Size(83, 28);
+            this.rdoChangeAtToQQId.TabIndex = 2;
+            this.rdoChangeAtToQQId.Text = "QQ号";
+            this.rdoChangeAtToQQId.UseVisualStyleBackColor = true;
+            // 
+            // rdoDontChangeAt
+            // 
+            this.rdoDontChangeAt.AutoSize = true;
+            this.rdoDontChangeAt.Checked = true;
+            this.rdoDontChangeAt.Location = new System.Drawing.Point(5, 4);
+            this.rdoDontChangeAt.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.rdoDontChangeAt.Name = "rdoDontChangeAt";
+            this.rdoDontChangeAt.Size = new System.Drawing.Size(89, 28);
+            this.rdoDontChangeAt.TabIndex = 0;
+            this.rdoDontChangeAt.TabStop = true;
+            this.rdoDontChangeAt.Text = "不处理";
+            this.rdoDontChangeAt.UseVisualStyleBackColor = true;
+            // 
+            // panel2
+            // 
+            this.panel2.AutoSize = true;
+            this.panel2.Controls.Add(this.rdoChangeMeToProfileUrl);
+            this.panel2.Controls.Add(this.rdoChangeMeToNick);
+            this.panel2.Controls.Add(this.rdoChangeMeToQQId);
+            this.panel2.Controls.Add(this.rdoDontChangeMe);
+            this.panel2.Location = new System.Drawing.Point(179, 237);
+            this.panel2.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(526, 38);
+            this.panel2.TabIndex = 69;
+            // 
+            // rdoChangeMeToProfileUrl
+            // 
+            this.rdoChangeMeToProfileUrl.AutoSize = true;
+            this.rdoChangeMeToProfileUrl.Location = new System.Drawing.Point(340, 5);
+            this.rdoChangeMeToProfileUrl.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.rdoChangeMeToProfileUrl.Name = "rdoChangeMeToProfileUrl";
+            this.rdoChangeMeToProfileUrl.Size = new System.Drawing.Size(107, 28);
+            this.rdoChangeMeToProfileUrl.TabIndex = 4;
+            this.rdoChangeMeToProfileUrl.Text = "头像地址";
+            this.rdoChangeMeToProfileUrl.UseVisualStyleBackColor = true;
+            // 
+            // rdoChangeMeToNick
+            // 
+            this.rdoChangeMeToNick.AutoSize = true;
+            this.rdoChangeMeToNick.Location = new System.Drawing.Point(197, 5);
+            this.rdoChangeMeToNick.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.rdoChangeMeToNick.Name = "rdoChangeMeToNick";
+            this.rdoChangeMeToNick.Size = new System.Drawing.Size(133, 28);
+            this.rdoChangeMeToNick.TabIndex = 3;
+            this.rdoChangeMeToNick.Text = "群名片/昵称";
+            this.rdoChangeMeToNick.UseVisualStyleBackColor = true;
+            // 
+            // rdoChangeMeToQQId
+            // 
+            this.rdoChangeMeToQQId.AutoSize = true;
+            this.rdoChangeMeToQQId.Location = new System.Drawing.Point(104, 4);
+            this.rdoChangeMeToQQId.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.rdoChangeMeToQQId.Name = "rdoChangeMeToQQId";
+            this.rdoChangeMeToQQId.Size = new System.Drawing.Size(83, 28);
+            this.rdoChangeMeToQQId.TabIndex = 2;
+            this.rdoChangeMeToQQId.Text = "QQ号";
+            this.rdoChangeMeToQQId.UseVisualStyleBackColor = true;
+            // 
+            // rdoDontChangeMe
+            // 
+            this.rdoDontChangeMe.AutoSize = true;
+            this.rdoDontChangeMe.Checked = true;
+            this.rdoDontChangeMe.Location = new System.Drawing.Point(5, 4);
+            this.rdoDontChangeMe.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.rdoDontChangeMe.Name = "rdoDontChangeMe";
+            this.rdoDontChangeMe.Size = new System.Drawing.Size(89, 28);
+            this.rdoDontChangeMe.TabIndex = 0;
+            this.rdoDontChangeMe.TabStop = true;
+            this.rdoDontChangeMe.Text = "不转换";
+            this.rdoDontChangeMe.UseVisualStyleBackColor = true;
+            // 
+            // lblChangeTypeInfo
+            // 
+            this.lblChangeTypeInfo.AutoSize = true;
+            this.lblChangeTypeInfo.Location = new System.Drawing.Point(720, 196);
+            this.lblChangeTypeInfo.Name = "lblChangeTypeInfo";
+            this.lblChangeTypeInfo.Size = new System.Drawing.Size(191, 72);
+            this.lblChangeTypeInfo.TabIndex = 70;
+            this.lblChangeTypeInfo.Text = "仅限命令不包含正则且\r\n拼在命令之后的字或@\r\n消息, 只拼接在URL后";
+            // 
             // FrmEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(949, 877);
+            this.ClientSize = new System.Drawing.Size(949, 971);
+            this.Controls.Add(this.lblChangeTypeInfo);
+            this.Controls.Add(this.panel2);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.lblChangeMeTo);
+            this.Controls.Add(this.lblChangeAtTo);
             this.Controls.Add(this.lblInfo);
             this.Controls.Add(this.txbHelpMessage);
             this.Controls.Add(this.lblHelpMessageTitle);
@@ -709,6 +876,10 @@
             this.pnlParseMode.ResumeLayout(false);
             this.pnlParseMode.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvHeader)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -772,5 +943,18 @@
         private TextBox txbHelpMessage;
         private Label lblHelpMessageTitle;
         private Label lblInfo;
+        private Label lblChangeAtTo;
+        private Label lblChangeMeTo;
+        private Panel panel1;
+        private RadioButton rdoChangeAtToProfileUrl;
+        private RadioButton rdoChangeAtToNick;
+        private RadioButton rdoChangeAtToQQId;
+        private RadioButton rdoDontChangeAt;
+        private Panel panel2;
+        private RadioButton rdoChangeMeToProfileUrl;
+        private RadioButton rdoChangeMeToNick;
+        private RadioButton rdoChangeMeToQQId;
+        private RadioButton rdoDontChangeMe;
+        private Label lblChangeTypeInfo;
     }
 }

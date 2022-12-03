@@ -105,6 +105,36 @@ namespace GreenOnions.CustomHttpApiInvoker
                         rdoSendVoiceStream.Checked = true;
                         break;
                 }
+                switch (Config.ChangeAtTo)
+                {
+                    case ChangeMessageTypeEnum.None:
+                        rdoDontChangeAt.Checked = true;
+                        break;
+                    case ChangeMessageTypeEnum.QQId:
+                        rdoChangeAtToQQId.Checked = true;
+                        break;
+                    case ChangeMessageTypeEnum.Nick:
+                        rdoChangeAtToNick.Checked = true;
+                        break;
+                    case ChangeMessageTypeEnum.ProfilePhotoUrl:
+                        rdoChangeAtToProfileUrl.Checked = true;
+                        break;
+                }
+                switch (Config.ChangeMeTo)
+                {
+                    case ChangeMessageTypeEnum.None:
+                        rdoDontChangeMe.Checked = true;
+                        break;
+                    case ChangeMessageTypeEnum.QQId:
+                        rdoChangeMeToQQId.Checked = true;
+                        break;
+                    case ChangeMessageTypeEnum.Nick:
+                        rdoChangeMeToNick.Checked = true;
+                        break;
+                    case ChangeMessageTypeEnum.ProfilePhotoUrl:
+                        rdoChangeMeToProfileUrl.Checked = true;
+                        break;
+                }
             }
         }
 
@@ -458,6 +488,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                 }
             }
 
+            #region -- 屎山if --
             if (rdoParseText.Checked)
                 Config.ParseMode = ParseModeEnum.Text;
             else if (rdoParseJson.Checked)
@@ -478,33 +509,38 @@ namespace GreenOnions.CustomHttpApiInvoker
             Config.SubTextWithSuffix = chkSubTextWithSuffix.Checked;
 
             if (rdoSendText.Checked)
-            {
                 Config.SendMode = SendModeEnum.Text;
-            }
             else if (rdoSendImageByUrl.Checked)
-            {
                 Config.SendMode = SendModeEnum.ImageUrl;
-            }
             else if (rdoSendImageByBase64.Checked)
-            {
                 Config.SendMode = SendModeEnum.ImageBase64;
-            }
             else if (rdoSendVoiceByUrl.Checked)
-            {
                 Config.SendMode = SendModeEnum.VoiceUrl;
-            }
             else if (rdoSendVoiceByBase64.Checked)
-            {
                 Config.SendMode = SendModeEnum.VoiceBase64;
-            }
             else if (rdoSendImageStream.Checked)
-            {
                 Config.SendMode = SendModeEnum.ImageStream;
-            }
             else if (rdoSendVoiceStream.Checked)
-            {
                 Config.SendMode = SendModeEnum.VoiceStream;
-            }
+
+            if (rdoDontChangeAt.Checked)
+                Config.ChangeAtTo = ChangeMessageTypeEnum.None;
+            else if (rdoChangeAtToQQId.Checked)
+                Config.ChangeAtTo = ChangeMessageTypeEnum.QQId;
+            else if (rdoChangeAtToNick.Checked)
+                Config.ChangeAtTo = ChangeMessageTypeEnum.Nick;
+            else if (rdoChangeAtToProfileUrl.Checked)
+                Config.ChangeAtTo = ChangeMessageTypeEnum.ProfilePhotoUrl;
+
+            if (rdoDontChangeMe.Checked)
+                Config.ChangeMeTo = ChangeMessageTypeEnum.None;
+            else if (rdoChangeMeToQQId.Checked)
+                Config.ChangeMeTo = ChangeMessageTypeEnum.QQId;
+            else if (rdoChangeMeToNick.Checked)
+                Config.ChangeMeTo = ChangeMessageTypeEnum.Nick;
+            else if (rdoChangeMeToProfileUrl.Checked)
+                Config.ChangeMeTo = ChangeMessageTypeEnum.ProfilePhotoUrl;
+            #endregion -- 屎山if --
         }
     }
 }

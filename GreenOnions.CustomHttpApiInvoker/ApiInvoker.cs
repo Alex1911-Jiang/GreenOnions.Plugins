@@ -60,7 +60,7 @@ namespace GreenOnions.CustomHttpApiInvoker
         {
             if (msgs.FirstOrDefault() is GreenOnionsTextMessage msg)
             {
-                if (string.Equals(_botApi!.ReplaceGreenOnionsStringTags(_config.HelpCmd), msg.Text, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(_botApi!.ReplaceGreenOnionsStringTags(_config.HelpCmd), msg.Text, StringComparison.OrdinalIgnoreCase))  //列出所有命令
                 {
                     StringBuilder helpMessage = new StringBuilder();
                     for (int i = 0; i < _config.ApiConfig.Count; i++)
@@ -72,12 +72,12 @@ namespace GreenOnions.CustomHttpApiInvoker
                 }
                 else
                 {
-                    for (int i = 0; i < _config.ApiConfig.Count; i++)
+                    for (int i = 0; i < _config.ApiConfig.Count; i++)  //每个自定义命令
                     {
                         if (!string.IsNullOrEmpty(_config.ApiConfig[i].Cmd))
                         {
                             Task<GreenOnionsMessages?>? task = null;
-                            if (_regexs.ContainsKey(_config.ApiConfig[i]))
+                            if (_regexs.ContainsKey(_config.ApiConfig[i]))  //含有正则，可以提取参数
                             {
                                 if (_regexs[_config.ApiConfig[i]].IsMatch(msg.Text))
                                 {
@@ -85,12 +85,50 @@ namespace GreenOnions.CustomHttpApiInvoker
                                     string param = string.Empty;
                                     if (match.Groups.Count > 1)
                                         param = match.Groups[1].Value;
-                                    task = InvokeApi(_config.ApiConfig[i], param);
+                                    task = InvokeApi(_config.ApiConfig[i], param, string.Empty);
                                 }
                             }
-                            else if (string.Equals(_botApi.ReplaceGreenOnionsStringTags(_config.ApiConfig[i].Cmd!), msg.Text, StringComparison.OrdinalIgnoreCase))
+                            else
                             {
-                                task = InvokeApi(_config.ApiConfig[i]);
+                                string cmd = _botApi.ReplaceGreenOnionsStringTags(_config.ApiConfig[i].Cmd!);
+                                if (string.Equals(cmd, _config.ApiConfig[i].Cmd!))  //完全匹配
+                                {
+                                    if (_config.ApiConfig[i].ChangeAtTo != ChangeMessageTypeEnum.None)  //需要替换@消息
+                                    {
+                                        if (msgs.Count > 1 && msgs[1] is GreenOnionsAtMessage atMsg)  //文字消息后为@消息
+                                        {
+                                            string appendValue = _config.ApiConfig[i].ChangeAtTo switch
+                                            {
+                                                ChangeMessageTypeEnum.QQId => atMsg.AtId.ToString(),
+                                                ChangeMessageTypeEnum.Nick => atMsg.NickName,
+                                                ChangeMessageTypeEnum.ProfilePhotoUrl => $@"http://q2.qlogo.cn/headimg_dl?dst_uin={atMsg.AtId}&spec=100",
+                                                _ => string.Empty,
+                                            } ?? string.Empty;
+                                            task = InvokeApi(_config.ApiConfig[i], string.Empty, appendValue);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        task = InvokeApi(_config.ApiConfig[i], string.Empty, string.Empty);
+                                    }
+                                }
+                                else if (msg.Text.StartsWith(cmd, StringComparison.OrdinalIgnoreCase))  //前缀匹配
+                                {
+                                    if (_config.ApiConfig[i].ChangeMeTo != ChangeMessageTypeEnum.None)  //需要替换我字
+                                    {
+                                        if (msg.Text.EndsWith("我"))
+                                        {
+                                            string appendValue = _config.ApiConfig[i].ChangeMeTo switch
+                                            {
+                                                ChangeMessageTypeEnum.QQId => msgs.SenderId.ToString(),
+                                                ChangeMessageTypeEnum.Nick => msgs.SenderName,
+                                                ChangeMessageTypeEnum.ProfilePhotoUrl => $@"http://q2.qlogo.cn/headimg_dl?dst_uin={msgs.SenderId}&spec=100",
+                                                _ => string.Empty,
+                                            } ?? string.Empty;
+                                            task = InvokeApi(_config.ApiConfig[i], "", appendValue);
+                                        }
+                                    }
+                                }
                             }
                             if (task != null)
                             {
@@ -100,7 +138,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                                         Response(callback.Result);
                                 });
                                 return true;
-                            } 
+                            }
                         }
                     }
                 }
@@ -108,7 +146,7 @@ namespace GreenOnions.CustomHttpApiInvoker
             return false;
         }
 
-        private async Task<GreenOnionsMessages?> InvokeApi(HttpApiConfig api, string param = "")
+        private async Task<GreenOnionsMessages?> InvokeApi(HttpApiConfig api, string param, string appendUrlValue)
         {
             GreenOnionsMessages msg = new GreenOnionsMessages() { Reply = false };
             if (string.IsNullOrEmpty(api.Url))
@@ -122,7 +160,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                 {
                     HttpMethod httpMethod = api.HttpMethod == HttpMethodEnum.GET ? HttpMethod.Get : HttpMethod.Post;
 
-                    using (HttpRequestMessage request = new HttpRequestMessage(httpMethod, api.Url.Replace("<参数>", param)))
+                    using (HttpRequestMessage request = new HttpRequestMessage(httpMethod, api.Url.Replace("<参数>", param) + appendUrlValue))
                     {
                         if (api.Headers != null)
                         {
