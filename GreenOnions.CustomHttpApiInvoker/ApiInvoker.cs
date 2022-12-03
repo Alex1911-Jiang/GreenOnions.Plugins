@@ -91,7 +91,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                             else
                             {
                                 string cmd = _botApi.ReplaceGreenOnionsStringTags(_config.ApiConfig[i].Cmd!);
-                                if (string.Equals(cmd, _config.ApiConfig[i].Cmd!))  //完全匹配
+                                if (string.Equals(msg.Text, cmd, StringComparison.OrdinalIgnoreCase))  //完全匹配
                                 {
                                     if (_config.ApiConfig[i].ChangeAtTo != ChangeMessageTypeEnum.None)  //需要替换@消息
                                     {
