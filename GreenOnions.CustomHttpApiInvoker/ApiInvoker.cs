@@ -29,6 +29,12 @@ namespace GreenOnions.CustomHttpApiInvoker
         public void OnConnected(long selfId, IGreenOnionsApi api)
         {
             _botApi = api;
+            _regexs.Clear();
+            foreach (var item in _config.ApiConfig)
+            {
+                if (item.Cmd!.Contains("(?<参数>"))
+                    _regexs.Add(item, new Regex(_botApi.ReplaceGreenOnionsStringTags(item.Cmd)));
+            }
         }
 
         public void OnDisconnected()
@@ -46,12 +52,6 @@ namespace GreenOnions.CustomHttpApiInvoker
                 if (!string.IsNullOrWhiteSpace(strConfigJson))
                 {
                     _config = JsonConvert.DeserializeObject<MainConfig>(strConfigJson)!;
-                    _regexs.Clear();
-                    foreach (var item in _config.ApiConfig)
-                    {
-                        if (item.Cmd!.Contains("(?<参数>"))
-                            _regexs.Add(item, new Regex(item.Cmd));
-                    }
                 }
             }
         }
@@ -383,11 +383,14 @@ namespace GreenOnions.CustomHttpApiInvoker
         public bool WindowSetting()
         {
             new FrmSettings(_path!, _config).ShowDialog();
-            _regexs.Clear();
-            foreach (var item in _config.ApiConfig)
+            if (_botApi != null)
             {
-                if (item.Cmd!.Contains("(?<参数>"))
-                    _regexs.Add(item, new Regex(item.Cmd));
+                _regexs.Clear();
+                foreach (var item in _config.ApiConfig)
+                {
+                    if (item.Cmd!.Contains("(?<参数>"))
+                        _regexs.Add(item, new Regex(_botApi.ReplaceGreenOnionsStringTags(item.Cmd)));
+                }
             }
             string configFileName = Path.Combine(_path!, "config.json");
             string jsonConfig = JsonConvert.SerializeObject(_config);
