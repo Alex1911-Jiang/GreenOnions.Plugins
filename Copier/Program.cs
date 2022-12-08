@@ -31,20 +31,11 @@
 
         private static void CopyFiles(string from, string to)
         {
-            string[] itemDirs =  Directory.GetDirectories(from);
-            for (int i = 0; i < itemDirs.Length; i++)
-            {
-                string nameWithOutPath = Path.GetFileNameWithoutExtension(itemDirs[i]);
-                CopyFiles(itemDirs[i], Path.Combine(to, nameWithOutPath));
-            }
-            string[] itemFiles = Directory.GetFiles(from);
-            for (int i = 0; i < itemFiles.Length; i++)
-            {
-                string fileName = Path.GetFileName(itemFiles[i]);
-                if (!Directory.Exists(to))
-                    Directory.CreateDirectory(to);
-                File.Copy(itemFiles[i], Path.Combine(to, fileName), true);
-            }
+            Directory.CreateDirectory(to);
+            foreach (var item in Directory.GetDirectories(from))
+                CopyFiles(item, Path.Combine(to, item.Substring(item.LastIndexOf('\\') + 1)));
+            foreach (var item in Directory.GetFiles(from))
+                File.Copy(item, Path.Combine(to, Path.GetFileName(item)), true);
         }
     }
 }
