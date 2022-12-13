@@ -1,5 +1,7 @@
-﻿using System.Text.Json;
+﻿using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Text.Unicode;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
 
@@ -146,7 +148,7 @@ namespace GreenOnions.ReplierWindows
         public bool WindowSetting()
         {
             new FrmSetting(_commandTable, _pluginPath!).ShowDialog();
-            string jsonValue = JsonSerializer.Serialize(_commandTable);
+            string jsonValue = JsonSerializer.Serialize(_commandTable, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
             File.WriteAllText(Path.Combine(_pluginPath!, "config.json"), jsonValue);
             return true;
         }

@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 
 namespace GreenOnions.TicTacToe_Windows
 {
@@ -53,7 +55,7 @@ namespace GreenOnions.TicTacToe_Windows
                     _config.TicTacToeMoveMode |= (TicTacToeMoveMode)Convert.ToInt32(moveMode.Tag);
             }
 
-            string strConfig = JsonSerializer.Serialize(_config);
+            string strConfig = JsonSerializer.Serialize(_config, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
             File.WriteAllText(_configFileName, strConfig);
 
             base.OnClosing(e);

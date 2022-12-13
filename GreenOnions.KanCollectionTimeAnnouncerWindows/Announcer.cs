@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
 
@@ -206,7 +208,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
             FrmSettings frmSettings = new FrmSettings(_settings!, _moeGirlHelper!);
             frmSettings.ShowDialog();
             string configFileName = Path.Combine(_pluginPath!, "config.json");
-            File.WriteAllText(configFileName, JsonSerializer.Serialize(_settings));
+            File.WriteAllText(configFileName, JsonSerializer.Serialize(_settings, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping }));
             RestartWorker();
             return true;
         }
