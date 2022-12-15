@@ -500,6 +500,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                 {
                     if (Config.Headers == null)
                         Config.Headers = new Dictionary<string, string>();
+                    Config.Headers.Clear();
                     string? headerValue = dgvHeader.Rows[i].Cells[1].Value?.ToString();
                     Config.Headers.Add(headerKey, headerValue ?? string.Empty);
                 }
@@ -516,6 +517,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                 {
                     if (Config.FormDataContent == null)
                         Config.FormDataContent = new Dictionary<string, string>();
+                    Config.FormDataContent.Clear();
                     string? contentValue = dgvContentFormData.Rows[i].Cells[1].Value?.ToString();
                     Config.FormDataContent.Add(conentKey, contentValue ?? string.Empty);
                 }
