@@ -215,9 +215,9 @@
             this.lblParseExpression.Dock = System.Windows.Forms.DockStyle.Top;
             this.lblParseExpression.Location = new System.Drawing.Point(0, 0);
             this.lblParseExpression.Name = "lblParseExpression";
-            this.lblParseExpression.Size = new System.Drawing.Size(518, 24);
+            this.lblParseExpression.Size = new System.Drawing.Size(591, 24);
             this.lblParseExpression.TabIndex = 18;
-            this.lblParseExpression.Text = "解析表达式：（特殊表达式<random>随机取数组中一个元素）";
+            this.lblParseExpression.Text = "解析表达式：（Json解析特殊表达式<random>随机取数组中一个元素）";
             // 
             // pnlSubText
             // 
@@ -461,7 +461,6 @@
             // rdoParseXPath
             // 
             this.rdoParseXPath.AutoSize = true;
-            this.rdoParseXPath.Enabled = false;
             this.rdoParseXPath.Location = new System.Drawing.Point(259, 4);
             this.rdoParseXPath.Name = "rdoParseXPath";
             this.rdoParseXPath.Size = new System.Drawing.Size(86, 28);
@@ -492,7 +491,7 @@
             // 
             this.txbCmd.Location = new System.Drawing.Point(129, 73);
             this.txbCmd.Name = "txbCmd";
-            this.txbCmd.Size = new System.Drawing.Size(673, 30);
+            this.txbCmd.Size = new System.Drawing.Size(674, 30);
             this.txbCmd.TabIndex = 50;
             // 
             // lblCmdTitle

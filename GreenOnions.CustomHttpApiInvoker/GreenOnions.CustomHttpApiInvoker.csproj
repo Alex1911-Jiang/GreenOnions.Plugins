@@ -14,6 +14,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="bmajlwln.izc~" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 

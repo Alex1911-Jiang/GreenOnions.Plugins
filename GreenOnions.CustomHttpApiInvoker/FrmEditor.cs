@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Text;
+using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -76,7 +77,8 @@ namespace GreenOnions.CustomHttpApiInvoker
                         rdoParseStream.Checked = true;
                         break;
                 }
-                txbParseExpression.Text = Config.ParseExpression;
+                if (Config.ParseExpression != null)
+                    txbParseExpression.Text = string.Join('\n', Config.ParseExpression);
                 txbSubTextFrom.Text = Config.SubTextFrom;
                 txbSubTextTo.Text = Config.SubTextTo;
                 chkSubTextWithPrefix.Checked = Config.SubTextWithPrefix;
@@ -147,11 +149,12 @@ namespace GreenOnions.CustomHttpApiInvoker
             }
             try
             {
-                using (HttpClient client = new HttpClient())
+                HttpMethod httpMethod = cboHttpMethod.Text.Equals("GET", StringComparison.OrdinalIgnoreCase) ? HttpMethod.Get : HttpMethod.Post;
+                using (HttpClient client = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
                 {
-                    HttpMethod httpMethod = cboHttpMethod.Text.Equals("GET", StringComparison.OrdinalIgnoreCase) ? HttpMethod.Get : HttpMethod.Post;
-
-                    using (HttpRequestMessage request = new HttpRequestMessage(httpMethod, txbUrl.Text))
+                    string url = txbUrl.Text;
+                IL_Redirect:;
+                    using (HttpRequestMessage request = new HttpRequestMessage(httpMethod, url))
                     {
                         //Header
                         for (int i = 0; i < dgvHeader.Rows.Count; i++)
@@ -194,8 +197,6 @@ namespace GreenOnions.CustomHttpApiInvoker
                             }
                             request.Content = form;
                         }
-
-                        string? requestUrl = request.RequestUri?.ToString();
                         HttpResponseMessage response;
                         try
                         {
@@ -206,10 +207,16 @@ namespace GreenOnions.CustomHttpApiInvoker
                             MessageBox.Show("发起请求异常。" + ex.Message, "请求失败");
                             return;
                         }
+                        string requestUrl = response.RequestMessage?.RequestUri!.ToString()!;
                         if ((int)response.StatusCode >= 400)
                         {
-                            MessageBox.Show($"{(int)response.StatusCode} {response.ReasonPhrase}{(response.RequestMessage?.RequestUri?.ToString() != requestUrl ? "\r\n发生链接跳转，请尝试使用POST进行请求。" : "")}", $"请求错误");
+                            MessageBox.Show($"{(int)response.StatusCode} {response.ReasonPhrase}{(requestUrl != url ? "\n发生链接跳转，请尝试使用POST进行请求。" : "")}", $"请求错误");
                             return;
+                        }
+                        if (requestUrl != url)
+                        {
+                            url = requestUrl;
+                            goto IL_Redirect;
                         }
 
                         //请求成功
@@ -238,7 +245,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                                         endIndex += txbSubTextTo.Text.Length;
                                 }
 
-                                valueText = text.Substring(0, endIndex).TrimStart('\n').TrimStart('\r').TrimStart('\n');
+                                valueText = text.Substring(0, endIndex).TrimStart('\n');
                             }
                             else if (rdoParseJson.Checked)
                             {
@@ -247,7 +254,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                                 bool bOpen = false;
                                 StringBuilder indexName = new StringBuilder();
 
-                                string[] expression = txbParseExpression.Text.Split("\r\n");
+                                string[] expression = txbParseExpression.Text.Split("\n");
                                 StringBuilder valueLines = new StringBuilder();
                                 for (int i = 0; i < expression.Length; i++)
                                 {
@@ -290,16 +297,38 @@ namespace GreenOnions.CustomHttpApiInvoker
                                     valueLines.AppendLine(jt.ToString());
                                 }
                                 valueText = valueLines.ToString();
-                                if (valueText.EndsWith("\r\n"))
-                                    valueText = valueText.Substring(0, valueText.Length - "\r\n".Length);
                             }
                             //else if (rdoParseXml.Checked)
                             //{
                             //}
-                            //else if (rdoParseXPath.Checked)
-                            //{
-
-                            //}
+                            else if (rdoParseXPath.Checked)
+                            {
+                                string[] expression = txbParseExpression.Text.Split("\n");
+                                StringBuilder valueLines = new StringBuilder();
+                                for (int i = 0; i < expression.Length; i++)
+                                {
+                                    string html = await response.Content.ReadAsStringAsync();
+                                    HtmlAgilityPack.HtmlDocument docSauceNAO = new HtmlAgilityPack.HtmlDocument();
+                                    docSauceNAO.LoadHtml(html);
+                                    if (expression[i].Contains('.'))
+                                    {
+                                        string[] xPathAndAttr = expression[i].Split('.');
+                                        if (xPathAndAttr.Length > 2)
+                                        {
+                                            MessageBox.Show("表达式格式有误，通过'.'访问标签属性，每行'.'不可超过一个", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                            return;
+                                        }
+                                        HtmlNode itemNode = docSauceNAO.DocumentNode.SelectSingleNode(xPathAndAttr[0]);
+                                        valueLines.AppendLine(itemNode.Attributes[xPathAndAttr[1]].Value);
+                                    }
+                                    else
+                                    {
+                                        HtmlNode itemNode = docSauceNAO.DocumentNode.SelectSingleNode( expression[i]);
+                                        valueLines.AppendLine(itemNode.InnerText);
+                                    }
+                                }
+                                valueText = valueLines.ToString();
+                            }
                             //else if (rdoParseJavaScript.Checked)
                             //{
 
@@ -319,10 +348,14 @@ namespace GreenOnions.CustomHttpApiInvoker
                             {
                                 string respFileName = Path.Combine(_path, "响应.txt");
                                 File.WriteAllText(respFileName, valueText);
-                                MessageBox.Show($"{ex.Message}\r\n响应文已保存在\r\n{respFileName}", $"请求成功，解析失败 {(int)response.StatusCode}");
+                                MessageBox.Show($"{ex.Message}\n响应文已保存在\n{respFileName}", $"请求成功，解析失败 {(int)response.StatusCode}");
                             }
                             return;
                         }
+
+                        if (valueText.EndsWith("\n"))
+                            valueText = valueText.Substring(0, valueText.Length - "\n".Length);
+
                         //解析成功
                         try
                         {
@@ -409,7 +442,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show($"{ex.Message}\r\n{(int)response.StatusCode} {response.ReasonPhrase}", "解析成功，转换失败");
+                            MessageBox.Show($"{ex.Message}\n{(int)response.StatusCode} {response.ReasonPhrase}", "解析成功，转换失败");
                             return;
                         }
                     }
@@ -502,7 +535,7 @@ namespace GreenOnions.CustomHttpApiInvoker
             else if (rdoParseStream.Checked)
                 Config.ParseMode = ParseModeEnum.Stream;
 
-            Config.ParseExpression = txbParseExpression.Text;
+            Config.ParseExpression = txbParseExpression.Text.Split('\n');
             Config.SubTextFrom = txbSubTextFrom.Text;
             Config.SubTextTo = txbSubTextTo.Text;
             Config.SubTextWithPrefix = chkSubTextWithPrefix.Checked;

@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
+using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -248,7 +249,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                             else if (api.ParseMode == ParseModeEnum.Json)
                             {
                                 string json = await response.Content.ReadAsStringAsync();
-                                if (string.IsNullOrEmpty(api.ParseExpression))
+                                if (api.ParseExpression == null || api.ParseExpression.Length == 0)
                                 {
                                     valueText = json;
                                 }
@@ -258,16 +259,15 @@ namespace GreenOnions.CustomHttpApiInvoker
                                     bool bOpen = false;
                                     StringBuilder indexName = new StringBuilder();
 
-                                    string[] expression = api.ParseExpression.Split("\r\n");
                                     StringBuilder valueLines = new StringBuilder();
-                                    for (int i = 0; i < expression.Length; i++)
+                                    for (int i = 0; i < api.ParseExpression.Length; i++)
                                     {
                                         JToken jt = topJt;
-                                        for (int j = 0; j < expression[i].Length; j++)
+                                        for (int j = 0; j < api.ParseExpression[i].Length; j++)
                                         {
                                             if (bOpen)
                                             {
-                                                if (expression[i][j] == ']')
+                                                if (api.ParseExpression[i][j] == ']')
                                                 {
                                                     bOpen = false;
                                                     if (string.Equals(indexName.ToString(), "<random>", StringComparison.OrdinalIgnoreCase))
@@ -283,15 +283,15 @@ namespace GreenOnions.CustomHttpApiInvoker
                                                     indexName.Clear();
                                                     continue;
                                                 }
-                                                if (expression[i][j] == '\'' || expression[i][j] == '\"')
+                                                if (api.ParseExpression[i][j] == '\'' || api.ParseExpression[i][j] == '\"')
                                                 {
                                                     continue;
                                                 }
-                                                indexName.Append(expression[i][j]);
+                                                indexName.Append(api.ParseExpression[i][j]);
                                             }
                                             else
                                             {
-                                                if (expression[i][j] == '[')
+                                                if (api.ParseExpression[i][j] == '[')
                                                 {
                                                     bOpen = true;
                                                     continue;
@@ -303,6 +303,35 @@ namespace GreenOnions.CustomHttpApiInvoker
                                     valueText = valueLines.ToString();
                                     if (valueText.EndsWith("\r\n"))
                                         valueText = valueText.Substring(0, valueText.Length - "\r\n".Length);
+                                }
+                            }
+                            else if (api.ParseMode == ParseModeEnum.XPath)
+                            {
+                                string html = await response.Content.ReadAsStringAsync();
+                                if (api.ParseExpression == null || api.ParseExpression.Length == 0)
+                                {
+                                    valueText = html;
+                                }
+                                else
+                                {
+                                    HtmlAgilityPack.HtmlDocument docSauceNAO = new HtmlAgilityPack.HtmlDocument();
+                                    docSauceNAO.LoadHtml(html);
+                                    StringBuilder valueLines = new StringBuilder();
+                                    for (int i = 0; i < api.ParseExpression.Length; i++)
+                                    {
+                                        if (api.ParseExpression[i].Contains('.'))
+                                        {
+                                            string[] xPathAndAttr = api.ParseExpression[i].Split('.');
+                                            HtmlNode itemNode = docSauceNAO.DocumentNode.SelectSingleNode(xPathAndAttr[0]);
+                                            valueLines.AppendLine(itemNode.Attributes[xPathAndAttr[1]].Value);
+                                        }
+                                        else
+                                        {
+                                            HtmlNode itemNode = docSauceNAO.DocumentNode.SelectSingleNode(api.ParseExpression[i]);
+                                            valueLines.AppendLine(itemNode.InnerText);
+                                        }
+                                    }
+                                    valueText = valueLines.ToString();
                                 }
                             }
                             else if (api.ParseMode == ParseModeEnum.Stream)

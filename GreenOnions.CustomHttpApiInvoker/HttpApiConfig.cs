@@ -23,7 +23,7 @@ namespace GreenOnions.CustomHttpApiInvoker
 
         [JsonConverter(typeof(StringEnumConverter))]
         public ParseModeEnum ParseMode { get; set; }
-        public string? ParseExpression { get; set; }
+        public string[]? ParseExpression { get; set; }
         public string? SubTextFrom { get; set; }
         public string? SubTextTo { get; set; }
         public bool SubTextWithPrefix { get; set; }
