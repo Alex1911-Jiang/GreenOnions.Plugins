@@ -1,5 +1,7 @@
-﻿namespace Copier
-{ 
+﻿using System.IO.Compression;
+
+namespace Copier
+{
     public static class Program
     {
         public static void Main()
@@ -18,13 +20,17 @@
             if (Directory.Exists(itemDebugPath))
             {
                 string? projectName = Path.GetFileName(firstDir[i]);
-                string? buildPath = Directory.GetDirectories(itemDebugPath).FirstOrDefault();
+                string? buildPath = Directory.GetDirectories(itemDebugPath).OrderByDescending(p => p.Length).FirstOrDefault();
                 if (buildPath != null)
                 {
                     string toPath = Path.Combine(Environment.CurrentDirectory, "bin", debugOrRelease, projectName);
                     if (!Directory.Exists(toPath))
                         Directory.CreateDirectory(toPath);
                     CopyFiles(buildPath, toPath);
+                    string zipName = $"{toPath}.zip";
+                    if (File.Exists(zipName))
+                        File.Delete(zipName);
+                    ZipFile.CreateFromDirectory(toPath, zipName, CompressionLevel.SmallestSize, true);
                 }
             }
         }
