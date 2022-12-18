@@ -2,6 +2,7 @@
 {
     public class Config
     {
+        public string? FFmpegPath { get; set; }
         public int ClipLengthSecond { get; set; } = 5;
         public Dictionary<long, string[]> MusicIDAndAnswers { get; set; } = new Dictionary<long, string[]>();
         public HashSet<string> SearchKeywords { get; set; } = new HashSet<string>();

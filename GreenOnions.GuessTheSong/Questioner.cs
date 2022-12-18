@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
 using NAudio.Wave;
@@ -9,6 +9,7 @@ namespace GreenOnions.GuessTheSong
 {
     public class Questioner : IPlugin
     {
+        private string? _pluginPath;
         private Config? _config;
         private IBotConfig? _botConfig;
         private IGreenOnionsApi? _api;
@@ -37,7 +38,9 @@ namespace GreenOnions.GuessTheSong
 
         public void OnLoad(string pluginPath, IBotConfig config)
         {
-            string configFileName = Path.Combine(pluginPath, "config.json");
+            _pluginPath = pluginPath;
+            _botConfig = config;
+            string configFileName = Path.Combine(_pluginPath, "config.json");
             if (File.Exists(configFileName))
             {
                 string strConfig = File.ReadAllText(configFileName);
@@ -48,7 +51,7 @@ namespace GreenOnions.GuessTheSong
                 catch (Exception ex)
                 {
                     _config = new Config();
-                    File.AppendAllText(Path.Combine(pluginPath, "error.log"), $"\r\n解析配置文件失败，请检查config.json格式  --------{DateTime.Now}\r\n{ex.Message}\r\n");
+                    File.AppendAllText(Path.Combine(_pluginPath, "error.log"), $"\r\n解析配置文件失败，请检查config.json格式  --------{DateTime.Now}\r\n{ex.Message}\r\n");
                 }
 
                 if (_config!.MusicIDAndAnswers.Count == 0 && _config.SearchKeywords.Count == 0)
@@ -174,7 +177,32 @@ namespace GreenOnions.GuessTheSong
                         using MemoryStream? ms = await CutMp3(originalMusic);
                         if (ms != null)
                         {
-                            GreenOnionsMessages msgVoice = new GreenOnionsVoiceMessage(ms);
+                            GreenOnionsMessages msgVoice;
+                            if (!string.IsNullOrWhiteSpace(_config.FFmpegPath) && File.Exists(_config.FFmpegPath))  //转码成amr
+                            {
+                                string mp3FileName = Path.Combine(_pluginPath!, "original.mp3");
+                                File.WriteAllBytes(mp3FileName, ms.GetBuffer());
+
+                                string amrFileName = Path.Combine(_pluginPath!, "transcoded.amr");
+                                if (File.Exists(amrFileName))
+                                    File.Delete(amrFileName);
+
+                                Process p = new Process();
+                                ProcessStartInfo startInfo = new ProcessStartInfo(_config.FFmpegPath);
+                                startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                                startInfo.Arguments = $" -i {mp3FileName} -c:a libopencore_amrnb -ac 1 -ar 8000 -b:a 320K -y {amrFileName}";
+                                p.StartInfo = startInfo;
+                                p.StartInfo.UseShellExecute = false;
+                                p.StartInfo.CreateNoWindow = true;
+                                p.Start();
+                                p.WaitForExit();
+                                msgVoice = new GreenOnionsVoiceMessage(amrFileName);
+                                File.Delete(mp3FileName);
+                            }
+                            else  //原样发送mp3
+                            {
+                                msgVoice = new GreenOnionsVoiceMessage(ms);
+                            }
                             msgVoice.Reply = false;
                             Response(msgVoice);
                             await Task.Delay(60 * 1000);
@@ -277,6 +305,7 @@ namespace GreenOnions.GuessTheSong
             var endTime = TimeSpan.FromSeconds(startSecond + _config!.ClipLengthSecond);
 
             MemoryStream outputStream = new MemoryStream();
+
             Mp3Frame frame;
             do
             {
