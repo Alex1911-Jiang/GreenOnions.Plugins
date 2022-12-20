@@ -19,7 +19,7 @@ namespace GreenOnions.GuessTheSong
 
         public string Description => "葱葱听歌猜曲名插件";
 
-        public GreenOnionsMessages? HelpMessage => "输入 \"<机器人名称>猜歌\" 发起一场听歌猜曲名游戏，每场游戏时长为一分钟，任意群友猜出正确曲名或超时后结束。";
+        public GreenOnionsMessages? HelpMessage => _config?.HelpMessage ??  "输入 \"<机器人名称>猜歌\" 发起一场听歌猜曲名游戏，每场游戏时长为一分钟，任意群友猜出正确曲名或超时后结束。";
 
         public bool DisplayedInTheHelp => true;
 
@@ -89,7 +89,7 @@ namespace GreenOnions.GuessTheSong
                     }
                     else //这个组或这个人不在正在游玩的状态
                     {
-                        if (msg.Text == _api!.ReplaceGreenOnionsStringTags("<机器人名称>猜歌"))  //开始请求歌曲
+                        if (msg.Text == _api!.ReplaceGreenOnionsStringTags(_config!.StartCmd))  //开始请求歌曲
                         {
                             Random rdm = new Random(Guid.NewGuid().GetHashCode());
 
@@ -174,42 +174,48 @@ namespace GreenOnions.GuessTheSong
 
                     async void SendSongAndReceiveAnswers(Stream originalMusic, string answer)
                     {
-                        using MemoryStream? ms = await CutMp3(originalMusic);
+                        MemoryStream? ms = CutMp3(originalMusic);
                         if (ms != null)
                         {
-                            GreenOnionsMessages msgVoice;
-                            if (!string.IsNullOrWhiteSpace(_config.FFmpegPath) && File.Exists(_config.FFmpegPath))  //转码成amr
+                            using (ms)
                             {
-                                string mp3FileName = Path.Combine(_pluginPath!, "original.mp3");
-                                File.WriteAllBytes(mp3FileName, ms.GetBuffer());
+                                GreenOnionsMessages msgVoice;
+                                if (!string.IsNullOrWhiteSpace(_config.FFmpegPath) && File.Exists(_config.FFmpegPath))  //转码成amr
+                                {
+                                    string mp3FileName = Path.Combine(_pluginPath!, "original.mp3");
+                                    File.WriteAllBytes(mp3FileName, ms.GetBuffer());
 
-                                string amrFileName = Path.Combine(_pluginPath!, "transcoded.amr");
-                                if (File.Exists(amrFileName))
-                                    File.Delete(amrFileName);
+                                    string amrFileName = Path.Combine(_pluginPath!, "transcoded.amr");
+                                    if (File.Exists(amrFileName))
+                                        File.Delete(amrFileName);
 
-                                Process p = new Process();
-                                ProcessStartInfo startInfo = new ProcessStartInfo(_config.FFmpegPath);
-                                startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                                startInfo.Arguments = $" -i {mp3FileName} -c:a libopencore_amrnb -ac 1 -ar 8000 -b:a 320K -y {amrFileName}";
-                                p.StartInfo = startInfo;
-                                p.StartInfo.UseShellExecute = false;
-                                p.StartInfo.CreateNoWindow = true;
-                                p.Start();
-                                p.WaitForExit();
-                                msgVoice = new GreenOnionsVoiceMessage(amrFileName);
-                                File.Delete(mp3FileName);
+                                    Process p = new Process();
+                                    ProcessStartInfo startInfo = new ProcessStartInfo(_config.FFmpegPath);
+                                    startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                                    startInfo.Arguments = $" -i {mp3FileName} -c:a libopencore_amrnb -ac 1 -ar 8000 -b:a 320K -y {amrFileName}";
+                                    p.StartInfo = startInfo;
+                                    p.StartInfo.UseShellExecute = false;
+                                    p.StartInfo.CreateNoWindow = true;
+                                    p.Start();
+                                    p.WaitForExit();
+                                    msgVoice = new GreenOnionsVoiceMessage(amrFileName);
+                                    File.Delete(mp3FileName);
+                                }
+                                else  //原样发送mp3
+                                {
+                                    msgVoice = new GreenOnionsVoiceMessage(ms);
+                                }
+                                msgVoice.Reply = false;
+                                Response(msgVoice);
+                                await Task.Delay(60 * 1000);
+                                if (playerAndAnswers.ContainsKey(playerId))
+                                {
+                                    GreenOnionsMessages msgEnd = new GreenOnionsMessages(_config!.TimeOutReplyReply.Replace("<歌曲名称>", answer));  //游戏结束，公布答案
+                                    msgEnd.Reply = false;
+                                    Response(msgEnd);
+                                    playerAndAnswers.Remove(playerId);
+                                }
                             }
-                            else  //原样发送mp3
-                            {
-                                msgVoice = new GreenOnionsVoiceMessage(ms);
-                            }
-                            msgVoice.Reply = false;
-                            Response(msgVoice);
-                            await Task.Delay(60 * 1000);
-                            GreenOnionsMessages msgEnd = new GreenOnionsMessages(_config!.TimeOutReplyReply.Replace("<歌曲名称>", answer));  //游戏结束，公布答案
-                            msgEnd.Reply = false;
-                            Response(msgEnd);
-                            playerAndAnswers.Remove(playerId);
                         }
                     }
                 }
@@ -292,7 +298,7 @@ namespace GreenOnions.GuessTheSong
             return await mp3Response.Content.ReadAsStreamAsync();
         }
 
-        public async Task<MemoryStream?> CutMp3(Stream inputStream)
+        public MemoryStream? CutMp3(Stream inputStream)
         {
             using Mp3FileReader reader = new Mp3FileReader(inputStream);
             if (reader.TotalTime.TotalSeconds < 12)
@@ -314,7 +320,7 @@ namespace GreenOnions.GuessTheSong
                 {
                     if (reader.CurrentTime > endTime)
                         break;
-                    await outputStream.WriteAsync(frame.RawData, 0, frame.RawData.Length);
+                    outputStream.Write(frame.RawData, 0, frame.RawData.Length);
                 }
             } while (frame != null);
             return outputStream;
