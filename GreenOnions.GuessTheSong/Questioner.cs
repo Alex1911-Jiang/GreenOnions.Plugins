@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Net;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
 using NAudio.Wave;
@@ -74,7 +75,7 @@ namespace GreenOnions.GuessTheSong
 
         public bool OnMessage(GreenOnionsMessages msgs, long? senderGroup, Action<GreenOnionsMessages> Response)
         {
-            long playerId = senderGroup == null ? msgs.SenderId : senderGroup.Value;
+            long playerId = senderGroup is null ? msgs.SenderId : senderGroup.Value;
             try
             {
                 if (msgs.FirstOrDefault() is GreenOnionsTextMessage msg)
@@ -102,14 +103,14 @@ namespace GreenOnions.GuessTheSong
                                 {
                                     DownloadMusic(musicID).ContinueWith(originalMusic =>
                                     {
-                                        try
-                                        {
-                                            SendSongAndReceiveAnswers(originalMusic.Result, _config.MusicIDAndAnswers[musicID].First());
-                                        }
-                                        catch (Exception ex)
+                                        if (originalMusic.Result is null)
                                         {
                                             Response($"剪歌失败，请重试");
-                                            SendMessageToAdmin($"葱葱听歌猜曲名插件剪歌失败，歌曲ID为：{musicID}，错误信息为：{ex.Message}");
+                                            SendMessageToAdmin($"葱葱听歌猜曲名插件剪歌失败，歌曲ID为：{musicID}，音频流为空");
+                                        }
+                                        else
+                                        {
+                                            SendSongAndReceiveAnswers(originalMusic.Result, _config.MusicIDAndAnswers[musicID].First(), musicID, Response);
                                         }
                                     });
                                 }
@@ -147,7 +148,7 @@ namespace GreenOnions.GuessTheSong
 
                             playerAndAnswers.Add(playerId, r.Result.Answers!);
 
-                            Stream originalMusic;
+                            Stream? originalMusic;
                             try
                             {
                                 originalMusic = await DownloadMusic(r.Result.MusicId);
@@ -159,63 +160,76 @@ namespace GreenOnions.GuessTheSong
                                 SendMessageToAdmin($"葱葱听歌猜曲名插件下载歌曲失败，歌曲ID为：{r.Result.MusicId}，错误信息为：{ex.Message}");
                                 return;
                             }
-                            try
+
+                            if (originalMusic is null)
                             {
-                                SendSongAndReceiveAnswers(originalMusic, r.Result.Answers!.First());
+                                Search(searchKey, playerId);
+                                return;
                             }
-                            catch (Exception ex)
-                            {
-                                Response($"剪歌失败，请重试");
-                                playerAndAnswers.Remove(playerId);
-                                SendMessageToAdmin($"葱葱听歌猜曲名插件剪歌失败，歌曲ID为：{r.Result.MusicId}，错误信息为：{ex.Message}");
-                            }
+
+                            SendSongAndReceiveAnswers(originalMusic, r.Result.Answers!.First(), r.Result.MusicId, Response);
                         });
                     }
 
-                    async void SendSongAndReceiveAnswers(Stream originalMusic, string answer)
+                    async void SendSongAndReceiveAnswers(Stream originalMusic, string answer, long musicId, Action<GreenOnionsMessages> Response)
                     {
-                        MemoryStream? ms = CutMp3(originalMusic);
-                        if (ms != null)
+                        try
                         {
-                            using (ms)
+                            MemoryStream? ms = CutMp3(originalMusic);
+                            if (ms != null)
                             {
-                                GreenOnionsMessages msgVoice;
-                                if (!string.IsNullOrWhiteSpace(_config.FFmpegPath) && File.Exists(_config.FFmpegPath))  //转码成amr
+                                using (ms)
                                 {
-                                    string mp3FileName = Path.Combine(_pluginPath!, "original.mp3");
-                                    File.WriteAllBytes(mp3FileName, ms.GetBuffer());
+                                    GreenOnionsMessages msgVoice;
+                                    if (!string.IsNullOrWhiteSpace(_config.FFmpegPath) && File.Exists(_config.FFmpegPath))  //转码成amr
+                                    {
+                                        string mp3FileName = Path.Combine(_pluginPath!, "original.mp3");
+                                        File.WriteAllBytes(mp3FileName, ms.GetBuffer());
 
-                                    string amrFileName = Path.Combine(_pluginPath!, "transcoded.amr");
-                                    if (File.Exists(amrFileName))
-                                        File.Delete(amrFileName);
+                                        string amrFileName = Path.Combine(_pluginPath!, "transcoded.amr");
+                                        if (File.Exists(amrFileName))
+                                            File.Delete(amrFileName);
 
-                                    Process p = new Process();
-                                    ProcessStartInfo startInfo = new ProcessStartInfo(_config.FFmpegPath);
-                                    startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                                    startInfo.Arguments = $" -i {mp3FileName} -c:a libopencore_amrnb -ac 1 -ar 8000 -b:a 320K -y {amrFileName}";
-                                    p.StartInfo = startInfo;
-                                    p.StartInfo.UseShellExecute = false;
-                                    p.StartInfo.CreateNoWindow = true;
-                                    p.Start();
-                                    p.WaitForExit();
-                                    msgVoice = new GreenOnionsVoiceMessage(amrFileName);
-                                    File.Delete(mp3FileName);
-                                }
-                                else  //原样发送mp3
-                                {
-                                    msgVoice = new GreenOnionsVoiceMessage(ms);
-                                }
-                                msgVoice.Reply = false;
-                                Response(msgVoice);
-                                await Task.Delay(60 * 1000);
-                                if (playerAndAnswers.ContainsKey(playerId))
-                                {
-                                    GreenOnionsMessages msgEnd = new GreenOnionsMessages(_config!.TimeOutReplyReply.Replace("<歌曲名称>", answer));  //游戏结束，公布答案
-                                    msgEnd.Reply = false;
-                                    Response(msgEnd);
-                                    playerAndAnswers.Remove(playerId);
+                                        Process p = new Process();
+                                        ProcessStartInfo startInfo = new ProcessStartInfo(_config.FFmpegPath);
+                                        startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                                        startInfo.Arguments = $" -i {mp3FileName} -c:a libopencore_amrnb -ac 1 -ar 8000 -b:a 320K -y {amrFileName}";
+                                        p.StartInfo = startInfo;
+                                        p.StartInfo.UseShellExecute = false;
+                                        p.StartInfo.CreateNoWindow = true;
+                                        p.Start();
+                                        p.WaitForExit();
+                                        msgVoice = new GreenOnionsVoiceMessage(amrFileName);
+                                        File.Delete(mp3FileName);
+                                    }
+                                    else  //原样发送mp3
+                                    {
+                                        msgVoice = new GreenOnionsVoiceMessage(ms);
+                                    }
+                                    msgVoice.Reply = false;
+                                    Response(msgVoice);
+                                    await Task.Delay(60 * 1000);
+                                    if (playerAndAnswers.ContainsKey(playerId))
+                                    {
+                                        GreenOnionsMessages msgEnd = new GreenOnionsMessages(_config!.TimeOutReplyReply.Replace("<歌曲名称>", answer));  //游戏结束，公布答案
+                                        msgEnd.Reply = false;
+                                        Response(msgEnd);
+                                        playerAndAnswers.Remove(playerId);
+                                    }
                                 }
                             }
+                            else
+                            {
+                                Response($"剪歌失败，请重试");
+                                playerAndAnswers.Remove(playerId);
+                                SendMessageToAdmin($"葱葱听歌猜曲名插件剪歌失败，歌曲ID为：{musicId}，音频流为空");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Response($"剪歌失败，请重试");
+                            playerAndAnswers.Remove(playerId);
+                            SendMessageToAdmin($"葱葱听歌猜曲名插件剪歌失败，歌曲ID为：{musicId}，错误信息为：{ex.Message}");
                         }
                     }
                 }
@@ -243,10 +257,10 @@ namespace GreenOnions.GuessTheSong
             HttpResponseMessage response = await client.GetAsync($"http://music.163.com/api/song/detail/?id={songID}&ids=%5B{songID}%5D");
             string strSongInfo = await response.Content.ReadAsStringAsync();
             JToken? songInfo = JsonConvert.DeserializeObject<JToken>(strSongInfo);
-            if (songInfo != null)
+            if (songInfo is not null)
             {
                 JToken? duration = songInfo["songs"]?[0]?["duration"];
-                if (duration != null)
+                if (duration is not null)
                 {
                     long lDuration = Convert.ToInt64(duration.ToString());
                     TimeSpan span = TimeSpan.FromMilliseconds(lDuration);
@@ -265,7 +279,7 @@ namespace GreenOnions.GuessTheSong
             HttpResponseMessage songListResponse = await httpClient.GetAsync($"http://music.163.com/api/search/get/web?csrf_token=hlpretag=&hlposttag=&s={musicName}&type=1&offset={iOffset}&total=true&limit=100");
             string songListStr = await songListResponse.Content.ReadAsStringAsync();
             JToken? jtSongs = JsonConvert.DeserializeObject<JToken>(songListStr)?["result"]?["songs"];
-            if (jtSongs != null)
+            if (jtSongs is not null)
             {
                 int songCount = jtSongs.Count();
                 if (songCount > 0)
@@ -277,10 +291,10 @@ namespace GreenOnions.GuessTheSong
                     string name = song!["name"]!.ToString();
                     answers.Add(name);
                     JToken? transNamesJt = song["album"]?["transNames"];
-                    if (transNamesJt != null)
+                    if (transNamesJt is not null)
                     {
                         string[]? transNames = JsonConvert.DeserializeObject<string[]>(transNamesJt.ToString());  //中文名
-                        if (transNames != null)
+                        if (transNames is not null)
                             answers.AddRange(transNames);
                     }
 
@@ -291,10 +305,12 @@ namespace GreenOnions.GuessTheSong
         }
 
 
-        private async Task<Stream> DownloadMusic(long musicID)
+        private async Task<Stream?> DownloadMusic(long musicID)
         {
             using HttpClient httpClient = new HttpClient();
             HttpResponseMessage mp3Response = await httpClient.GetAsync($"http://music.163.com/song/media/outer/url?id={musicID}.mp3");
+            if (mp3Response.RequestMessage?.RequestUri?.ToString().Contains("music.163.com/404") == true)
+                return null;
             return await mp3Response.Content.ReadAsStreamAsync();
         }
 
@@ -322,7 +338,7 @@ namespace GreenOnions.GuessTheSong
                         break;
                     outputStream.Write(frame.RawData, 0, frame.RawData.Length);
                 }
-            } while (frame != null);
+            } while (frame is not null);
             return outputStream;
         }
 
