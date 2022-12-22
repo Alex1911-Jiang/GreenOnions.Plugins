@@ -1,5 +1,6 @@
-﻿using System.Diagnostics;
-using System.Net;
+﻿using System.Collections;
+using System.Diagnostics;
+using System.Xml.Linq;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
 using NAudio.Wave;
@@ -274,36 +275,51 @@ namespace GreenOnions.GuessTheSong
         {
             using HttpClient httpClient = new HttpClient();
             Random rdmOffset = new Random(Guid.NewGuid().GetHashCode());
-            int iOffset = rdmOffset.Next(0, 1500);
+            int iOffset = rdmOffset.Next(0, _config!.MaximumSearchRange);
             List<string> answers = new List<string>();
-            HttpResponseMessage songListResponse = await httpClient.GetAsync($"http://music.163.com/api/search/get/web?csrf_token=hlpretag=&hlposttag=&s={musicName}&type=1&offset={iOffset}&total=true&limit=100");
+            HttpResponseMessage songListResponse = await httpClient.GetAsync($"http://music.163.com/api/search/get/web?csrf_token=hlpretag=&hlposttag=&s={musicName}&type=1&offset={iOffset}&limit=1");
             string songListStr = await songListResponse.Content.ReadAsStringAsync();
             JToken? jtSongs = JsonConvert.DeserializeObject<JToken>(songListStr)?["result"]?["songs"];
-            if (jtSongs is not null)
+            if (jtSongs is not null && jtSongs.Count() > 0)
             {
-                int songCount = jtSongs.Count();
-                if (songCount > 0)
+                JToken song = jtSongs.First();
+                long id = Convert.ToInt64(song!["id"]);
+                string name = song!["name"]!.ToString();
+                answers.AddRange(GetSoneNameWithOutBracket(name));
+                answers.Add(name);
+                JToken? transNamesJt = song["album"]?["transNames"];
+                if (transNamesJt is not null)
                 {
-                    Random rdmSongIndex = new Random(Guid.NewGuid().GetHashCode());
-                    int iSongIndex = rdmSongIndex.Next(0, songCount);
-                    JToken song = jtSongs[iSongIndex]!;
-                    long id = Convert.ToInt64(song!["id"]);
-                    string name = song!["name"]!.ToString();
-                    answers.Add(name);
-                    JToken? transNamesJt = song["album"]?["transNames"];
-                    if (transNamesJt is not null)
+                    string[]? transNames = JsonConvert.DeserializeObject<string[]>(transNamesJt.ToString());  //中文名
+                    if (transNames is not null)
                     {
-                        string[]? transNames = JsonConvert.DeserializeObject<string[]>(transNamesJt.ToString());  //中文名
-                        if (transNames is not null)
-                            answers.AddRange(transNames);
+                        answers.AddRange(transNames);
+                        answers.AddRange(GetSoneNameWithOutBracket(transNames));
                     }
-
-                    return (id, answers);
                 }
+
+                return (id, answers);
             }
             return (-1, null);
         }
 
+        private List<string> GetSoneNameWithOutBracket(string songOriginalName)
+        {
+            List<string> names = new List<string>();
+            if (songOriginalName.Contains('（'))
+                names.Add(songOriginalName.Substring(0, songOriginalName.IndexOf('（')).TrimEnd());
+            if (songOriginalName.Contains('('))
+                names.Add(songOriginalName.Substring(0, songOriginalName.IndexOf('(')).TrimEnd());
+            return names;
+        }
+
+        private List<string> GetSoneNameWithOutBracket(string[] songOriginalNames)
+        {
+            List<string> names = new List<string>();
+            for (int i = 0; i < songOriginalNames.Length; i++)
+                names.AddRange(GetSoneNameWithOutBracket(songOriginalNames[i]));
+            return names;
+        }
 
         private async Task<Stream?> DownloadMusic(long musicID)
         {
@@ -317,11 +333,11 @@ namespace GreenOnions.GuessTheSong
         public MemoryStream? CutMp3(Stream inputStream)
         {
             using Mp3FileReader reader = new Mp3FileReader(inputStream);
-            if (reader.TotalTime.TotalSeconds < 12)
+            if (reader.TotalTime.TotalSeconds < 20 + _config!.ClipLengthSecond)  //至少要有前后10秒+裁剪长度的时长
                 return null;
 
             Random rdm = new Random();
-            int startSecond = rdm.Next(6, (int)reader.TotalTime.TotalSeconds - 5 - _config!.ClipLengthSecond);
+            int startSecond = rdm.Next(11, (int)reader.TotalTime.TotalSeconds - 10 - _config!.ClipLengthSecond);  //跳过前后10秒一定程度上避免裁剪到无声片段
 
             var startTime = TimeSpan.FromSeconds(startSecond);
             var endTime = TimeSpan.FromSeconds(startSecond + _config!.ClipLengthSecond);
