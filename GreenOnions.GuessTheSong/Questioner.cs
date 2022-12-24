@@ -32,17 +32,8 @@ namespace GreenOnions.GuessTheSong
         public void OnConnected(long selfId, IGreenOnionsApi api)
         {
             _api = api;
-        }
 
-        public void OnDisconnected()
-        {
-        }
-
-        public void OnLoad(string pluginPath, IBotConfig config)
-        {
-            _pluginPath = pluginPath;
-            _botConfig = config;
-            string configFileName = Path.Combine(_pluginPath, "config.json");
+            string configFileName = Path.Combine(_pluginPath!, "config.json");
             if (File.Exists(configFileName))
             {
                 string strConfig = File.ReadAllText(configFileName);
@@ -52,8 +43,8 @@ namespace GreenOnions.GuessTheSong
                 }
                 catch (Exception ex)
                 {
+                    SendMessageToAdmin($"葱葱听歌猜曲名插件解析配置文件失败，请检查config.json格式。{ex.Message}");
                     _config = new Config();
-                    File.AppendAllText(Path.Combine(_pluginPath, "error.log"), $"\r\n解析配置文件失败，请检查config.json格式  --------{DateTime.Now}\r\n{ex.Message}\r\n");
                 }
 
                 if (_config!.MusicIDAndAnswers.Count == 0 && _config.SearchKeywords.Count == 0)
@@ -72,6 +63,16 @@ namespace GreenOnions.GuessTheSong
                 string strConfig = JsonConvert.SerializeObject(_config);
                 File.WriteAllText(configFileName, strConfig);
             }
+        }
+
+        public void OnDisconnected()
+        {
+        }
+
+        public void OnLoad(string pluginPath, IBotConfig config)
+        {
+            _pluginPath = pluginPath;
+            _botConfig = config;
         }
 
         public bool OnMessage(GreenOnionsMessages msgs, long? senderGroup, Action<GreenOnionsMessages> Response)
