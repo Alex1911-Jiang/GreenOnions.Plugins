@@ -142,7 +142,7 @@ namespace GreenOnions.GuessTheSong
                                 SendMessageToAdmin($"葱葱听歌猜曲名插件搜索失败，用户搜索词为：{searchKey}");
                             }
                             double duration = await GetSongDurationSeconds(r.Result.MusicId);
-                            if (duration < _config.ClipLengthSecond * 2 + 2)  //歌曲总时长低于裁剪片段时长
+                            if (duration < _config.ClipLengthSecond + 20)  //歌曲总时长低于裁剪片段时长
                             {
                                 Search(searchKey, playerId);
                                 return;
