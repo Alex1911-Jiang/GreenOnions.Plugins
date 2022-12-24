@@ -1,7 +1,6 @@
 ﻿using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Text.Unicode;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
 

@@ -164,7 +164,7 @@ namespace GreenOnions.TicTacToe_Windows
                 }
             }
             else
-                LogError($"数据异常, 时间表中存在QQ:{qqId}, 但对局表中不存在, 可能是刚刚超时了(坐标下子操作)");
+                SendMessageToAdmin($"葱葱井字棋插件错误：数据异常, 时间表中存在QQ:{qqId}, 但对局表中不存在, 可能是刚刚超时了(坐标下子操作)");
         }
 
         /// <summary>
@@ -210,13 +210,13 @@ namespace GreenOnions.TicTacToe_Windows
                 }
                 else
                 {
-                    LogError("井字棋图片转换失败");
+                    SendMessageToAdmin("葱葱井字棋插件错误：图片转换失败");
                     return _api!.ReplaceGreenOnionsStringTags("图裂了o(╥﹏╥)o");
                 }
             }
             else
             {
-                LogError($"数据异常, 时间表中存在QQ:{qqId}, 但对局表中不存在, 可能是刚刚超时了(涂鸦下子操作)");
+                SendMessageToAdmin($"葱葱井字棋插件错误：数据异常, 时间表中存在QQ:{qqId}, 但对局表中不存在, 可能是刚刚超时了(涂鸦下子操作)");
                 return _api!.ReplaceGreenOnionsStringTags("<机器人名称>把图弄丢了, 这局就当您赢了吧, 请向<机器人名称>反馈Bug o(╥﹏╥)o");
             }
         }
@@ -291,19 +291,16 @@ namespace GreenOnions.TicTacToe_Windows
             {
                 if (_regexTicTacToeStart!.IsMatch(txtMsg.Text))
                 {
-                    LogMessage($"{msgs.SenderId}消息触发开始井字棋");
                     StartTicTacToeSession(msgs.SenderId, Response);
                     return true;
                 }
                 else if (_regexTicTacToeStop!.IsMatch(txtMsg.Text))
                 {
-                    LogMessage($"{msgs.SenderId}消息触发结束井字棋");
                     StopTicTacToeSession(msgs.SenderId, Response);
                     return true;
                 }
                 else if ((_config!.TicTacToeMoveMode & TicTacToeMoveMode.Nomenclature) != 0 && PlayingTicTacToeUsers.ContainsKey(msgs.SenderId) && txtMsg.Text.Length == 2)
                 {
-                    LogMessage($"{msgs.SenderId}消息触发井字棋移动");
                     PlayerMoveByNomenclature(txtMsg.Text, msgs.SenderId, Response);
                     return true;
                 }
@@ -327,16 +324,12 @@ namespace GreenOnions.TicTacToe_Windows
             return true;
         }
 
-        private void LogMessage(string text)
+        private async void SendMessageToAdmin(string msg)
         {
-            string logFile = Path.Combine(_pluginPath!, "information.log");
-            File.AppendAllText(logFile, $"{text}    ----{DateTime.Now}\r\n");
-        }
-
-        public void LogError(string text)
-        {
-            string logFile = Path.Combine(_pluginPath!, "error.log");
-            File.AppendAllText(logFile, $"{text}    ----{DateTime.Now}\r\n");
+            foreach (long item in _botConfig!.AdminQQ)
+            {
+                await _api!.SendFriendMessageAsync(item, msg);
+            }
         }
 
         public static async Task<MemoryStream?> DownloadImageAsMemoryStreamAsync(string url)

@@ -96,7 +96,7 @@ namespace GreenOnions.GuessTheSong
                         {
                             Random rdm = new Random(Guid.NewGuid().GetHashCode());
 
-                            if (_config!.MusicIDAndAnswers.Count > 0)  //自定义模式
+                            if (_config!.MusicIDAndAnswers is not null && _config!.MusicIDAndAnswers.Count > 0)  //自定义模式
                             {
                                 int musicIndex = rdm.Next(0, _config.MusicIDAndAnswers.Count);
                                 long musicID = _config.MusicIDAndAnswers.Keys.ToArray()[musicIndex];
@@ -245,11 +245,11 @@ namespace GreenOnions.GuessTheSong
             return false;
         }
 
-        private void SendMessageToAdmin(string msg)
+        private async void SendMessageToAdmin(string msg)
         {
             foreach (long item in _botConfig!.AdminQQ)
             {
-                _api!.SendFriendMessageAsync(item, msg);
+                await _api!.SendFriendMessageAsync(item, msg);
             }
         }
 

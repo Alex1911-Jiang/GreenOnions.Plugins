@@ -1,6 +1,8 @@
-﻿using HtmlAgilityPack;
-using Newtonsoft.Json.Linq;
+﻿using GreenOnions.Interface;
+using GreenOnions.Interface.Configs;
+using HtmlAgilityPack;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace GreenOnions.KanCollectionTimeAnnouncerWindows
@@ -9,10 +11,23 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
     {
         private string _cachePath;
         private CancellationToken _token;
-        internal MoeGirlHelper(string cachePath, CancellationToken token)
+        private IGreenOnionsApi _api;
+        private IBotConfig _botConfig;
+
+        internal MoeGirlHelper(string cachePath, IGreenOnionsApi api, IBotConfig botConfig, CancellationToken token)
         {
             _cachePath = cachePath;
+            _api = api;
+            _botConfig = botConfig;
             _token = token;
+        }
+
+        private async void SendMessageToAdmin(string msg)
+        {
+            foreach (long item in _botConfig!.AdminQQ)
+            {
+                await _api!.SendFriendMessageAsync(item, msg);
+            }
         }
 
         /// <summary>
@@ -204,7 +219,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
             }
             catch (Exception ex)
             {
-                await File.AppendAllTextAsync(Path.Combine(_cachePath, "错误.log"), $"下载音频到本地失败。{ex.Message}    ----{DateTime.Now}\r\n");
+                SendMessageToAdmin($"葱葱舰C报时插件错误：下载音频到本地失败。{ex}");
             }
         }
 
