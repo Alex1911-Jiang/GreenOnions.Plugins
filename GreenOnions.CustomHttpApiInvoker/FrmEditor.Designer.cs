@@ -33,8 +33,6 @@
             this.rdoContentRaw = new System.Windows.Forms.RadioButton();
             this.rdoContentFormData = new System.Windows.Forms.RadioButton();
             this.dgvContentFormData = new System.Windows.Forms.DataGridView();
-            this.dgvContentKeyColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvContentValueColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnInvokeTest = new System.Windows.Forms.Button();
             this.pnlParse = new System.Windows.Forms.Panel();
             this.txbParseExpression = new System.Windows.Forms.TextBox();
@@ -67,8 +65,6 @@
             this.txbCmd = new System.Windows.Forms.TextBox();
             this.lblCmdTitle = new System.Windows.Forms.Label();
             this.dgvHeader = new System.Windows.Forms.DataGridView();
-            this.dgvHeaderKeyColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvHeaderValueColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cboEncoding = new System.Windows.Forms.ComboBox();
             this.lblEncodeTitle = new System.Windows.Forms.Label();
             this.cboMediaType = new System.Windows.Forms.ComboBox();
@@ -97,6 +93,10 @@
             this.rdoChangeMeToQQId = new System.Windows.Forms.RadioButton();
             this.rdoDontChangeMe = new System.Windows.Forms.RadioButton();
             this.lblChangeTypeInfo = new System.Windows.Forms.Label();
+            this.dgvHeaderKeyColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvHeaderValueColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvContentKeyColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvContentValueColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.pnlContentType.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvContentFormData)).BeginInit();
             this.pnlParse.SuspendLayout();
@@ -113,7 +113,7 @@
             this.txbContentRaw.Location = new System.Drawing.Point(25, 559);
             this.txbContentRaw.Multiline = true;
             this.txbContentRaw.Name = "txbContentRaw";
-            this.txbContentRaw.Size = new System.Drawing.Size(898, 165);
+            this.txbContentRaw.Size = new System.Drawing.Size(900, 165);
             this.txbContentRaw.TabIndex = 60;
             // 
             // pnlContentType
@@ -167,18 +167,6 @@
             this.dgvContentFormData.Size = new System.Drawing.Size(900, 165);
             this.dgvContentFormData.TabIndex = 58;
             this.dgvContentFormData.Visible = false;
-            // 
-            // dgvContentKeyColumn
-            // 
-            this.dgvContentKeyColumn.HeaderText = "Key";
-            this.dgvContentKeyColumn.MinimumWidth = 8;
-            this.dgvContentKeyColumn.Name = "dgvContentKeyColumn";
-            // 
-            // dgvContentValueColumn
-            // 
-            this.dgvContentValueColumn.HeaderText = "Value";
-            this.dgvContentValueColumn.MinimumWidth = 8;
-            this.dgvContentValueColumn.Name = "dgvContentValueColumn";
             // 
             // btnInvokeTest
             // 
@@ -518,18 +506,6 @@
             this.dgvHeader.Size = new System.Drawing.Size(900, 175);
             this.dgvHeader.TabIndex = 48;
             // 
-            // dgvHeaderKeyColumn
-            // 
-            this.dgvHeaderKeyColumn.HeaderText = "Key";
-            this.dgvHeaderKeyColumn.MinimumWidth = 8;
-            this.dgvHeaderKeyColumn.Name = "dgvHeaderKeyColumn";
-            // 
-            // dgvHeaderValueColumn
-            // 
-            this.dgvHeaderValueColumn.HeaderText = "Value";
-            this.dgvHeaderValueColumn.MinimumWidth = 8;
-            this.dgvHeaderValueColumn.Name = "dgvHeaderValueColumn";
-            // 
             // cboEncoding
             // 
             this.cboEncoding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -820,6 +796,32 @@
             this.lblChangeTypeInfo.TabIndex = 70;
             this.lblChangeTypeInfo.Text = "仅限命令不包含正则且\r\n拼在命令之后的字或@\r\n消息, 只拼接在URL后";
             // 
+            // dgvHeaderKeyColumn
+            // 
+            this.dgvHeaderKeyColumn.FillWeight = 20F;
+            this.dgvHeaderKeyColumn.HeaderText = "Key";
+            this.dgvHeaderKeyColumn.MinimumWidth = 8;
+            this.dgvHeaderKeyColumn.Name = "dgvHeaderKeyColumn";
+            // 
+            // dgvHeaderValueColumn
+            // 
+            this.dgvHeaderValueColumn.HeaderText = "Value";
+            this.dgvHeaderValueColumn.MinimumWidth = 8;
+            this.dgvHeaderValueColumn.Name = "dgvHeaderValueColumn";
+            // 
+            // dgvContentKeyColumn
+            // 
+            this.dgvContentKeyColumn.FillWeight = 20F;
+            this.dgvContentKeyColumn.HeaderText = "Key";
+            this.dgvContentKeyColumn.MinimumWidth = 8;
+            this.dgvContentKeyColumn.Name = "dgvContentKeyColumn";
+            // 
+            // dgvContentValueColumn
+            // 
+            this.dgvContentValueColumn.HeaderText = "Value";
+            this.dgvContentValueColumn.MinimumWidth = 8;
+            this.dgvContentValueColumn.Name = "dgvContentValueColumn";
+            // 
             // FrmEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
@@ -891,8 +893,6 @@
         private RadioButton rdoContentRaw;
         private RadioButton rdoContentFormData;
         private DataGridView dgvContentFormData;
-        private DataGridViewTextBoxColumn dgvContentKeyColumn;
-        private DataGridViewTextBoxColumn dgvContentValueColumn;
         private Button btnInvokeTest;
         private Panel pnlParse;
         private Label lblParseExpression;
@@ -924,8 +924,6 @@
         private TextBox txbCmd;
         private Label lblCmdTitle;
         private DataGridView dgvHeader;
-        private DataGridViewTextBoxColumn dgvHeaderKeyColumn;
-        private DataGridViewTextBoxColumn dgvHeaderValueColumn;
         private ComboBox cboEncoding;
         private Label lblEncodeTitle;
         private ComboBox cboMediaType;
@@ -955,5 +953,9 @@
         private RadioButton rdoChangeMeToQQId;
         private RadioButton rdoDontChangeMe;
         private Label lblChangeTypeInfo;
+        private DataGridViewTextBoxColumn dgvHeaderKeyColumn;
+        private DataGridViewTextBoxColumn dgvHeaderValueColumn;
+        private DataGridViewTextBoxColumn dgvContentKeyColumn;
+        private DataGridViewTextBoxColumn dgvContentValueColumn;
     }
 }

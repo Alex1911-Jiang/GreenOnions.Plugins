@@ -17,7 +17,7 @@ namespace GreenOnions.CustomHttpApiInvoker
             _path = path;
             InitializeComponent();
 
-            if (config == null)
+            if (config is null)
             {
                 Config = new HttpApiConfig();
                 cboHttpMethod.SelectedIndex = 0;
@@ -35,7 +35,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                 cboEncoding.SelectedIndex = (int)Config.Encoding;
                 cboMediaType.SelectedIndex = cboMediaType.Items.IndexOf(Config.MediaType);
 
-                if (Config.Headers != null)
+                if (Config.Headers is not null)
                 {
                     foreach (var item in Config.Headers)
                         dgvHeader.Rows.Add(item.Key, item.Value);
@@ -51,7 +51,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                         break;
                 }
                 txbContentRaw.Text = Config.RowContent;
-                if (Config.FormDataContent != null)
+                if (Config.FormDataContent is not null)
                 {
                     foreach (var item in Config.FormDataContent)
                         dgvContentFormData.Rows.Add(item.Key, item.Value);
@@ -77,7 +77,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                         rdoParseStream.Checked = true;
                         break;
                 }
-                if (Config.ParseExpression != null)
+                if (Config.ParseExpression is not null)
                     txbParseExpression.Text = string.Join('\n', Config.ParseExpression);
                 txbSubTextFrom.Text = Config.SubTextFrom;
                 txbSubTextTo.Text = Config.SubTextTo;
@@ -393,7 +393,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                             }
                             else if (rdoSendImageStream.Checked)
                             {
-                                if (valueStream != null)
+                                if (valueStream is not null)
                                 {
                                     using (valueStream)
                                     {
@@ -426,7 +426,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                             }
                             else if (rdoSendVoiceStream.Checked)
                             {
-                                if (valueStream != null)
+                                if (valueStream is not null)
                                 {
                                     using (Stream outStream = File.OpenWrite(saveMusicFileName))
                                     {
@@ -496,9 +496,9 @@ namespace GreenOnions.CustomHttpApiInvoker
             for (int i = 0; i < dgvHeader.Rows.Count; i++)
             {
                 string? headerKey = dgvHeader.Rows[i].Cells[0].Value?.ToString();
-                if (headerKey != null)
+                if (headerKey is not null)
                 {
-                    if (Config.Headers == null)
+                    if (Config.Headers is null)
                         Config.Headers = new Dictionary<string, string>();
                     Config.Headers.Clear();
                     string? headerValue = dgvHeader.Rows[i].Cells[1].Value?.ToString();
@@ -515,7 +515,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                 string? conentKey = dgvContentFormData.Rows[i].Cells[0].Value?.ToString();
                 if (!string.IsNullOrWhiteSpace(conentKey))
                 {
-                    if (Config.FormDataContent == null)
+                    if (Config.FormDataContent is null)
                         Config.FormDataContent = new Dictionary<string, string>();
                     Config.FormDataContent.Clear();
                     string? contentValue = dgvContentFormData.Rows[i].Cells[1].Value?.ToString();
