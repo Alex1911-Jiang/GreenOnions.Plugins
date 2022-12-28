@@ -96,7 +96,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
                 }
 
                 List<string> kanGirlList = collectionNames.ToList();
-                string jsonCache = JsonConvert.SerializeObject(kanGirlList);
+                string jsonCache = JsonConvert.SerializeObject(kanGirlList, Formatting.Indented);
                 File.WriteAllText(kanGirlListFileName, jsonCache);
                 return kanGirlList;
             }
@@ -105,7 +105,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
         internal void CoverSaveKanGirlList(List<string> kanGirlList)
         {
             string kanGirlListFileName = Path.Combine(_cachePath, "KanGirlList.json");
-            string jsonCache = JsonConvert.SerializeObject(kanGirlList);
+            string jsonCache = JsonConvert.SerializeObject(kanGirlList, Formatting.Indented);
             File.WriteAllText(kanGirlListFileName, jsonCache);
         }
 

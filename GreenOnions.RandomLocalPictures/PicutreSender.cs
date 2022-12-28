@@ -54,8 +54,8 @@ namespace GreenOnions.RandomLocalPictures
                         PictureSourcePath = @"D:\图库2"
                     }
                 };
-                File.WriteAllText(configPath, JsonConvert.SerializeObject(sourcesInfos));
             }
+            File.WriteAllText(configPath, JsonConvert.SerializeObject(sourcesInfos, Formatting.Indented));
             CreateCmdToPathDic(sourcesInfos);
         }
 

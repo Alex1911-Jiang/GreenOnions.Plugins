@@ -422,7 +422,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                 }
             }
             string configFileName = Path.Combine(_path!, "config.json");
-            string jsonConfig = JsonConvert.SerializeObject(_config);
+            string jsonConfig = JsonConvert.SerializeObject(_config, Formatting.Indented);
             File.WriteAllText(configFileName, jsonConfig);
             return true;
         }

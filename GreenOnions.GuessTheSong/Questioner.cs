@@ -60,9 +60,8 @@ namespace GreenOnions.GuessTheSong
                 _config.MusicIDAndAnswers.Add(26096272, new[] { "千本樱", "千本桜", "千本櫻" });
                 _config.MusicIDAndAnswers.Add(22709632, new[] { "世界第一公主殿下", "ワールドイズマイン", "世界で一番おひめさま", "世界第一的公主殿下", "World Is Mine" });
                 _config.MusicIDAndAnswers.Add(4888328, new[] { "炉心融解" });
-                string strConfig = JsonConvert.SerializeObject(_config);
-                File.WriteAllText(configFileName, strConfig);
             }
+            File.WriteAllText(configFileName, JsonConvert.SerializeObject(_config, Formatting.Indented));
         }
 
         public void OnDisconnected()
