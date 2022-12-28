@@ -16,7 +16,16 @@
 ![Naifu](https://user-images.githubusercontent.com/50268952/203353603-a94af9cd-5e50-4369-b409-9745facd78be.jpg)
 ![WebUI](https://user-images.githubusercontent.com/50268952/203338626-80dc28ec-c5df-429c-ac15-367b17dea13c.jpg)
 
-食用方法: 下载Release并解压到GreenOnions\Plugins\下
+<br>
+<br>
+特别的，如果使用魔改版 WebUI，您还需要手动在浏览器上请求一次绘制并将以下参数拷贝到 custom_data.txt 文件中
+
+![fn_indexAndData](https://user-images.githubusercontent.com/50268952/209811793-778448f5-9cef-4f47-ac0c-ce57161080de.jpg)
+
+<br>
+<br>
+
+食用方法: 下载 Release 并解压到 GreenOnions\Plugins\ 下
 
 其他说明：本插件不带自动翻译中文为英文的功能，支不支持中文关键词生成取决于您NovelAI所使用的模型
 
