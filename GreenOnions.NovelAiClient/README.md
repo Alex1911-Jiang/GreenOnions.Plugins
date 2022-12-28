@@ -18,7 +18,7 @@
 
 <br>
 <br>
-特别的，如果使用魔改版 WebUI，您还需要手动在浏览器上请求一次绘制并将以下参数拷贝到 custom_data.txt 文件中
+特别的，如果使用魔改版 WebUI，您需要将 ConnectFrontEnd 修改为"CustomWebUI"，还需要手动在浏览器上请求一次绘制并将以下参数拷贝到 custom_data.txt 文件中
 
 ![fn_indexAndData](https://user-images.githubusercontent.com/50268952/209811793-778448f5-9cef-4f47-ac0c-ce57161080de.jpg)
 
