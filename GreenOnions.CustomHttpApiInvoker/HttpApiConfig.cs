@@ -18,7 +18,7 @@ namespace GreenOnions.CustomHttpApiInvoker
 
         [JsonConverter(typeof(StringEnumConverter))]
         public ContentTypeEnum ContentType { get; set; }
-        public string? RowContent { get; set; }
+        public string? RawContent { get; set; }
         public Dictionary<string, string>? FormDataContent { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]

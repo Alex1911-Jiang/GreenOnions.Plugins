@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Http.Headers;
+using System.Text;
 using System.Text.RegularExpressions;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
@@ -182,21 +183,22 @@ namespace GreenOnions.CustomHttpApiInvoker
 
                         if (api.ContentType == ContentTypeEnum.raw)
                         {
-                            if (!string.IsNullOrEmpty(api.RowContent))
-                                request.Content = new StringContent(api.RowContent.Replace("<参数>", param), encoding, api.MediaType);
+                            string rawContent = string.Empty;
+                            if (!string.IsNullOrWhiteSpace(api.RawContent))
+                                rawContent = api.RawContent.Replace("<参数>", param);
+                            request.Content = new StringContent(rawContent, encoding, api.MediaType);
                         }
                         else
                         {
+                            var form = new MultipartFormDataContent();
                             if (api.FormDataContent != null)
                             {
-                                var form = new MultipartFormDataContent();
                                 foreach (var item in api.FormDataContent)
-                                {
                                     form.Add(new StringContent(item.Value.Replace("<参数>", param), encoding, api.MediaType), item.Key);
-                                }
-                                request.Content = form;
                             }
+                            request.Content = form;
                         }
+                        request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(api.MediaType);
 
                         HttpResponseMessage response;
                         try

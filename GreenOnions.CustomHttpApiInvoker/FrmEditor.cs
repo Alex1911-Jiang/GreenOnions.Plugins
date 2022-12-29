@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Net.Http.Headers;
 using System.Text;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
@@ -50,7 +51,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                         rdoContentFormData.Checked = true;
                         break;
                 }
-                txbContentRaw.Text = Config.RowContent;
+                txbContentRaw.Text = Config.RawContent;
                 if (Config.FormDataContent is not null)
                 {
                     foreach (var item in Config.FormDataContent)
@@ -197,6 +198,8 @@ namespace GreenOnions.CustomHttpApiInvoker
                             }
                             request.Content = form;
                         }
+                        request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(cboMediaType.Text);
+
                         HttpResponseMessage response;
                         try
                         {
@@ -508,7 +511,7 @@ namespace GreenOnions.CustomHttpApiInvoker
 
             Config.ContentType = rdoContentRaw.Checked ? ContentTypeEnum.raw : ContentTypeEnum.form_data;
 
-            Config.RowContent = txbContentRaw.Text;
+            Config.RawContent = txbContentRaw.Text;
 
             for (int i = 0; i < dgvContentFormData.Rows.Count; i++)
             {
