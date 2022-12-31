@@ -219,7 +219,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
             }
             catch (Exception ex)
             {
-                SendMessageToAdmin($"葱葱舰C报时插件错误：下载音频到本地失败。{ex}");
+                SendMessageToAdmin($"葱葱舰C报时插件错误：下载音频到本地失败。{ex}\r\n 地址为：{item.Mp3UrlOrFileName}");
             }
         }
 
