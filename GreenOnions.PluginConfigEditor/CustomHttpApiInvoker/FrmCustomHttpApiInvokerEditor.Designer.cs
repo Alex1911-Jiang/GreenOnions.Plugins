@@ -1,6 +1,6 @@
-﻿namespace GreenOnions.CustomHttpApiInvoker
+﻿namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
 {
-    partial class FrmEditor
+    partial class FrmCustomHttpApiInvokerEditor
     {
         /// <summary>
         /// Required designer variable.
@@ -822,7 +822,7 @@
             this.lblChangeTypeInfo.TabIndex = 70;
             this.lblChangeTypeInfo.Text = "仅限命令不包含正则且\r\n拼在命令之后的字或@\r\n消息, 只拼接在URL后";
             // 
-            // FrmEditor
+            // FrmCustomHttpApiInvokerEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -862,7 +862,7 @@
             this.Controls.Add(this.lblUrlTitle);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "FrmEditor";
+            this.Name = "FrmCustomHttpApiInvokerEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "编辑请求";
             this.pnlContentType.ResumeLayout(false);

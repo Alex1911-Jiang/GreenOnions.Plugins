@@ -1,16 +1,16 @@
-﻿namespace GreenOnions.CustomHttpApiInvoker
+﻿using GreenOnions.PluginConfigs.CustomHttpApiInvoker;
+
+namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
 {
-    public partial class CtrlListItem : UserControl
+    internal partial class CtrlListItem : UserControl
     {
-        private readonly string _path;
         public HttpApiConfig Config { get; private set; }
 
         public event Action<CtrlListItem> DeleteEvent;
         public event Func<HttpApiConfig, bool> CheckHasSameCmd;
 
-        public CtrlListItem(string path, HttpApiConfig config, Action<CtrlListItem> deleteEvent, Func<HttpApiConfig, bool> checkHasSameCmd)
+        public CtrlListItem(HttpApiConfig config, Action<CtrlListItem> deleteEvent, Func<HttpApiConfig, bool> checkHasSameCmd)
         {
-            _path = path;
             Config = config;
             DeleteEvent = deleteEvent;
             CheckHasSameCmd = checkHasSameCmd;
@@ -24,7 +24,7 @@
         {
             HttpApiConfig editedConfig = Config;
         IL_Retry:;
-            FrmEditor frmEditor = new(_path, editedConfig);
+            FrmCustomHttpApiInvokerEditor frmEditor = new(editedConfig);
             frmEditor.ShowDialog();
             editedConfig = frmEditor.Config;
             if (string.IsNullOrWhiteSpace(editedConfig.Cmd))

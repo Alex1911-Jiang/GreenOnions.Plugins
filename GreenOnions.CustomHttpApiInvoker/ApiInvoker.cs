@@ -1,8 +1,11 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Diagnostics;
+using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
+using GreenOnions.PluginConfigs.CustomHttpApiInvoker;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -12,7 +15,8 @@ namespace GreenOnions.CustomHttpApiInvoker
     public class ApiInvoker : IPlugin
     {
         private string? _path;
-        private MainConfig _config = new MainConfig();
+        private string? _configDirect;
+        private MainConfig _config;
         private Dictionary<HttpApiConfig, Regex> _regexs = new Dictionary<HttpApiConfig, Regex>();
         private IGreenOnionsApi? _botApi;
 
@@ -47,14 +51,23 @@ namespace GreenOnions.CustomHttpApiInvoker
         public void OnLoad(string pluginPath, IBotConfig config)
         {
             _path = pluginPath;
-            string configFileName = Path.Combine(_path, "config.json");
-            if (File.Exists(configFileName))
+            _configDirect = Path.Combine(_path!, "config.json");
+            ReloadConfig();
+        }
+
+        private void ReloadConfig()
+        {
+            if (File.Exists(_configDirect))
             {
-                string strConfigJson = File.ReadAllText(configFileName);
+                string strConfigJson = File.ReadAllText(_configDirect);
                 if (!string.IsNullOrWhiteSpace(strConfigJson))
                 {
                     _config = JsonConvert.DeserializeObject<MainConfig>(strConfigJson)!;
                 }
+            }
+            else
+            {
+                _config = new MainConfig();
             }
         }
 
@@ -413,7 +426,12 @@ namespace GreenOnions.CustomHttpApiInvoker
 
         public bool WindowSetting()
         {
-            new FrmSettings(_path!, _config).ShowDialog();
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                return false;
+
+            string editorDirect = Path.Combine("Plugins", "GreenOnions.PluginConfigEditor", "GreenOnions.PluginConfigEditor.exe");
+            Process.Start(editorDirect, new[] { new StackTrace(true).GetFrame(0).GetMethod().DeclaringType.Namespace, _configDirect }).WaitForExit();
+            ReloadConfig();
             if (_botApi != null)
             {
                 _regexs.Clear();
@@ -423,9 +441,9 @@ namespace GreenOnions.CustomHttpApiInvoker
                         _regexs.Add(item, new Regex(_botApi.ReplaceGreenOnionsStringTags(item.Cmd)));
                 }
             }
-            string configFileName = Path.Combine(_path!, "config.json");
+            string _configDirec = Path.Combine(_path!, "config.json");
             string jsonConfig = JsonConvert.SerializeObject(_config, Formatting.Indented);
-            File.WriteAllText(configFileName, jsonConfig);
+            File.WriteAllText(_configDirec, jsonConfig);
             return true;
         }
     }

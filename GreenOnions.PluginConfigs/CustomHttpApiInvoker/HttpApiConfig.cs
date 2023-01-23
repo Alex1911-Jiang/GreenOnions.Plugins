@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using Newtonsoft.Json.Converters;
 
-namespace GreenOnions.CustomHttpApiInvoker
+namespace GreenOnions.PluginConfigs.CustomHttpApiInvoker
 {
     public class HttpApiConfig
     {

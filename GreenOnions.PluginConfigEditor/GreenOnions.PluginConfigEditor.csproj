@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GreenOnions.PluginConfigs\GreenOnions.PluginConfigs.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="CustomHttpApiInvoker\CtrlListItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="CustomHttpApiInvoker\FrmCustomHttpApiInvokerEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="CustomHttpApiInvoker\FrmCustomHttpApiInvokerSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="ImageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+
+</Project>

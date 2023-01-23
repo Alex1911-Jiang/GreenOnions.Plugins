@@ -1,21 +1,19 @@
 ﻿using System.ComponentModel;
 using System.Net.Http.Headers;
 using System.Text;
+using GreenOnions.PluginConfigs.CustomHttpApiInvoker;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace GreenOnions.CustomHttpApiInvoker
+namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
 {
-    public partial class FrmEditor : Form
+    internal partial class FrmCustomHttpApiInvokerEditor : Form
     {
-        private string _path;
-
         public HttpApiConfig Config { get; private set; }
 
-        public FrmEditor(string path, HttpApiConfig? config = null)
+        public FrmCustomHttpApiInvokerEditor(HttpApiConfig? config = null)
         {
-            _path = path;
             InitializeComponent();
 
             if (config is null)
@@ -349,7 +347,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                             }
                             else
                             {
-                                string respFileName = Path.Combine(_path, "响应.txt");
+                                string respFileName = Path.Combine("响应.txt");
                                 File.WriteAllText(respFileName, valueText);
                                 MessageBox.Show($"{ex.Message}\n响应文已保存在\n{respFileName}", $"请求成功，解析失败 {(int)response.StatusCode}");
                             }
@@ -362,7 +360,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                         //解析成功
                         try
                         {
-                            string saveMusicFileName = Path.Combine(_path, "msuic");
+                            string saveMusicFileName = Path.Combine("msuic");
                             if (rdoSendText.Checked)
                             {
                                 MessageBox.Show(valueText, $"成功 {(int)response.StatusCode}");

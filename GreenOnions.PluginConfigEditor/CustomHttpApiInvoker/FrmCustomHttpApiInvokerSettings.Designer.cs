@@ -1,6 +1,6 @@
-﻿namespace GreenOnions.CustomHttpApiInvoker
+﻿namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
 {
-    partial class FrmSettings
+    partial class FrmCustomHttpApiInvokerSettings
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmSettings));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmCustomHttpApiInvokerSettings));
             this.pnlConfigList = new System.Windows.Forms.FlowLayoutPanel();
             this.btnAddConfig = new System.Windows.Forms.Button();
             this.lblHelpCmd = new System.Windows.Forms.Label();

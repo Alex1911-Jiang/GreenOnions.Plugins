@@ -1,4 +1,4 @@
-﻿namespace GreenOnions.CustomHttpApiInvoker
+﻿namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
 {
     partial class CtrlListItem
     {

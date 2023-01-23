@@ -8,8 +8,4 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\GreenOnions.CustomHttpApiInvoker\GreenOnions.CustomHttpApiInvoker.csproj" />
-  </ItemGroup>
-
 </Project>

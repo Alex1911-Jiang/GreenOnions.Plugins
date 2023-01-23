@@ -1,4 +1,4 @@
-﻿namespace GreenOnions.CustomHttpApiInvoker
+﻿namespace GreenOnions.PluginConfigEditor
 {
     public partial class ImageBox : Form
     {
