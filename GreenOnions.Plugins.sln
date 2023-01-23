@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.CustomHttpApiIn
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.PluginTest", "GreenOnions.PluginTest\GreenOnions.PluginTest.csproj", "{C22664ED-1CE4-4D46-9DF4-7C21990E9304}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.GPT3Client", "GreenOnions.GPT3Client\GreenOnions.GPT3Client.csproj", "{96CD4ACC-6188-4511-89F6-49EC9E440134}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{C22664ED-1CE4-4D46-9DF4-7C21990E9304}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C22664ED-1CE4-4D46-9DF4-7C21990E9304}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C22664ED-1CE4-4D46-9DF4-7C21990E9304}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96CD4ACC-6188-4511-89F6-49EC9E440134}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96CD4ACC-6188-4511-89F6-49EC9E440134}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96CD4ACC-6188-4511-89F6-49EC9E440134}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96CD4ACC-6188-4511-89F6-49EC9E440134}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
