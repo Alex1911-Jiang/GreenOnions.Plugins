@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\GreenOnions\GreenOnions.Interface\GreenOnions.Interface.csproj" />
+    <ProjectReference Include="..\GreenOnions.PluginConfigs\GreenOnions.PluginConfigs.csproj" />
+  </ItemGroup>
+
+</Project>

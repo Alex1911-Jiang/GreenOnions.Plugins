@@ -5,18 +5,18 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
-namespace GreenOnions.KanCollectionTimeAnnouncerWindows
+namespace GreenOnions.KanCollectionTimeAnnouncer
 {
     internal class MoeGirlHelper
     {
-        private string _cachePath;
+        private string _pluginPath;
         private CancellationToken _token;
         private IGreenOnionsApi _api;
         private IBotConfig _botConfig;
 
-        internal MoeGirlHelper(string cachePath, IGreenOnionsApi api, IBotConfig botConfig, CancellationToken token)
+        internal MoeGirlHelper(string pluginPath, IGreenOnionsApi api, IBotConfig botConfig, CancellationToken token)
         {
-            _cachePath = cachePath;
+            _pluginPath = pluginPath;
             _api = api;
             _botConfig = botConfig;
             _token = token;
@@ -34,77 +34,74 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
         /// 请求萌娘百科获取舰娘名称列表
         /// </summary>
         /// <returns></returns>
-        internal async Task<List<string>?> GetKanGrilNameListAsync(bool reget = false)
+        internal async Task<List<string>?> GetKanGrilNameListAsync()
         {
-            string kanGirlListFileName = Path.Combine(_cachePath, "KanGirlList.json");
-            if (File.Exists(kanGirlListFileName))
+            List<string>? kanGirlList;
+            string jsonCache;
+
+            string kanGirlListFileName = Path.Combine(_pluginPath, "KanGirlList.json");
+            if (!File.Exists(kanGirlListFileName) || new FileInfo(kanGirlListFileName).Length == 0)
+                goto IL_GetMoeGirl;
+
+            jsonCache = File.ReadAllText(kanGirlListFileName);
+            if (string.IsNullOrEmpty(jsonCache))
+                goto IL_GetMoeGirl;
+
+            kanGirlList = JsonConvert.DeserializeObject<List<string>>(jsonCache);
+            if (kanGirlList is null || kanGirlList.Count == 0)
+                goto IL_GetMoeGirl;
+
+            return kanGirlList;
+
+        IL_GetMoeGirl:;
+            using HttpClient client = new();
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36");
+            string html;
+            try
             {
-                if (reget)
+                HttpResponseMessage response = await client.GetAsync(@"https://zh.moegirl.org.cn/舰队Collection/图鉴/舰娘", _token);
+                html = await response.Content.ReadAsStringAsync(_token) + "</body></html>";
+            }
+            catch (OperationCanceledException)
+            {
+                return new List<string>();
+            }
+
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(html);
+
+            //按图鉴编号排列的Table
+            var tables = doc.DocumentNode.SelectNodes(@"/html/body/template[@id='MOE_SKIN_TEMPLATE_BODYCONTENT']/div[@id='mw-content-text']/div[@class='mw-parser-output']/table[@class='wikitable']");
+
+            if (tables == null)
+            {
+                File.WriteAllText(Path.Combine(_pluginPath, "获取舰娘失败.html"), html);
+                SendMessageToAdmin("葱葱舰C报时插件获取舰娘列表失败，可能需要滑动验证，请手动打开 https://zh.moegirl.org.cn/舰队Collection/图鉴/舰娘 ，如果无需滑动验证，请打开插件目录下\"获取舰娘失败.html\"查看错误信息");
+                return null;  //滑动验证
+            }
+
+            HashSet<string> collectionNames = new HashSet<string>();
+            foreach (HtmlNode table in tables)
+            {
+                foreach (HtmlNode tr in table.SelectNodes("tbody/tr"))
                 {
-                    File.Delete(kanGirlListFileName);
-                }
-                else if (new FileInfo(kanGirlListFileName).Length > 0)
-                {
-                    string jsonCache = File.ReadAllText(kanGirlListFileName);
-                    if (!string.IsNullOrEmpty(jsonCache))
+                    foreach (string title in tr.SelectNodes("td/a").Select(a => a.Attributes["title"].Value))
                     {
-                        List<string>? kanGirlList = JsonConvert.DeserializeObject<List<string>>(jsonCache);
-                        if (kanGirlList != null && kanGirlList.Count > 0)
-                        {
-                            return kanGirlList;
-                        }
+                        if (title.Contains("舰队Collection:"))  //排除联动的舰娘
+                            collectionNames.Add(title.Substring("舰队Collection:".Length));
                     }
                 }
             }
-            using (HttpClient client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36");
-                string html;
-                try
-                {
-                    HttpResponseMessage response = await client.GetAsync(@"https://zh.moegirl.org.cn/舰队Collection/图鉴/舰娘", _token);
-                    html = await response.Content.ReadAsStringAsync(_token) + "</body></html>";
-                }
-                catch (OperationCanceledException)
-                {
-                    return new List<string>();
-                }
 
-                HtmlDocument doc = new HtmlDocument();
-                doc.LoadHtml(html);
-
-                //按图鉴编号排列的Table
-                var tables = doc.DocumentNode.SelectNodes(@"/html/body/template[@id='MOE_SKIN_TEMPLATE_BODYCONTENT']/div[@id='mw-content-text']/div[@class='mw-parser-output']/table[@class='wikitable']");
-
-                if (tables == null)
-                {
-                    File.WriteAllText(Path.Combine(_cachePath, "滑动验证html检查.html"), html);
-                    return null;  //滑动验证
-                }
-
-                HashSet<string> collectionNames = new HashSet<string>();
-                foreach (HtmlNode table in tables)
-                {
-                    foreach (HtmlNode tr in table.SelectNodes("tbody/tr"))
-                    {
-                        foreach (string title in tr.SelectNodes("td/a").Select(a => a.Attributes["title"].Value))
-                        {
-                            if (title.Contains("舰队Collection:"))  //排除联动的舰娘
-                                collectionNames.Add(title.Substring("舰队Collection:".Length));
-                        }
-                    }
-                }
-
-                List<string> kanGirlList = collectionNames.ToList();
-                string jsonCache = JsonConvert.SerializeObject(kanGirlList, Formatting.Indented);
-                File.WriteAllText(kanGirlListFileName, jsonCache);
-                return kanGirlList;
-            }
+            kanGirlList = collectionNames.ToList();
+            jsonCache = JsonConvert.SerializeObject(kanGirlList, Formatting.Indented);
+            File.WriteAllText(kanGirlListFileName, jsonCache);
+            return kanGirlList;
         }
 
         internal void CoverSaveKanGirlList(List<string> kanGirlList)
         {
-            string kanGirlListFileName = Path.Combine(_cachePath, "KanGirlList.json");
+            string kanGirlListFileName = Path.Combine(_pluginPath, "KanGirlList.json");
             string jsonCache = JsonConvert.SerializeObject(kanGirlList, Formatting.Indented);
             File.WriteAllText(kanGirlListFileName, jsonCache);
         }
@@ -117,7 +114,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
         /// <returns></returns>
         internal async Task<KanGirlVoiceItem?> GetNextHourVoiceUrlAsync(string kanGirlName, int hour)
         {
-            string mp3Path = Path.Combine(_cachePath, "MP3", kanGirlName);
+            string mp3Path = Path.Combine(_pluginPath, "MP3", kanGirlName);
             if (!Directory.Exists(mp3Path))
                 Directory.CreateDirectory(mp3Path);
 
@@ -199,7 +196,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncerWindows
         {
             try
             {
-                string mp3Path = Path.Combine(_cachePath, "MP3", kanGirlName);
+                string mp3Path = Path.Combine(_pluginPath, "MP3", kanGirlName);
                 if (!Directory.Exists(mp3Path))
                     Directory.CreateDirectory(mp3Path);
                 try

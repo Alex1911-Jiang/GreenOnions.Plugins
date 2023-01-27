@@ -8,7 +8,7 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
     internal partial class FrmCustomHttpApiInvokerSettings : Form
     {
         private readonly string _configDirect;
-        private readonly MainConfig _config;
+        private readonly HttpApiConfig _config;
 
         public FrmCustomHttpApiInvokerSettings(string configDirect)
         {
@@ -18,17 +18,17 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
             if (!File.Exists(_configDirect) || string.IsNullOrWhiteSpace(strConfigJson = File.ReadAllText(_configDirect)))
             {
                 MessageBox.Show($"配置文件 {_configDirect} 不存在，即将重新生成");
-                _config = new MainConfig();
+                _config = new HttpApiConfig();
                 strConfigJson = JsonConvert.SerializeObject(_config, Formatting.Indented, new StringEnumConverter());
                 File.WriteAllText(_configDirect, strConfigJson);
             }
             else
             {
-                MainConfig? config = JsonConvert.DeserializeObject<MainConfig>(strConfigJson);
+                HttpApiConfig? config = JsonConvert.DeserializeObject<HttpApiConfig>(strConfigJson);
                 if (config is null)
                 {
                     MessageBox.Show("配置文件读取失败，重新生成");
-                    config = new MainConfig();
+                    config = new HttpApiConfig();
                 }
                 _config = config;
             }
@@ -55,7 +55,7 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
             File.WriteAllText(_configDirect, JsonConvert.SerializeObject(_config, Formatting.Indented, new StringEnumConverter()));
         }
 
-        private bool HasSameCmd(HttpApiConfig config) => _config.ApiConfig.Any(c => c != config && c.Cmd == config.Cmd);
+        private bool HasSameCmd(HttpApiItemConfig config) => _config.ApiConfig.Any(c => c != config && c.Cmd == config.Cmd);
 
         private void DeleteItemControl(CtrlListItem item)
         {

@@ -10,15 +10,15 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
 {
     internal partial class FrmCustomHttpApiInvokerEditor : Form
     {
-        public HttpApiConfig Config { get; private set; }
+        public HttpApiItemConfig Config { get; private set; }
 
-        public FrmCustomHttpApiInvokerEditor(HttpApiConfig? config = null)
+        public FrmCustomHttpApiInvokerEditor(HttpApiItemConfig? config = null)
         {
             InitializeComponent();
 
             if (config is null)
             {
-                Config = new HttpApiConfig();
+                Config = new HttpApiItemConfig();
                 cboHttpMethod.SelectedIndex = 0;
                 cboEncoding.SelectedIndex = 0;
                 cboMediaType.SelectedIndex = 0;
@@ -485,7 +485,8 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
-
+            dgvHeader.EndEdit();
+            dgvContentFormData.EndEdit();
             Config.Url = txbUrl.Text;
             Config.Cmd = txbCmd.Text;
             Config.Remark = txbRemark.Text;

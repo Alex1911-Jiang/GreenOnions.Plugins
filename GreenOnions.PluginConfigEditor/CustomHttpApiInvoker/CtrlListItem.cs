@@ -4,12 +4,12 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
 {
     internal partial class CtrlListItem : UserControl
     {
-        public HttpApiConfig Config { get; private set; }
+        public HttpApiItemConfig Config { get; private set; }
 
         public event Action<CtrlListItem> DeleteEvent;
-        public event Func<HttpApiConfig, bool> CheckHasSameCmd;
+        public event Func<HttpApiItemConfig, bool> CheckHasSameCmd;
 
-        public CtrlListItem(HttpApiConfig config, Action<CtrlListItem> deleteEvent, Func<HttpApiConfig, bool> checkHasSameCmd)
+        public CtrlListItem(HttpApiItemConfig config, Action<CtrlListItem> deleteEvent, Func<HttpApiItemConfig, bool> checkHasSameCmd)
         {
             Config = config;
             DeleteEvent = deleteEvent;
@@ -22,7 +22,7 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
 
         private void BtnEdit_Click(object sender, EventArgs e)
         {
-            HttpApiConfig editedConfig = Config;
+            HttpApiItemConfig editedConfig = Config;
         IL_Retry:;
             FrmCustomHttpApiInvokerEditor frmEditor = new(editedConfig);
             frmEditor.ShowDialog();

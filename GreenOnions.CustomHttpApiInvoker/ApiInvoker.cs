@@ -16,8 +16,8 @@ namespace GreenOnions.CustomHttpApiInvoker
     {
         private string? _path;
         private string? _configDirect;
-        private MainConfig _config;
-        private Dictionary<HttpApiConfig, Regex> _regexs = new Dictionary<HttpApiConfig, Regex>();
+        private HttpApiConfig? _config;
+        private Dictionary<HttpApiItemConfig, Regex> _regexs = new Dictionary<HttpApiItemConfig, Regex>();
         private IGreenOnionsApi? _botApi;
 
         public string Name => "自定义API客户端";
@@ -36,7 +36,7 @@ namespace GreenOnions.CustomHttpApiInvoker
         {
             _botApi = api;
             _regexs.Clear();
-            foreach (var item in _config.ApiConfig)
+            foreach (var item in _config!.ApiConfig)
             {
                 if (item.Cmd!.Contains("(?<参数>"))
                     _regexs.Add(item, new Regex(_botApi.ReplaceGreenOnionsStringTags(item.Cmd)));
@@ -62,12 +62,12 @@ namespace GreenOnions.CustomHttpApiInvoker
                 string strConfigJson = File.ReadAllText(_configDirect);
                 if (!string.IsNullOrWhiteSpace(strConfigJson))
                 {
-                    _config = JsonConvert.DeserializeObject<MainConfig>(strConfigJson)!;
+                    _config = JsonConvert.DeserializeObject<HttpApiConfig>(strConfigJson)!;
                 }
             }
             else
             {
-                _config = new MainConfig();
+                _config = new HttpApiConfig();
             }
         }
 
@@ -75,7 +75,7 @@ namespace GreenOnions.CustomHttpApiInvoker
         {
             if (msgs.FirstOrDefault() is GreenOnionsTextMessage msg)
             {
-                if (string.Equals(_botApi!.ReplaceGreenOnionsStringTags(_config.HelpCmd), msg.Text, StringComparison.OrdinalIgnoreCase))  //列出所有命令
+                if (string.Equals(_botApi!.ReplaceGreenOnionsStringTags(_config!.HelpCmd), msg.Text, StringComparison.OrdinalIgnoreCase))  //列出所有命令
                 {
                     StringBuilder helpMessage = new StringBuilder();
                     for (int i = 0; i < _config.ApiConfig.Count; i++)
@@ -161,7 +161,7 @@ namespace GreenOnions.CustomHttpApiInvoker
             return false;
         }
 
-        private async Task<GreenOnionsMessages?> InvokeApi(HttpApiConfig api, string param, string appendUrlValue)
+        private async Task<GreenOnionsMessages?> InvokeApi(HttpApiItemConfig api, string param, string appendUrlValue)
         {
             GreenOnionsMessages msg = new GreenOnionsMessages() { Reply = false };
             if (string.IsNullOrEmpty(api.Url))
@@ -430,12 +430,12 @@ namespace GreenOnions.CustomHttpApiInvoker
                 return false;
 
             string editorDirect = Path.Combine("Plugins", "GreenOnions.PluginConfigEditor", "GreenOnions.PluginConfigEditor.exe");
-            Process.Start(editorDirect, new[] { new StackTrace(true).GetFrame(0).GetMethod().DeclaringType.Namespace, _configDirect }).WaitForExit();
+            Process.Start(editorDirect, new[] { new StackTrace(true).GetFrame(0)!.GetMethod()!.DeclaringType!.Namespace!, _configDirect! }).WaitForExit();
             ReloadConfig();
             if (_botApi != null)
             {
                 _regexs.Clear();
-                foreach (var item in _config.ApiConfig)
+                foreach (var item in _config!.ApiConfig)
                 {
                     if (item.Cmd!.Contains("(?<参数>"))
                         _regexs.Add(item, new Regex(_botApi.ReplaceGreenOnionsStringTags(item.Cmd)));

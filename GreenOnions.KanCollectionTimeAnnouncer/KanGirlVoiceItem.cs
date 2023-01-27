@@ -1,4 +1,4 @@
-﻿namespace GreenOnions.KanCollectionTimeAnnouncerWindows
+﻿namespace GreenOnions.KanCollectionTimeAnnouncer
 {
     /// <summary>
     /// 表示一个时间的语音和文字

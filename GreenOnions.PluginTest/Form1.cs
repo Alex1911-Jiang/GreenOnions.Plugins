@@ -11,9 +11,10 @@ namespace GreenOnions.PluginTest
 
         private void btnTest_Click(object sender, EventArgs e)
         {
+            string pluginName = "GreenOnions.KanCollectionTimeAnnouncer";
             string editorDirect = Path.Combine(new DirectoryInfo(Application.StartupPath).Parent.Parent.Parent.Parent.FullName, "GreenOnions.PluginConfigEditor", "bin", "Debug", "net6.0-windows", "GreenOnions.PluginConfigEditor.exe");
-            string configDirect = Path.Combine(new DirectoryInfo(Application.StartupPath).Parent.Parent.Parent.Parent.FullName, "GreenOnions.CustomHttpApiInvoker", "bin", "Debug", "net6.0-windows", "config.json");
-            Process.Start(editorDirect, new[] { "GreenOnions.CustomHttpApiInvoker", configDirect }).WaitForExit();
+            string configDirect = Path.Combine(new DirectoryInfo(Application.StartupPath).Parent.Parent.Parent.Parent.FullName, pluginName, "bin", "Debug", "net6.0-windows", "config.json");
+            Process.Start(editorDirect, new[] { pluginName, configDirect }).WaitForExit();
         }
     }
 }

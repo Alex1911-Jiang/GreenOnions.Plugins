@@ -1,6 +1,6 @@
-﻿namespace GreenOnions.KanCollectionTimeAnnouncerWindows
+﻿namespace GreenOnions.PluginConfigs.KanCollectionTimeAnnouncer
 {
-    internal class AnnounceSetting
+    public class KanCollectionSetting
     {
         /// <summary>
         /// 是否指定群组

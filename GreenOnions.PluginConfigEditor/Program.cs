@@ -1,4 +1,6 @@
 using GreenOnions.PluginConfigEditor.CustomHttpApiInvoker;
+using GreenOnions.PluginConfigEditor.KanCollectionTimeAnnouncer;
+using GreenOnions.PluginConfigEditor.Replier;
 
 namespace GreenOnions.PluginConfigEditor
 {
@@ -12,7 +14,7 @@ namespace GreenOnions.PluginConfigEditor
         {
             ApplicationConfiguration.Initialize();
 
-            if (args.Length < 2)
+            if (args.Length != 2)
             {
                 MessageBox.Show("请不要直接运行此程序","提示");
                 Environment.Exit(0);
@@ -22,6 +24,12 @@ namespace GreenOnions.PluginConfigEditor
             {
                 case "GreenOnions.CustomHttpApiInvoker":
                     Application.Run(new FrmCustomHttpApiInvokerSettings(args[1]));
+                    break;
+                case "GreenOnions.KanCollectionTimeAnnouncer":
+                    Application.Run(new FrmKanCollectionTimeAnnouncerSettings(args[1]));
+                    break;
+                case "GreenOnions.Replier":
+                    Application.Run(new FrmReplierSetting(args[1]));
                     break;
             }
         }

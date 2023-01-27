@@ -30,6 +30,12 @@
     <Compile Update="ImageBox.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="KanCollectionTimeAnnouncer\FrmKanCollectionTimeAnnouncerSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Replier\FrmReplierSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
 
 </Project>

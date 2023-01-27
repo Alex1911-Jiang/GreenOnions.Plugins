@@ -1,17 +1,25 @@
 ﻿using System.ComponentModel;
 using System.Data;
+using GreenOnions.PluginConfigs.Replier;
+using Newtonsoft.Json;
 
-namespace GreenOnions.ReplierWindows
+namespace GreenOnions.PluginConfigEditor.Replier
 {
-    public partial class FrmSetting : Form
+    public partial class FrmReplierSetting : Form
     {
         private string _pluginPath;
         private string _ImagePath;
-        private List<CommandSetting> _commandTable;
+        private List<CommandSetting>? _commandTable = null;
 
-        public FrmSetting(List<CommandSetting> commandTable, string pluginPath)
+        public FrmReplierSetting(string configDirect)
         {
-            _commandTable = commandTable;
+            if (File.Exists(configDirect) && new FileInfo(configDirect).Length > 0)
+                _commandTable = JsonConvert.DeserializeObject<List<CommandSetting>>(File.ReadAllText(configDirect));
+
+            if (_commandTable is null)
+                _commandTable = new List<CommandSetting>();
+
+            string pluginPath = Path.GetDirectoryName(configDirect)!;
             _pluginPath = pluginPath;
             if (!Directory.Exists(_pluginPath))
                 Directory.CreateDirectory(_pluginPath);
@@ -36,14 +44,14 @@ namespace GreenOnions.ReplierWindows
             dtSource.Columns.Add("ReplyValue");
             dtSource.Columns.Add("Priority");
             dtSource.Columns.Add("ReplyMode");
-            for (int i = 0; i < commandTable.Count; i++)
+            for (int i = 0; i < _commandTable.Count; i++)
             {
                 List<string> strTriggers = new List<string>();
-                if ((commandTable[i].TriggerMode & TriggerModes.私聊) != 0)
+                if ((_commandTable[i].TriggerMode & TriggerModes.私聊) != 0)
                     strTriggers.Add("私聊");
-                if ((commandTable[i].TriggerMode & TriggerModes.群组) != 0)
+                if ((_commandTable[i].TriggerMode & TriggerModes.群组) != 0)
                     strTriggers.Add("群组");
-                dtSource.Rows.Add(commandTable[i].Message, commandTable[i].MatchMode, $"{string.Join('/', strTriggers)}消息", commandTable[i].ReplyValue, commandTable[i].Priority, commandTable[i].ReplyMode);
+                dtSource.Rows.Add(_commandTable[i].Message, _commandTable[i].MatchMode, $"{string.Join('/', strTriggers)}消息", _commandTable[i].ReplyValue, _commandTable[i].Priority, _commandTable[i].ReplyMode);
             }
             dgvReplies.DataSource = dtSource;
         }
@@ -82,7 +90,7 @@ namespace GreenOnions.ReplierWindows
             btnAddImage.Focus();
             if (dgvReplies.DataSource is DataTable dt)
             {
-                _commandTable.Clear();
+                _commandTable!.Clear();
                 foreach (DataRow row in dt.Rows)
                 {
                     _commandTable.Add(new CommandSetting

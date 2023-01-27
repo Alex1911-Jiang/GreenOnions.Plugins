@@ -1,6 +1,6 @@
-﻿namespace GreenOnions.ReplierWindows
+﻿namespace GreenOnions.PluginConfigEditor.Replier
 {
-    partial class FrmSetting
+    partial class FrmReplierSetting
     {
         /// <summary>
         /// Required designer variable.

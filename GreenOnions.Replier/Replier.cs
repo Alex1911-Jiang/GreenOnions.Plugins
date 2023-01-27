@@ -1,10 +1,14 @@
-﻿using System.Text.Encodings.Web;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
+using GreenOnions.PluginConfigs.Replier;
+using Newtonsoft.Json;
 
-namespace GreenOnions.ReplierWindows
+namespace GreenOnions.Replier
 {
     public class Replier : IPlugin
     {
@@ -41,7 +45,7 @@ namespace GreenOnions.ReplierWindows
             _imagePath = Path.Combine(_pluginPath, "Images");
             _configFileName = Path.Combine(_pluginPath, "config.json");
             if (File.Exists(_configFileName))
-                _commandTable = JsonSerializer.Deserialize<List<CommandSetting>>(File.ReadAllText(_configFileName))!;
+                _commandTable = JsonConvert.DeserializeObject<List<CommandSetting>>(File.ReadAllText(_configFileName))!;
         }
 
         public bool OnMessage(GreenOnionsMessages msgs, long? senderGroup, Action<GreenOnionsMessages> Response)
@@ -146,53 +150,10 @@ namespace GreenOnions.ReplierWindows
 
         public bool WindowSetting()
         {
-            new FrmSetting(_commandTable, _pluginPath!).ShowDialog();
-            string jsonValue = JsonSerializer.Serialize(_commandTable, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
-            File.WriteAllText(Path.Combine(_pluginPath!, "config.json"), jsonValue);
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                return false;
+
             return true;
         }
-    }
-
-    public struct CommandSetting
-    {
-        /// <summary>
-        /// 触发消息
-        /// </summary>
-        public string Message { get; set; }
-        /// <summary>
-        /// 匹配模式
-        /// </summary>
-        public MatchModes MatchMode { get; set; }
-        /// <summary>
-        /// 触发模式
-        /// </summary>
-        public TriggerModes TriggerMode { get; set; }
-        /// <summary>
-        /// 回复内容
-        /// </summary>
-        public string ReplyValue { get; set; }
-        /// <summary>
-        /// 以"回复"方式发送(仅限群)
-        /// </summary>
-        public bool ReplyMode { get; set; }
-        /// <summary>
-        /// 优先级
-        /// </summary>
-        public int Priority { get; set; }
-    }
-
-    public enum MatchModes
-    {
-        完全 = 0,
-        包含 = 1,
-        前缀 = 2,
-        后缀 = 3,
-        正则表达式 = 4,
-    }
-
-    public enum TriggerModes : int
-    {
-        私聊 = 1,
-        群组 = 2,
     }
 }

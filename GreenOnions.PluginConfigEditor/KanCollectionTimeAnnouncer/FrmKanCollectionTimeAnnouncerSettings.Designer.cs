@@ -1,6 +1,6 @@
-﻿namespace GreenOnions.KanCollectionTimeAnnouncerWindows
+﻿namespace GreenOnions.PluginConfigEditor.KanCollectionTimeAnnouncer
 {
-    partial class FrmSettings
+    partial class FrmKanCollectionTimeAnnouncerSettings
     {
         /// <summary>
         /// Required designer variable.

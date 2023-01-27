@@ -3,13 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.KanCollectionTimeAnnouncerWindows", "GreenOnions.KanCollectionTimeAnnouncerWindows\GreenOnions.KanCollectionTimeAnnouncerWindows.csproj", "{55F0837A-ED96-4805-9D34-DEF2FFFA7C3F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.RandomLocalPictures", "GreenOnions.RandomLocalPictures\GreenOnions.RandomLocalPictures.csproj", "{799BAC38-2ACF-4218-9C18-21E934A023AB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.Interface", "..\GreenOnions\GreenOnions.Interface\GreenOnions.Interface.csproj", "{0503C020-3FD4-4238-837D-45C6E69A248B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.ReplierWindows", "GreenOnions.ReplierWindows\GreenOnions.ReplierWindows.csproj", "{E9F47B9C-06E4-437F-BC27-B4ED4CB438CB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.TicTacToe_Windows", "GreenOnions.TicTacToe_Windows\GreenOnions.TicTacToe_Windows.csproj", "{A7EFB39A-F437-4CDE-A031-9AA9B15B2D38}"
 EndProject
@@ -25,7 +21,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.PluginConfigEdi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.PluginConfigs", "GreenOnions.PluginConfigs\GreenOnions.PluginConfigs.csproj", "{2ADF0E29-E56E-42B4-8B85-E8EF321266FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.CustomHttpApiInvoker", "GreenOnions.CustomHttpApiInvoker\GreenOnions.CustomHttpApiInvoker.csproj", "{04995A60-1F84-4D9A-A12A-85183D958B20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.CustomHttpApiInvoker", "GreenOnions.CustomHttpApiInvoker\GreenOnions.CustomHttpApiInvoker.csproj", "{04995A60-1F84-4D9A-A12A-85183D958B20}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.KanCollectionTimeAnnouncer", "GreenOnions.KanCollectionTimeAnnouncer\GreenOnions.KanCollectionTimeAnnouncer.csproj", "{D49614D8-1131-43F9-9B45-C7919F03D0DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.Replier", "GreenOnions.Replier\GreenOnions.Replier.csproj", "{4C48BE63-9D41-4BB1-8F2E-C1A620E1EA23}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +33,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{55F0837A-ED96-4805-9D34-DEF2FFFA7C3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{55F0837A-ED96-4805-9D34-DEF2FFFA7C3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{55F0837A-ED96-4805-9D34-DEF2FFFA7C3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{55F0837A-ED96-4805-9D34-DEF2FFFA7C3F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{799BAC38-2ACF-4218-9C18-21E934A023AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{799BAC38-2ACF-4218-9C18-21E934A023AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{799BAC38-2ACF-4218-9C18-21E934A023AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,10 +41,6 @@ Global
 		{0503C020-3FD4-4238-837D-45C6E69A248B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0503C020-3FD4-4238-837D-45C6E69A248B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0503C020-3FD4-4238-837D-45C6E69A248B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E9F47B9C-06E4-437F-BC27-B4ED4CB438CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E9F47B9C-06E4-437F-BC27-B4ED4CB438CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E9F47B9C-06E4-437F-BC27-B4ED4CB438CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E9F47B9C-06E4-437F-BC27-B4ED4CB438CB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A7EFB39A-F437-4CDE-A031-9AA9B15B2D38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A7EFB39A-F437-4CDE-A031-9AA9B15B2D38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7EFB39A-F437-4CDE-A031-9AA9B15B2D38}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -81,6 +73,14 @@ Global
 		{04995A60-1F84-4D9A-A12A-85183D958B20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04995A60-1F84-4D9A-A12A-85183D958B20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04995A60-1F84-4D9A-A12A-85183D958B20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D49614D8-1131-43F9-9B45-C7919F03D0DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D49614D8-1131-43F9-9B45-C7919F03D0DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D49614D8-1131-43F9-9B45-C7919F03D0DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D49614D8-1131-43F9-9B45-C7919F03D0DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C48BE63-9D41-4BB1-8F2E-C1A620E1EA23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C48BE63-9D41-4BB1-8F2E-C1A620E1EA23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C48BE63-9D41-4BB1-8F2E-C1A620E1EA23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C48BE63-9D41-4BB1-8F2E-C1A620E1EA23}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
