@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.dgvReplies = new System.Windows.Forms.DataGridView();
             this.colMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -64,14 +64,14 @@
             // 
             this.dgvReplies.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvReplies.BackgroundColor = System.Drawing.Color.White;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvReplies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvReplies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvReplies.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvReplies.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colMessage,
@@ -81,30 +81,32 @@
             this.colPriority,
             this.colReplyMode,
             this.colRemove});
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvReplies.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvReplies.DefaultCellStyle = dataGridViewCellStyle2;
             this.dgvReplies.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvReplies.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.dgvReplies.GridColor = System.Drawing.Color.Silver;
-            this.dgvReplies.Location = new System.Drawing.Point(0, 21);
+            this.dgvReplies.Location = new System.Drawing.Point(0, 30);
+            this.dgvReplies.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.dgvReplies.Name = "dgvReplies";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvReplies.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvReplies.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dgvReplies.RowHeadersVisible = false;
+            this.dgvReplies.RowHeadersWidth = 62;
             this.dgvReplies.RowTemplate.Height = 25;
-            this.dgvReplies.Size = new System.Drawing.Size(944, 510);
+            this.dgvReplies.Size = new System.Drawing.Size(1483, 719);
             this.dgvReplies.TabIndex = 2;
             this.dgvReplies.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvReplies_CellContentClick);
             // 
@@ -112,6 +114,7 @@
             // 
             this.colMessage.DataPropertyName = "Message";
             this.colMessage.HeaderText = "触发消息";
+            this.colMessage.MinimumWidth = 8;
             this.colMessage.Name = "colMessage";
             // 
             // colMatchMode
@@ -125,6 +128,7 @@
             "前缀",
             "后缀",
             "正则表达式"});
+            this.colMatchMode.MinimumWidth = 8;
             this.colMatchMode.Name = "colMatchMode";
             // 
             // colTriggerMode
@@ -136,12 +140,14 @@
             "私聊消息",
             "群组消息",
             "私聊/群组消息"});
+            this.colTriggerMode.MinimumWidth = 8;
             this.colTriggerMode.Name = "colTriggerMode";
             // 
             // colReplyValue
             // 
             this.colReplyValue.DataPropertyName = "ReplyValue";
             this.colReplyValue.HeaderText = "回复内容";
+            this.colReplyValue.MinimumWidth = 8;
             this.colReplyValue.Name = "colReplyValue";
             // 
             // colPriority
@@ -149,6 +155,7 @@
             this.colPriority.DataPropertyName = "Priority";
             this.colPriority.FillWeight = 40F;
             this.colPriority.HeaderText = "优先级";
+            this.colPriority.MinimumWidth = 8;
             this.colPriority.Name = "colPriority";
             // 
             // colReplyMode
@@ -156,12 +163,14 @@
             this.colReplyMode.DataPropertyName = "ReplyMode";
             this.colReplyMode.FillWeight = 60F;
             this.colReplyMode.HeaderText = "以回复方式发送";
+            this.colReplyMode.MinimumWidth = 8;
             this.colReplyMode.Name = "colReplyMode";
             // 
             // colRemove
             // 
             this.colRemove.FillWeight = 30F;
             this.colRemove.HeaderText = "删除";
+            this.colRemove.MinimumWidth = 8;
             this.colRemove.Name = "colRemove";
             this.colRemove.Text = "删除";
             this.colRemove.UseColumnTextForButtonValue = true;
@@ -171,16 +180,18 @@
             this.pnlTop.Controls.Add(this.lblInfo);
             this.pnlTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlTop.Location = new System.Drawing.Point(0, 0);
+            this.pnlTop.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.pnlTop.Name = "pnlTop";
-            this.pnlTop.Size = new System.Drawing.Size(944, 21);
+            this.pnlTop.Size = new System.Drawing.Size(1483, 30);
             this.pnlTop.TabIndex = 3;
             // 
             // lblInfo
             // 
             this.lblInfo.AutoSize = true;
-            this.lblInfo.Location = new System.Drawing.Point(19, 2);
+            this.lblInfo.Location = new System.Drawing.Point(30, 3);
+            this.lblInfo.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.lblInfo.Name = "lblInfo";
-            this.lblInfo.Size = new System.Drawing.Size(907, 17);
+            this.lblInfo.Size = new System.Drawing.Size(1357, 24);
             this.lblInfo.TabIndex = 0;
             this.lblInfo.Text = "提示：插入图片格式：<图片名称.后缀>，例如\"回复测试<测试图片.jpg>\"。优先级：数字越小优先度越高。随机回复：触发消息和优先级均相等时会随机发送一条回复。";
             // 
@@ -189,9 +200,10 @@
             this.pnlBottom.Controls.Add(this.lvImages);
             this.pnlBottom.Controls.Add(this.btnAddImage);
             this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlBottom.Location = new System.Drawing.Point(0, 531);
+            this.pnlBottom.Location = new System.Drawing.Point(0, 749);
+            this.pnlBottom.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.pnlBottom.Name = "pnlBottom";
-            this.pnlBottom.Size = new System.Drawing.Size(944, 150);
+            this.pnlBottom.Size = new System.Drawing.Size(1483, 212);
             this.pnlBottom.TabIndex = 3;
             // 
             // lvImages
@@ -200,8 +212,9 @@
             this.lvImages.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvImages.LargeImageList = this.imageList;
             this.lvImages.Location = new System.Drawing.Point(0, 0);
+            this.lvImages.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.lvImages.Name = "lvImages";
-            this.lvImages.Size = new System.Drawing.Size(904, 150);
+            this.lvImages.Size = new System.Drawing.Size(1420, 212);
             this.lvImages.TabIndex = 3;
             this.lvImages.UseCompatibleStateImageBehavior = false;
             this.lvImages.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lvImages_MouseUp);
@@ -209,9 +222,10 @@
             // btnAddImage
             // 
             this.btnAddImage.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnAddImage.Location = new System.Drawing.Point(904, 0);
+            this.btnAddImage.Location = new System.Drawing.Point(1420, 0);
+            this.btnAddImage.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.btnAddImage.Name = "btnAddImage";
-            this.btnAddImage.Size = new System.Drawing.Size(40, 150);
+            this.btnAddImage.Size = new System.Drawing.Size(63, 212);
             this.btnAddImage.TabIndex = 2;
             this.btnAddImage.Text = "添加图片";
             this.btnAddImage.UseVisualStyleBackColor = true;
@@ -219,28 +233,30 @@
             // 
             // contextMenuStrip
             // 
+            this.contextMenuStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuItemRemove});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(101, 26);
+            this.contextMenuStrip.Size = new System.Drawing.Size(117, 34);
             // 
             // menuItemRemove
             // 
             this.menuItemRemove.Name = "menuItemRemove";
-            this.menuItemRemove.Size = new System.Drawing.Size(100, 22);
+            this.menuItemRemove.Size = new System.Drawing.Size(116, 30);
             this.menuItemRemove.Text = "删除";
             this.menuItemRemove.Click += new System.EventHandler(this.MenuItemRemove_Click);
             // 
-            // FrmSetting
+            // FrmReplierSetting
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(944, 681);
+            this.ClientSize = new System.Drawing.Size(1483, 961);
             this.Controls.Add(this.dgvReplies);
             this.Controls.Add(this.pnlTop);
             this.Controls.Add(this.pnlBottom);
-            this.Name = "FrmSetting";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.Name = "FrmReplierSetting";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "自定义回复设置";
             ((System.ComponentModel.ISupportInitialize)(this.dgvReplies)).EndInit();
             this.pnlTop.ResumeLayout(false);

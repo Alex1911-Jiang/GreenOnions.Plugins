@@ -484,7 +484,6 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            base.OnClosing(e);
             dgvHeader.EndEdit();
             dgvContentFormData.EndEdit();
             Config.Url = txbUrl.Text;
@@ -578,6 +577,8 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
             else if (rdoChangeMeToProfileUrl.Checked)
                 Config.ChangeMeTo = ChangeMessageTypeEnum.ProfilePhotoUrl;
             #endregion -- 屎山if --
+
+            base.OnClosing(e);
         }
     }
 }

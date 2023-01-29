@@ -863,7 +863,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmCustomHttpApiInvokerEditor";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "编辑请求";
             this.pnlContentType.ResumeLayout(false);
             this.pnlContentType.PerformLayout();

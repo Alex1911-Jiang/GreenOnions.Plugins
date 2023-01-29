@@ -83,7 +83,7 @@
             this.txbHelpCmd.Size = new System.Drawing.Size(648, 30);
             this.txbHelpCmd.TabIndex = 10;
             // 
-            // FrmSettings
+            // FrmCustomHttpApiInvokerSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -91,8 +91,8 @@
             this.Controls.Add(this.txbHelpCmd);
             this.Controls.Add(this.lblHelpCmd);
             this.Controls.Add(this.pnlConfigList);
-            this.Name = "FrmSettings";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Name = "FrmCustomHttpApiInvokerSettings";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "自定义API设置";
             this.pnlConfigList.ResumeLayout(false);
             this.ResumeLayout(false);

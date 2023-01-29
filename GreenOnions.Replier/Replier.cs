@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Text.Encodings.Web;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
@@ -13,7 +11,7 @@ namespace GreenOnions.Replier
     public class Replier : IPlugin
     {
         private string? _pluginPath;
-        private string? _configFileName;
+        private string? _configDirect;
         private string? _imagePath;
         private List<CommandSetting> _commandTable = new List<CommandSetting>();
 
@@ -43,9 +41,14 @@ namespace GreenOnions.Replier
         {
             _pluginPath = pluginPath;
             _imagePath = Path.Combine(_pluginPath, "Images");
-            _configFileName = Path.Combine(_pluginPath, "config.json");
-            if (File.Exists(_configFileName))
-                _commandTable = JsonConvert.DeserializeObject<List<CommandSetting>>(File.ReadAllText(_configFileName))!;
+            _configDirect = Path.Combine(_pluginPath, "config.json");
+            ReloadConfig();
+        }
+
+        private void ReloadConfig()
+        {
+            if (File.Exists(_configDirect))
+                _commandTable = JsonConvert.DeserializeObject<List<CommandSetting>>(File.ReadAllText(_configDirect))!;
         }
 
         public bool OnMessage(GreenOnionsMessages msgs, long? senderGroup, Action<GreenOnionsMessages> Response)
@@ -152,6 +155,10 @@ namespace GreenOnions.Replier
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 return false;
+
+            string editorDirect = Path.Combine("Plugins", "GreenOnions.PluginConfigEditor", "GreenOnions.PluginConfigEditor.exe");
+            Process.Start(editorDirect, new[] { new StackTrace(true).GetFrame(0)!.GetMethod()!.DeclaringType!.Namespace!, _configDirect! }).WaitForExit();
+            ReloadConfig();
 
             return true;
         }

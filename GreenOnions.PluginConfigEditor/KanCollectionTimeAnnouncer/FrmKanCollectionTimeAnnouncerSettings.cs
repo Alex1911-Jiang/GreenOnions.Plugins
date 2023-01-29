@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
+using GreenOnions.PluginConfigs.CustomHttpApiInvoker;
 using GreenOnions.PluginConfigs.KanCollectionTimeAnnouncer;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace GreenOnions.PluginConfigEditor.KanCollectionTimeAnnouncer
@@ -16,11 +18,7 @@ namespace GreenOnions.PluginConfigEditor.KanCollectionTimeAnnouncer
         internal FrmKanCollectionTimeAnnouncerSettings(string configDirect)
         {
             _configDirect = configDirect;
-            if (File.Exists(_configDirect))
-                _config = JsonConvert.DeserializeObject<KanCollectionSetting>(File.ReadAllText(_configDirect));
-            if (_config is null)
-                _config = new KanCollectionSetting();
-
+            _config = ConfigLoader.LoadConfig<KanCollectionSetting>(_configDirect);
             InitializeComponent();
             cboDesignatedKanGirl.SelectedIndex = 0;
 
@@ -82,8 +80,6 @@ namespace GreenOnions.PluginConfigEditor.KanCollectionTimeAnnouncer
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            base.OnClosing(e);
-
             SetControlEnabled();
 
             if (cboDesignatedKanGirl.DataSource != null)
@@ -109,6 +105,8 @@ namespace GreenOnions.PluginConfigEditor.KanCollectionTimeAnnouncer
 
             string jsonConfig = JsonConvert.SerializeObject(_config, Formatting.Indented);
             File.WriteAllText(_configDirect, jsonConfig);
+
+            base.OnClosing(e);
         }
 
         private void rdo_CheckedChanged(object sender, EventArgs e) => SetControlEnabled();

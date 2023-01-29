@@ -13,25 +13,7 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
         public FrmCustomHttpApiInvokerSettings(string configDirect)
         {
             _configDirect = configDirect;
-
-            string strConfigJson;
-            if (!File.Exists(_configDirect) || string.IsNullOrWhiteSpace(strConfigJson = File.ReadAllText(_configDirect)))
-            {
-                MessageBox.Show($"配置文件 {_configDirect} 不存在，即将重新生成");
-                _config = new HttpApiConfig();
-                strConfigJson = JsonConvert.SerializeObject(_config, Formatting.Indented, new StringEnumConverter());
-                File.WriteAllText(_configDirect, strConfigJson);
-            }
-            else
-            {
-                HttpApiConfig? config = JsonConvert.DeserializeObject<HttpApiConfig>(strConfigJson);
-                if (config is null)
-                {
-                    MessageBox.Show("配置文件读取失败，重新生成");
-                    config = new HttpApiConfig();
-                }
-                _config = config;
-            }
+            _config = ConfigLoader.LoadConfig<HttpApiConfig>(_configDirect);
             InitializeComponent();
             txbHelpCmd.Text = _config.HelpCmd;
         }
@@ -50,9 +32,9 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            base.OnClosing(e);
             _config.HelpCmd = txbHelpCmd.Text;
             File.WriteAllText(_configDirect, JsonConvert.SerializeObject(_config, Formatting.Indented, new StringEnumConverter()));
+            base.OnClosing(e);
         }
 
         private bool HasSameCmd(HttpApiItemConfig config) => _config.ApiConfig.Any(c => c != config && c.Cmd == config.Cmd);

@@ -7,18 +7,15 @@ namespace GreenOnions.PluginConfigEditor.Replier
 {
     public partial class FrmReplierSetting : Form
     {
+        private string _configDirect;
         private string _pluginPath;
         private string _ImagePath;
-        private List<CommandSetting>? _commandTable = null;
+        private List<CommandSetting>? _config = null;
 
         public FrmReplierSetting(string configDirect)
         {
-            if (File.Exists(configDirect) && new FileInfo(configDirect).Length > 0)
-                _commandTable = JsonConvert.DeserializeObject<List<CommandSetting>>(File.ReadAllText(configDirect));
-
-            if (_commandTable is null)
-                _commandTable = new List<CommandSetting>();
-
+            _configDirect = configDirect;
+            _config = ConfigLoader.LoadConfig<List<CommandSetting>>(_configDirect);
             string pluginPath = Path.GetDirectoryName(configDirect)!;
             _pluginPath = pluginPath;
             if (!Directory.Exists(_pluginPath))
@@ -44,14 +41,14 @@ namespace GreenOnions.PluginConfigEditor.Replier
             dtSource.Columns.Add("ReplyValue");
             dtSource.Columns.Add("Priority");
             dtSource.Columns.Add("ReplyMode");
-            for (int i = 0; i < _commandTable.Count; i++)
+            for (int i = 0; i < _config.Count; i++)
             {
                 List<string> strTriggers = new List<string>();
-                if ((_commandTable[i].TriggerMode & TriggerModes.私聊) != 0)
+                if ((_config[i].TriggerMode & TriggerModes.私聊) != 0)
                     strTriggers.Add("私聊");
-                if ((_commandTable[i].TriggerMode & TriggerModes.群组) != 0)
+                if ((_config[i].TriggerMode & TriggerModes.群组) != 0)
                     strTriggers.Add("群组");
-                dtSource.Rows.Add(_commandTable[i].Message, _commandTable[i].MatchMode, $"{string.Join('/', strTriggers)}消息", _commandTable[i].ReplyValue, _commandTable[i].Priority, _commandTable[i].ReplyMode);
+                dtSource.Rows.Add(_config[i].Message, _config[i].MatchMode, $"{string.Join('/', strTriggers)}消息", _config[i].ReplyValue, _config[i].Priority, _config[i].ReplyMode);
             }
             dgvReplies.DataSource = dtSource;
         }
@@ -90,10 +87,10 @@ namespace GreenOnions.PluginConfigEditor.Replier
             btnAddImage.Focus();
             if (dgvReplies.DataSource is DataTable dt)
             {
-                _commandTable!.Clear();
+            _config!.Clear();
                 foreach (DataRow row in dt.Rows)
                 {
-                    _commandTable.Add(new CommandSetting
+                    _config.Add(new CommandSetting
                     {
                         Message = row[0].ToString()!,
                         MatchMode = ToMatchMode(row[1]),
@@ -104,6 +101,9 @@ namespace GreenOnions.PluginConfigEditor.Replier
                     });
                 }
             }
+            string strConfig = JsonConvert.SerializeObject(_config, Formatting.Indented);
+            File.WriteAllText(_configDirect, strConfig);
+
             base.OnClosing(e);
         }
 
