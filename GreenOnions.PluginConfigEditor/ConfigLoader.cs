@@ -12,6 +12,9 @@ namespace GreenOnions.PluginConfigEditor
             if (!File.Exists(configDirect) || string.IsNullOrWhiteSpace(strConfigJson = File.ReadAllText(configDirect)))
             {
                 MessageBox.Show($"配置文件 {configDirect} 不存在，即将重新生成");
+                string? path = Path.GetDirectoryName(configDirect);
+                if (!string.IsNullOrWhiteSpace(path) && !Directory.Exists(path))
+                    Directory.CreateDirectory(path);
                 outConfig = new T();
                 strConfigJson = JsonConvert.SerializeObject(outConfig, Formatting.Indented, new StringEnumConverter());
                 File.WriteAllText(configDirect, strConfigJson);
