@@ -1,7 +1,7 @@
 # GreenOnions.Plugins
 ### [GreenOnions](https://github.com/Alex1911-Jiang/GreenOnions) 的各种插件
 
-GreenOnions.KanCollectionTimeAnnouncerWindows #舰C语音报时插件<br>
+GreenOnions.KanCollectionTimeAnnouncer #舰C语音报时插件<br>
 GreenOnions.RandomLocalPictures #随机本地图片插件<br>
 GreenOnions.Replier #自定义回复插件 [查看示例](https://github.com/Alex1911-Jiang/GreenOnions.Plugins/tree/main/GreenOnions.Replier)<br>
 GreenOnions.TicTacToe_Windows #井字棋插件(仅限Windows) [查看示例](https://github.com/Alex1911-Jiang/GreenOnions.Plugins/tree/main/GreenOnions.TicTacToe_Windows)<br>
