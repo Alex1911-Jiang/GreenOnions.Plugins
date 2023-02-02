@@ -7,7 +7,7 @@ using NovelAIClient;
 
 namespace GreenOnions.NovelAiClient
 {
-    public class NovelHandler : IPlugin
+    public class NovelHandler : IMessagePlugin, IPluginSetting, IPluginHelp
     {
         private string? _pluginPath;
         private Config? _config;
@@ -19,13 +19,6 @@ namespace GreenOnions.NovelAiClient
         public string Description => "NovelAi画图插件";
 
         public GreenOnionsMessages? HelpMessage => "发送 \"<机器人名称>画图：<关键词>\" 来绘制一张图片，多个关键词请用英文逗号分隔。";
-
-        public bool DisplayedInTheHelp => true;
-
-        public void ConsoleSetting()
-        {
-
-        }
 
         public void OnConnected(long selfId, IGreenOnionsApi api)
         {
@@ -152,9 +145,9 @@ namespace GreenOnions.NovelAiClient
             return webuiClient.PostAsync(customData, defalutPrompt + prompts, _config!.DefaultUndesired ?? "");
         }
 
-        public bool WindowSetting()
+        public void Setting()
         {
-            return false;
+            throw new Exception("请进入插件目录修改config.json配置文件");
         }
     }
 }

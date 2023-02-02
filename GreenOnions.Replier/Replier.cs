@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace GreenOnions.Replier
 {
-    public class Replier : IPlugin
+    public class Replier : IMessagePlugin, IPluginSetting
     {
         private string? _pluginPath;
         private string? _configDirect;
@@ -18,15 +18,6 @@ namespace GreenOnions.Replier
         public string Name => "自定义回复";
 
         public string Description => "自定义回复插件";
-
-        public bool DisplayedInTheHelp => false;
-
-        public GreenOnionsMessages? HelpMessage => null;
-
-        public void ConsoleSetting()
-        {
-            Console.WriteLine("本插件没有设计Console设置功能，请使用Windows端加载。");
-        }
 
         public void OnConnected(long selfId, IGreenOnionsApi api)
         {
@@ -151,16 +142,14 @@ namespace GreenOnions.Replier
             return messages;
         }
 
-        public bool WindowSetting()
+        public void Setting()
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                return false;
+                return;
 
             string editorDirect = Path.Combine("Plugins", "GreenOnions.PluginConfigEditor", "GreenOnions.PluginConfigEditor.exe");
             Process.Start(editorDirect, new[] { new StackTrace(true).GetFrame(0)!.GetMethod()!.DeclaringType!.Namespace!, _configDirect! }).WaitForExit();
             ReloadConfig();
-
-            return true;
         }
     }
 }

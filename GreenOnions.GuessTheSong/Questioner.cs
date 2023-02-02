@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace GreenOnions.GuessTheSong
 {
-    public class Questioner : IPlugin
+    public class Questioner : IMessagePlugin, IPluginSetting, IPluginHelp
     {
         private string? _pluginPath;
         private Config? _config;
@@ -22,12 +22,6 @@ namespace GreenOnions.GuessTheSong
         public string Description => "葱葱听歌猜曲名插件";
 
         public GreenOnionsMessages? HelpMessage => _config?.HelpMessage ??  "输入 \"<机器人名称>猜歌\" 发起一场听歌猜曲名游戏，每场游戏时长为一分钟，任意群友猜出正确曲名或超时后结束。";
-
-        public bool DisplayedInTheHelp => true;
-
-        public void ConsoleSetting()
-        {
-        }
 
         public void OnConnected(long selfId, IGreenOnionsApi api)
         {
@@ -358,9 +352,9 @@ namespace GreenOnions.GuessTheSong
             return outputStream;
         }
 
-        public bool WindowSetting()
+        public void Setting()
         {
-            return false;
+            throw new Exception("请进入插件目录修改config.json配置文件");
         }
     }
 }

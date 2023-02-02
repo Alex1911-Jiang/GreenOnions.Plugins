@@ -7,7 +7,7 @@ using GreenOnions.Interface.Configs;
 
 namespace GreenOnions.TicTacToe_Windows
 {
-    public class TicTacToeHandler : IPlugin
+    public class TicTacToeHandler : IMessagePlugin, IPluginSetting, IPluginHelp
     {
         private string? _pluginPath;
         private Regex? _regexTicTacToeStart;
@@ -22,8 +22,6 @@ namespace GreenOnions.TicTacToe_Windows
         public string Name => "井字棋";
 
         public string Description => "葱葱井字棋游戏插件";
-
-        public bool DisplayedInTheHelp => true;
 
         public GreenOnionsMessages HelpMessage
         {
@@ -308,12 +306,7 @@ namespace GreenOnions.TicTacToe_Windows
             return false;
         }
 
-        public void ConsoleSetting()
-        {
-
-        }
-
-        public bool WindowSetting()
+        public void Setting()
         {
             new FrmSettings(_config!, _pluginPath!).ShowDialog();
             if (_api != null)
@@ -321,7 +314,6 @@ namespace GreenOnions.TicTacToe_Windows
                 _regexTicTacToeStart = new Regex(_api.ReplaceGreenOnionsStringTags(_config!.StartTicTacToeCmd));
                 _regexTicTacToeStop = new Regex(_api.ReplaceGreenOnionsStringTags(_config!.StopTicTacToeCmd));
             }
-            return true;
         }
 
         private async void SendMessageToAdmin(string msg)

@@ -12,7 +12,7 @@ using Newtonsoft.Json.Linq;
 
 namespace GreenOnions.CustomHttpApiInvoker
 {
-    public class ApiInvoker : IPlugin
+    public class ApiInvoker : IMessagePlugin, IPluginSetting
     {
         private string? _path;
         private string? _configDirect;
@@ -23,14 +23,6 @@ namespace GreenOnions.CustomHttpApiInvoker
         public string Name => "自定义API客户端";
 
         public string Description => "自定义调用HttpApi插件";
-
-        public bool DisplayedInTheHelp => false;
-
-        public GreenOnionsMessages? HelpMessage => null;
-
-        public void ConsoleSetting()
-        {
-        }
 
         public void OnConnected(long selfId, IGreenOnionsApi api)
         {
@@ -424,10 +416,10 @@ namespace GreenOnions.CustomHttpApiInvoker
             return null;
         }
 
-        public bool WindowSetting()
+        public void Setting()
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                return false;
+                return;
 
             string editorDirect = Path.Combine("Plugins", "GreenOnions.PluginConfigEditor", "GreenOnions.PluginConfigEditor.exe");
             Process.Start(editorDirect, new[] { new StackTrace(true).GetFrame(0)!.GetMethod()!.DeclaringType!.Namespace!, _configDirect! }).WaitForExit();
@@ -444,7 +436,6 @@ namespace GreenOnions.CustomHttpApiInvoker
             string _configDirec = Path.Combine(_path!, "config.json");
             string jsonConfig = JsonConvert.SerializeObject(_config, Formatting.Indented);
             File.WriteAllText(_configDirec, jsonConfig);
-            return true;
         }
     }
 }

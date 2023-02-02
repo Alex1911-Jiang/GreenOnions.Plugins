@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Text.Json;
-using System.Text.RegularExpressions;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
 using GreenOnions.PluginConfigs.KanCollectionTimeAnnouncer;
@@ -9,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace GreenOnions.KanCollectionTimeAnnouncer
 {
-    public class Announcer : IPlugin
+    public class Announcer : IMessagePlugin, IPluginSetting
     {
         private KanCollectionSetting? _settings;
         private MoeGirlHelper? _moeGirlHelper;
@@ -25,15 +23,6 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
         public string Name => "舰C报时";
 
         public string Description => "舰队Collection整点语音报时插件";
-
-        public GreenOnionsMessages? HelpMessage => null;
-
-        public bool DisplayedInTheHelp => false;
-
-        public void ConsoleSetting()
-        {
-            Console.WriteLine("本插件没有设计Console设置功能，请使用Windows端加载。");
-        }
 
         public void OnConnected(long selfId, IGreenOnionsApi api)
         {
@@ -208,16 +197,15 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
             return false;
         }
 
-        public bool WindowSetting()
+        public void Setting()
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                return false;
+                return;
 
             string editorDirect = Path.Combine("Plugins", "GreenOnions.PluginConfigEditor", "GreenOnions.PluginConfigEditor.exe");
             Process.Start(editorDirect, new[] { new StackTrace(true).GetFrame(0)!.GetMethod()!.DeclaringType!.Namespace!, _configDirect! }).WaitForExit();
             ReloadConfig();
             RestartWorker();
-            return true;
         }
     }
 }

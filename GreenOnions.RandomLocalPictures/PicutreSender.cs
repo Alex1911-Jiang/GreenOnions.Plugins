@@ -4,21 +4,12 @@ using Newtonsoft.Json;
 
 namespace GreenOnions.RandomLocalPictures
 {
-    public class PicutreSender : IPlugin
+    public class PicutreSender : IMessagePlugin, IPluginSetting
     {
         private Dictionary<string,string> _cmdToPath = new Dictionary<string,string>();
         public string Name => "本地随机色图";
 
         public string Description => "通过命令随机发送本地指定目录的图片";
-
-        public GreenOnionsMessages? HelpMessage => null;
-
-        public bool DisplayedInTheHelp => false;
-
-        public void ConsoleSetting()
-        {
-            Console.WriteLine("本插件不通过运行中设置功能, 请手动修改插件目录下的config.json后重启机器人");
-        }
 
         public void OnConnected(long selfId, IGreenOnionsApi api)
         {
@@ -96,9 +87,9 @@ namespace GreenOnions.RandomLocalPictures
             return false;
         }
 
-        public bool WindowSetting()
+        public void Setting()
         {
-            return false;
+            throw new Exception("请进入插件目录修改config.json配置文件");
         }
 
         public struct SourcesInfo

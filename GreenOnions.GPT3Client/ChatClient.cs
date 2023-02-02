@@ -9,7 +9,7 @@ using GreenOnions.Interface.Configs;
 
 namespace GreenOnions.GPT3Client
 {
-    public class ChatClient : IPlugin
+    public class ChatClient : IMessagePlugin, IPluginHelp
     {
         private string? _pluginPath;
         private Config? _config;
@@ -25,8 +25,6 @@ namespace GreenOnions.GPT3Client
 
         public string Description => "GPT3聊天插件";
 
-        public bool DisplayedInTheHelp => !string.IsNullOrWhiteSpace(_config!.APIkey);
-
         public GreenOnionsMessages? HelpMessage
         {
             get
@@ -37,10 +35,6 @@ namespace GreenOnions.GPT3Client
                     return $"发送 \"{startCmd}\" 进入聊天模式，之后您发送的所有消息都将被视为与<机器人名称>对话，{_config.TimeOutSecond / 60}分钟不发言或发送 \"{exitCmd}\" 结束聊天模式。\r\n(<机器人名称>只会记QQ号，不会记群号，在您退出聊天模式之前，您在其他群的发言也会被视为与<机器人名称>聊天)";
                 return null;
             }
-        }
-
-        public void ConsoleSetting()
-        {
         }
 
         private void StartTimeoutWorker()
@@ -227,9 +221,9 @@ namespace GreenOnions.GPT3Client
             }
         }
 
-        public bool WindowSetting()
+        public void WindowSetting()
         {
-            return false;
+            throw new Exception("请进入插件目录修改config.json配置文件");
         }
     }
 }
