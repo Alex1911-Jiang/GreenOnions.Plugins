@@ -13,7 +13,7 @@ namespace GreenOnions.Replier
         private string? _pluginPath;
         private string? _configDirect;
         private string? _imagePath;
-        private List<CommandSetting> _commandTable = new List<CommandSetting>();
+        private CommandSetting[]? _commandTable;
 
         public string Name => "自定义回复";
 
@@ -39,7 +39,7 @@ namespace GreenOnions.Replier
         private void ReloadConfig()
         {
             if (File.Exists(_configDirect))
-                _commandTable = JsonConvert.DeserializeObject<List<CommandSetting>>(File.ReadAllText(_configDirect))!;
+                _commandTable = JsonConvert.DeserializeObject<CommandSetting[]>(File.ReadAllText(_configDirect))!;
         }
 
         public bool OnMessage(GreenOnionsMessages msgs, long? senderGroup, Action<GreenOnionsMessages> Response)
@@ -77,11 +77,11 @@ namespace GreenOnions.Replier
         private GreenOnionsMessages? CaeateReply(GreenOnionsTextMessage textMsg, CommandSetting comm)
         {
             if (comm.MatchMode == MatchModes.完全 && textMsg.Text == comm.Message)
-                return RandomSamePriority(textMsg.Text, comm.Priority);
+                return RandomSamePriority(comm.Message, comm.Priority);
             else if (comm.MatchMode == MatchModes.前缀 && textMsg.Text.StartsWith(comm.Message))
-                return RandomSamePriority(textMsg.Text, comm.Priority);
+                return RandomSamePriority(comm.Message, comm.Priority);
             else if (comm.MatchMode == MatchModes.后缀 && textMsg.Text.EndsWith(comm.Message))
-                return RandomSamePriority(textMsg.Text, comm.Priority);
+                return RandomSamePriority(comm.Message, comm.Priority);
             else if (comm.MatchMode == MatchModes.正则表达式)
             {
                 Regex regex = new Regex(comm.Message);
@@ -90,7 +90,7 @@ namespace GreenOnions.Replier
                     return RandomSamePriority(regex.ToString(), comm.Priority);
             }
             else if (comm.MatchMode == MatchModes.包含 && textMsg.Text.Contains(comm.Message))
-                return RandomSamePriority(textMsg.Text, comm.Priority);
+                return RandomSamePriority(comm.Message, comm.Priority);
             return null;
         }
 
