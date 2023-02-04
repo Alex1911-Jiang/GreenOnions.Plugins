@@ -1,13 +1,12 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
-using GreenOnions.Interface.Subinterface;
 
 namespace GreenOnions.NodeHttpClient
 {
-    public class Axios : IHttpClientSubstitutes
+    [Obsolete("不知道怎么用它来下载文件，暂时不用了")]
+    public class Axios //: IHttpClientSubstitutes
     {
         private string? _pluginPath;
 
@@ -15,38 +14,8 @@ namespace GreenOnions.NodeHttpClient
 
         public string Description => "使用Node替代系统发起SSL/TLS请求插件";
 
-        public string GetAsString(string url)
-        {
-            WriteUrl(url);
-            return InvokeByCmd("node.exe httpClient.js");
-        }
-
-        public async Task<string> GetAsStringAsync(string url)
-        {
-            WriteUrl(url);
-            return await InvokeByCmdAsync("node.exe httpClient.js");
-        }
-
-        private void WriteUrl(string url)
-        {
-            string file = Path.Combine(Environment.CurrentDirectory, "node", "httpClient.js");
-            File.WriteAllText(file, @"const axios = require('axios');
-axios.get('" +
-url +
-@"').then(res => {
-    var json = JSON.stringify(res.data);
-    console.log(json);
-  }).catch(err => {
-    console.log(err);
-  });");
-        }
-
         public void OnConnected(long selfId, IGreenOnionsApi api)
         {
-            if (true)  //TODO:设置中添加是否启用的选项
-            {
-                Init();
-            }
         }
 
         public void OnDisconnected()
@@ -57,24 +26,37 @@ url +
         {
             _pluginPath = pluginPath;
             Console.OutputEncoding = Encoding.UTF8;
+            Init();
         }
 
-        private async void Init()
+        public string GetAsString(string url)
         {
-            string path = Path.Combine(_pluginPath!, "node");
+            string file = Path.Combine(_pluginPath, "node", "axiosClient.js");
+            File.WriteAllText(file, @"const axios = require('axios');
+axios.get('" + url + @"').then(res => {
+    var json = JSON.stringify(res.data);
+    console.log(json);
+  }).catch(err => {
+    console.log(err.message);
+  });");
+            return WriteRead("axiosClient.js");
+        }
+
+        private void Init()
+        {
+            string path = Path.Combine(_pluginPath, "node");
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
-            string axiosJsFile = Path.Combine(_pluginPath!, "node", "node_modules","axios","lib", "axios.js");
-            if (!File.Exists(axiosJsFile))
-                await InvokeByCmdAsync("npm install axios --save");
+            if (!Directory.Exists(Path.Combine(_pluginPath, "node", "node_modules", "axios")))
+                Write("npm install axios --save");
         }
 
         private Process CreateCmdProcess()
         {
             Process proc = new Process();
             proc.StartInfo.FileName = "cmd.exe";
-            proc.StartInfo.WorkingDirectory = Path.Combine(_pluginPath!, "node");
+            proc.StartInfo.WorkingDirectory = Path.Combine(_pluginPath, "node");
             proc.StartInfo.CreateNoWindow = true;
             proc.StartInfo.RedirectStandardError = true;
             proc.StartInfo.RedirectStandardInput = true;
@@ -84,33 +66,40 @@ url +
             return proc;
         }
 
-        private string InvokeByCmd(params string[] command)
+        private string WriteRead(string executeFileName)
         {
             using (Process pc = CreateCmdProcess())
             {
-                foreach (string com in command)
-                    pc.StandardInput.WriteLine(com);
+                pc.StandardInput.WriteLine("node.exe " + executeFileName);
                 pc.StandardInput.WriteLine("exit");
                 pc.StandardInput.AutoFlush = true;
-                string outPut = pc.StandardOutput.ReadToEnd();    
+                bool bStart = false;
+                StringBuilder result = new StringBuilder();
+                string? line;
+                do
+                {
+                    line = pc.StandardOutput.ReadLine();
+                    if (bStart && line is not null && line.EndsWith("exit"))
+                        break;
+                    if (bStart)
+                        result.AppendLine(line);
+                    if (!bStart && line is not null && line.EndsWith(executeFileName))
+                        bStart = true;
+                } while (line is not null);
                 pc.WaitForExit();
                 pc.Close();
-                return outPut;
+                return result.ToString();
             }
         }
-
-        private async Task<string> InvokeByCmdAsync(params string[] command)
+        private void Write(string executeFileName)
         {
             using (Process pc = CreateCmdProcess())
             {
-                foreach (string com in command)
-                    await pc.StandardInput.WriteLineAsync(com);
-                await pc.StandardInput.WriteLineAsync("exit");
+                pc.StandardInput.WriteLine("node.exe " + executeFileName);
+                pc.StandardInput.WriteLine("exit");
                 pc.StandardInput.AutoFlush = true;
-                string outPut = await pc.StandardOutput.ReadToEndAsync();     
-                await pc.WaitForExitAsync();
+                pc.WaitForExit();
                 pc.Close();
-                return outPut;
             }
         }
     }
