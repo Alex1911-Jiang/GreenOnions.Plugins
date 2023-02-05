@@ -54,6 +54,8 @@
             // 
             // txbApiKey
             // 
+            this.txbApiKey.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txbApiKey.Location = new System.Drawing.Point(319, 31);
             this.txbApiKey.Name = "txbApiKey";
             this.txbApiKey.Size = new System.Drawing.Size(354, 30);
@@ -61,6 +63,8 @@
             // 
             // txbTemperature
             // 
+            this.txbTemperature.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txbTemperature.Location = new System.Drawing.Point(319, 67);
             this.txbTemperature.Name = "txbTemperature";
             this.txbTemperature.Size = new System.Drawing.Size(354, 30);
@@ -68,6 +72,8 @@
             // 
             // txbStartCommands
             // 
+            this.txbStartCommands.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txbStartCommands.Location = new System.Drawing.Point(319, 205);
             this.txbStartCommands.Multiline = true;
             this.txbStartCommands.Name = "txbStartCommands";
@@ -77,6 +83,8 @@
             // 
             // txbExitCommands
             // 
+            this.txbExitCommands.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txbExitCommands.Location = new System.Drawing.Point(319, 332);
             this.txbExitCommands.Multiline = true;
             this.txbExitCommands.Name = "txbExitCommands";
@@ -86,6 +94,8 @@
             // 
             // txbChatStartMessage
             // 
+            this.txbChatStartMessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txbChatStartMessage.Location = new System.Drawing.Point(319, 459);
             this.txbChatStartMessage.Name = "txbChatStartMessage";
             this.txbChatStartMessage.Size = new System.Drawing.Size(354, 30);
@@ -93,6 +103,8 @@
             // 
             // txbExitChatMessage
             // 
+            this.txbExitChatMessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txbExitChatMessage.Location = new System.Drawing.Point(319, 495);
             this.txbExitChatMessage.Name = "txbExitChatMessage";
             this.txbExitChatMessage.Size = new System.Drawing.Size(354, 30);
@@ -100,6 +112,8 @@
             // 
             // txbTimeOutMessage
             // 
+            this.txbTimeOutMessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txbTimeOutMessage.Location = new System.Drawing.Point(319, 531);
             this.txbTimeOutMessage.Name = "txbTimeOutMessage";
             this.txbTimeOutMessage.Size = new System.Drawing.Size(354, 30);
@@ -107,6 +121,8 @@
             // 
             // txbErrorMessage
             // 
+            this.txbErrorMessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txbErrorMessage.Location = new System.Drawing.Point(319, 567);
             this.txbErrorMessage.Name = "txbErrorMessage";
             this.txbErrorMessage.Size = new System.Drawing.Size(354, 30);
@@ -114,6 +130,8 @@
             // 
             // txbTimeOutSecond
             // 
+            this.txbTimeOutSecond.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txbTimeOutSecond.Location = new System.Drawing.Point(319, 603);
             this.txbTimeOutSecond.Name = "txbTimeOutSecond";
             this.txbTimeOutSecond.Size = new System.Drawing.Size(354, 30);
@@ -151,6 +169,7 @@
             // lnkTemperature
             // 
             this.lnkTemperature.ActiveLinkColor = System.Drawing.Color.Red;
+            this.lnkTemperature.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lnkTemperature.AutoSize = true;
             this.lnkTemperature.LinkColor = System.Drawing.Color.Blue;
             this.lnkTemperature.Location = new System.Drawing.Point(679, 70);
