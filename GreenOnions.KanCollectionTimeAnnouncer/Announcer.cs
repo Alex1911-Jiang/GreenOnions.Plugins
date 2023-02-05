@@ -9,7 +9,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
 {
     public class Announcer : IMessagePlugin, IPluginSetting
     {
-        private KanCollectionSetting? _settings;
+        private KanCollectionConfig? _settings;
         private MoeGirlHelper? _moeGirlHelper;
         private string? _pluginPath;
         private string? _configDirect;
@@ -187,9 +187,9 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
         private void ReloadConfig()
         {
             if (File.Exists(_configDirect))
-                _settings = JsonConvert.DeserializeObject<KanCollectionSetting>(File.ReadAllText(_configDirect))!;
+                _settings = JsonConvert.DeserializeObject<KanCollectionConfig>(File.ReadAllText(_configDirect))!;
             if (_settings == null)
-                _settings = new KanCollectionSetting();
+                _settings = new KanCollectionConfig();
         }
 
         public bool OnMessage(GreenOnionsMessages msgs, long? senderGroup, Action<GreenOnionsMessages> Response)
@@ -203,6 +203,8 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                 return;
 
             string editorDirect = Path.Combine("Plugins", "GreenOnions.PluginConfigEditor", "GreenOnions.PluginConfigEditor.exe");
+            if (!File.Exists(editorDirect))
+                throw new Exception("配置文件编辑器不存在，请安装 GreenOnions.PluginConfigEditor 插件。");
             Process.Start(editorDirect, new[] { new StackTrace(true).GetFrame(0)!.GetMethod()!.DeclaringType!.Namespace!, _configDirect! }).WaitForExit();
             ReloadConfig();
             RestartWorker();

@@ -24,7 +24,7 @@ namespace GreenOnions.PluginConfigEditor
                 T? config = JsonConvert.DeserializeObject<T>(strConfigJson);
                 if (config is null)
                 {
-                    MessageBox.Show("配置文件读取失败，重新生成");
+                    MessageBox.Show("配置文件读取失败，即将重新生成");
                     config = new T();
                 }
                 outConfig = config;

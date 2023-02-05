@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\GreenOnions\GreenOnions.Interface\GreenOnions.Interface.csproj" />
+    <ProjectReference Include="..\GreenOnions.PluginConfigs\GreenOnions.PluginConfigs.csproj" />
   </ItemGroup>
 
 </Project>

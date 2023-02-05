@@ -8,6 +8,7 @@ namespace GreenOnions.PluginConfigs.CustomHttpApiInvoker
         public string? Url { get; set; }
         public string? Cmd { get; set; }
         public string? Remark { get; set; }
+        public bool UseProxy { get; set; }
         public string? HelpMessage { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]

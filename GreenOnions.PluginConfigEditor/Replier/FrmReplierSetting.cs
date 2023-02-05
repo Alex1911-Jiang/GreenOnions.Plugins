@@ -10,12 +10,12 @@ namespace GreenOnions.PluginConfigEditor.Replier
         private string _configDirect;
         private string _pluginPath;
         private string _ImagePath;
-        private List<CommandSetting>? _config = null;
+        private List<ReplierConfig>? _config = null;
 
         public FrmReplierSetting(string configDirect)
         {
             _configDirect = configDirect;
-            _config = ConfigLoader.LoadConfig<List<CommandSetting>>(_configDirect);
+            _config = ConfigLoader.LoadConfig<List<ReplierConfig>>(_configDirect);
             string pluginPath = Path.GetDirectoryName(configDirect)!;
             _pluginPath = pluginPath;
             if (!Directory.Exists(_pluginPath))
@@ -90,7 +90,7 @@ namespace GreenOnions.PluginConfigEditor.Replier
             _config!.Clear();
                 foreach (DataRow row in dt.Rows)
                 {
-                    _config.Add(new CommandSetting
+                    _config.Add(new ReplierConfig
                     {
                         Message = row[0].ToString()!,
                         MatchMode = ToMatchMode(row[1]),

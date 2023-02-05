@@ -1,6 +1,6 @@
 ﻿namespace GreenOnions.PluginConfigs.Replier
 {
-    public struct CommandSetting
+    public struct ReplierConfig
     {
         /// <summary>
         /// 触发消息

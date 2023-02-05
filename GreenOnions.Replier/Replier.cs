@@ -13,7 +13,7 @@ namespace GreenOnions.Replier
         private string? _pluginPath;
         private string? _configDirect;
         private string? _imagePath;
-        private CommandSetting[]? _commandTable;
+        private ReplierConfig[]? _commandTable;
 
         public string Name => "自定义回复";
 
@@ -39,7 +39,7 @@ namespace GreenOnions.Replier
         private void ReloadConfig()
         {
             if (File.Exists(_configDirect))
-                _commandTable = JsonConvert.DeserializeObject<CommandSetting[]>(File.ReadAllText(_configDirect))!;
+                _commandTable = JsonConvert.DeserializeObject<ReplierConfig[]>(File.ReadAllText(_configDirect))!;
         }
 
         public bool OnMessage(GreenOnionsMessages msgs, long? senderGroup, Action<GreenOnionsMessages> Response)
@@ -74,7 +74,7 @@ namespace GreenOnions.Replier
             return false;
         }
 
-        private GreenOnionsMessages? CaeateReply(GreenOnionsTextMessage textMsg, CommandSetting comm)
+        private GreenOnionsMessages? CaeateReply(GreenOnionsTextMessage textMsg, ReplierConfig comm)
         {
             if (comm.MatchMode == MatchModes.完全 && textMsg.Text == comm.Message)
                 return RandomSamePriority(comm.Message, comm.Priority);
@@ -148,6 +148,8 @@ namespace GreenOnions.Replier
                 return;
 
             string editorDirect = Path.Combine("Plugins", "GreenOnions.PluginConfigEditor", "GreenOnions.PluginConfigEditor.exe");
+            if (!File.Exists(editorDirect))
+                throw new Exception("配置文件编辑器不存在，请安装 GreenOnions.PluginConfigEditor 插件。");
             Process.Start(editorDirect, new[] { new StackTrace(true).GetFrame(0)!.GetMethod()!.DeclaringType!.Namespace!, _configDirect! }).WaitForExit();
             ReloadConfig();
         }

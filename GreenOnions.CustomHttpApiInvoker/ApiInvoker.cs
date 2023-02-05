@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -16,6 +17,7 @@ namespace GreenOnions.CustomHttpApiInvoker
     {
         private string? _path;
         private string? _configDirect;
+        private IBotConfig? _botConfig;
         private HttpApiConfig? _config;
         private Dictionary<HttpApiItemConfig, Regex> _regexs = new Dictionary<HttpApiItemConfig, Regex>();
         private IGreenOnionsApi? _botApi;
@@ -43,6 +45,7 @@ namespace GreenOnions.CustomHttpApiInvoker
         public void OnLoad(string pluginPath, IBotConfig config)
         {
             _path = pluginPath;
+            _botConfig = config;
             _configDirect = Path.Combine(_path!, "config.json");
             ReloadConfig();
         }
@@ -163,249 +166,251 @@ namespace GreenOnions.CustomHttpApiInvoker
             }
             try
             {
-                using (HttpClient client = new HttpClient())
+                using HttpClientHandler handler = new HttpClientHandler();
+                if (api.UseProxy)
                 {
-                    HttpMethod httpMethod = api.HttpMethod == HttpMethodEnum.GET ? HttpMethod.Get : HttpMethod.Post;
+                    handler.UseProxy = true;
+                    handler.Proxy = new WebProxy(_botConfig!.ProxyUrl);
+                }
+                using HttpClient client = new();
+                HttpMethod httpMethod = api.HttpMethod == HttpMethodEnum.GET ? HttpMethod.Get : HttpMethod.Post;
 
-                    using (HttpRequestMessage request = new HttpRequestMessage(httpMethod, api.Url.Replace("<参数>", param) + appendUrlValue))
+                using HttpRequestMessage request = new(httpMethod, api.Url.Replace("<参数>", param) + appendUrlValue);
+                if (api.Headers != null)
+                {
+                    foreach (var item in api.Headers)
+                        request.Headers.Add(item.Key, item.Value.Replace("<参数>", param));
+                }
+
+                Encoding encoding = api.Encoding switch
+                {
+                    EncodingEnum.UTF8 => Encoding.UTF8,
+                    EncodingEnum.Unicode => Encoding.Unicode,
+                    EncodingEnum.BigEndianUnicode => Encoding.BigEndianUnicode,
+                    EncodingEnum.UTF32 => Encoding.UTF32,
+                    EncodingEnum.ASCII => Encoding.ASCII,
+                    EncodingEnum.GBK => Encoding.GetEncoding("GB2312"),
+                    _ => throw new NotImplementedException("编码类型无效"),
+                };
+
+                if (api.ContentType == ContentTypeEnum.raw)
+                {
+                    string rawContent = string.Empty;
+                    if (!string.IsNullOrWhiteSpace(api.RawContent))
+                        rawContent = api.RawContent.Replace("<参数>", param);
+                    request.Content = new StringContent(rawContent, encoding, api.MediaType);
+                }
+                else
+                {
+                    var form = new MultipartFormDataContent();
+                    if (api.FormDataContent != null)
                     {
-                        if (api.Headers != null)
+                        foreach (var item in api.FormDataContent)
+                            form.Add(new StringContent(item.Value.Replace("<参数>", param), encoding, api.MediaType), item.Key);
+                    }
+                    request.Content = form;
+                }
+                request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(api.MediaType);
+
+                HttpResponseMessage response;
+                try
+                {
+                    response = await client.SendAsync(request);
+                }
+                catch (Exception)
+                {
+                    msg.Add("请求失败，请联系机器人管理员");
+                    return msg;
+                }
+                if ((int)response.StatusCode >= 400)
+                {
+                    msg.Add("请求被拒绝，请联系机器人管理员");
+                    return msg;
+                }
+
+                //请求成功
+                string valueText = string.Empty;
+                Stream? valueStream = null;
+                try
+                {
+                    if (api.ParseMode == ParseModeEnum.Text)
+                    {
+                        string text = await response.Content.ReadAsStringAsync();
+
+                        int startIndex = 0;
+                        if (!string.IsNullOrEmpty(api.SubTextFrom))
                         {
-                            foreach (var item in api.Headers)
-                                request.Headers.Add(item.Key, item.Value.Replace("<参数>", param));
+                            startIndex = text.IndexOf(api.SubTextFrom);
+                            if (!api.SubTextWithPrefix)
+                                startIndex += api.SubTextFrom.Length;
                         }
 
-                        Encoding encoding = api.Encoding switch
-                        {
-                            EncodingEnum.UTF8 => Encoding.UTF8,
-                            EncodingEnum.Unicode => Encoding.Unicode,
-                            EncodingEnum.BigEndianUnicode => Encoding.BigEndianUnicode,
-                            EncodingEnum.UTF32 => Encoding.UTF32,
-                            EncodingEnum.ASCII => Encoding.ASCII,
-                            EncodingEnum.GBK => Encoding.GetEncoding("GB2312"),
-                            _ => throw new NotImplementedException("编码类型无效"),
-                        };
+                        int SubTextFromLength = 0;
+                        if (!string.IsNullOrEmpty(api.SubTextFrom))
+                            SubTextFromLength = api.SubTextFrom.Length;
 
-                        if (api.ContentType == ContentTypeEnum.raw)
+                        text = text.Substring(startIndex);
+                        int endIndex = text.Length;
+                        if (!string.IsNullOrEmpty(api.SubTextTo))
                         {
-                            string rawContent = string.Empty;
-                            if (!string.IsNullOrWhiteSpace(api.RawContent))
-                                rawContent = api.RawContent.Replace("<参数>", param);
-                            request.Content = new StringContent(rawContent, encoding, api.MediaType);
+                            endIndex = text.IndexOf(api.SubTextTo, api.SubTextWithPrefix ? SubTextFromLength : 0);
+                            if (api.SubTextWithSuffix)
+                                endIndex += api.SubTextTo.Length;
+                        }
+
+                        valueText = text.Substring(0, endIndex).TrimStart('\n').TrimStart('\r').TrimStart('\n');
+                    }
+                    else if (api.ParseMode == ParseModeEnum.Json)
+                    {
+                        string json = await response.Content.ReadAsStringAsync();
+                        if (api.ParseExpression == null || api.ParseExpression.Length == 0)
+                        {
+                            valueText = json;
                         }
                         else
                         {
-                            var form = new MultipartFormDataContent();
-                            if (api.FormDataContent != null)
+                            JToken topJt = JsonConvert.DeserializeObject<JToken>(json)!;
+                            bool bOpen = false;
+                            StringBuilder indexName = new StringBuilder();
+
+                            StringBuilder valueLines = new StringBuilder();
+                            for (int i = 0; i < api.ParseExpression.Length; i++)
                             {
-                                foreach (var item in api.FormDataContent)
-                                    form.Add(new StringContent(item.Value.Replace("<参数>", param), encoding, api.MediaType), item.Key);
-                            }
-                            request.Content = form;
-                        }
-                        request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(api.MediaType);
-
-                        HttpResponseMessage response;
-                        try
-                        {
-                            response = await client.SendAsync(request);
-                        }
-                        catch (Exception)
-                        {
-                            msg.Add("请求失败，请联系机器人管理员");
-                            return msg;
-                        }
-                        if ((int)response.StatusCode >= 400)
-                        {
-                            msg.Add("请求被拒绝，请联系机器人管理员");
-                            return msg;
-                        }
-
-                        //请求成功
-                        string valueText = string.Empty;
-                        Stream? valueStream = null;
-                        try
-                        {
-                            if (api.ParseMode == ParseModeEnum.Text)
-                            {
-                                string text = await response.Content.ReadAsStringAsync();
-
-                                int startIndex = 0;
-                                if (!string.IsNullOrEmpty(api.SubTextFrom))
+                                JToken jt = topJt;
+                                for (int j = 0; j < api.ParseExpression[i].Length; j++)
                                 {
-                                    startIndex = text.IndexOf(api.SubTextFrom);
-                                    if (!api.SubTextWithPrefix)
-                                        startIndex += api.SubTextFrom.Length;
-                                }
-
-                                int SubTextFromLength = 0;
-                                if (!string.IsNullOrEmpty(api.SubTextFrom))
-                                    SubTextFromLength = api.SubTextFrom.Length;
-
-                                text = text.Substring(startIndex);
-                                int endIndex = text.Length;
-                                if (!string.IsNullOrEmpty(api.SubTextTo))
-                                {
-                                    endIndex = text.IndexOf(api.SubTextTo, api.SubTextWithPrefix ? SubTextFromLength : 0);
-                                    if (api.SubTextWithSuffix)
-                                        endIndex += api.SubTextTo.Length;
-                                }
-
-                                valueText = text.Substring(0, endIndex).TrimStart('\n').TrimStart('\r').TrimStart('\n');
-                            }
-                            else if (api.ParseMode == ParseModeEnum.Json)
-                            {
-                                string json = await response.Content.ReadAsStringAsync();
-                                if (api.ParseExpression == null || api.ParseExpression.Length == 0)
-                                {
-                                    valueText = json;
-                                }
-                                else
-                                {
-                                    JToken topJt = JsonConvert.DeserializeObject<JToken>(json)!;
-                                    bool bOpen = false;
-                                    StringBuilder indexName = new StringBuilder();
-
-                                    StringBuilder valueLines = new StringBuilder();
-                                    for (int i = 0; i < api.ParseExpression.Length; i++)
+                                    if (bOpen)
                                     {
-                                        JToken jt = topJt;
-                                        for (int j = 0; j < api.ParseExpression[i].Length; j++)
+                                        if (api.ParseExpression[i][j] == ']')
                                         {
-                                            if (bOpen)
+                                            bOpen = false;
+                                            if (string.Equals(indexName.ToString(), "<random>", StringComparison.OrdinalIgnoreCase))
                                             {
-                                                if (api.ParseExpression[i][j] == ']')
-                                                {
-                                                    bOpen = false;
-                                                    if (string.Equals(indexName.ToString(), "<random>", StringComparison.OrdinalIgnoreCase))
-                                                    {
-                                                        var arr = jt.ToArray();
-                                                        Random rdm = new Random(Guid.NewGuid().GetHashCode());
-                                                        jt = arr[rdm.Next(0, arr.Length)];
-                                                    }
-                                                    else if (long.TryParse(indexName.ToString(), out long numberIndex))
-                                                        jt = jt.ToArray()[numberIndex]!;
-                                                    else
-                                                        jt = jt[indexName.ToString()]!;
-                                                    indexName.Clear();
-                                                    continue;
-                                                }
-                                                if (api.ParseExpression[i][j] == '\'' || api.ParseExpression[i][j] == '\"')
-                                                {
-                                                    continue;
-                                                }
-                                                indexName.Append(api.ParseExpression[i][j]);
+                                                var arr = jt.ToArray();
+                                                Random rdm = new Random(Guid.NewGuid().GetHashCode());
+                                                jt = arr[rdm.Next(0, arr.Length)];
                                             }
+                                            else if (long.TryParse(indexName.ToString(), out long numberIndex))
+                                                jt = jt.ToArray()[numberIndex]!;
                                             else
-                                            {
-                                                if (api.ParseExpression[i][j] == '[')
-                                                {
-                                                    bOpen = true;
-                                                    continue;
-                                                }
-                                            }
+                                                jt = jt[indexName.ToString()]!;
+                                            indexName.Clear();
+                                            continue;
                                         }
-                                        valueLines.AppendLine(jt.ToString());
+                                        if (api.ParseExpression[i][j] == '\'' || api.ParseExpression[i][j] == '\"')
+                                        {
+                                            continue;
+                                        }
+                                        indexName.Append(api.ParseExpression[i][j]);
                                     }
-                                    valueText = valueLines.ToString();
-                                    if (valueText.EndsWith("\r\n"))
-                                        valueText = valueText.Substring(0, valueText.Length - "\r\n".Length);
-                                }
-                            }
-                            else if (api.ParseMode == ParseModeEnum.XPath)
-                            {
-                                string html = await response.Content.ReadAsStringAsync();
-                                if (api.ParseExpression == null || api.ParseExpression.Length == 0)
-                                {
-                                    valueText = html;
-                                }
-                                else
-                                {
-                                    HtmlAgilityPack.HtmlDocument docSauceNAO = new HtmlAgilityPack.HtmlDocument();
-                                    docSauceNAO.LoadHtml(html);
-                                    StringBuilder valueLines = new StringBuilder();
-                                    for (int i = 0; i < api.ParseExpression.Length; i++)
+                                    else
                                     {
-                                        if (api.ParseExpression[i].Contains('.'))
+                                        if (api.ParseExpression[i][j] == '[')
                                         {
-                                            string[] xPathAndAttr = api.ParseExpression[i].Split('.');
-                                            HtmlNode itemNode = docSauceNAO.DocumentNode.SelectSingleNode(xPathAndAttr[0]);
-                                            valueLines.AppendLine(itemNode.Attributes[xPathAndAttr[1]].Value);
-                                        }
-                                        else
-                                        {
-                                            HtmlNode itemNode = docSauceNAO.DocumentNode.SelectSingleNode(api.ParseExpression[i]);
-                                            valueLines.AppendLine(itemNode.InnerText);
+                                            bOpen = true;
+                                            continue;
                                         }
                                     }
-                                    valueText = valueLines.ToString();
                                 }
+                                valueLines.AppendLine(jt.ToString());
                             }
-                            else if (api.ParseMode == ParseModeEnum.Stream)
-                            {
-                                valueStream = await response.Content.ReadAsStreamAsync();
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            msg.Add("解析失败，请联系机器人管理员");
-                            return msg;
-                        }
-                        //解析成功
-                        try
-                        {
-                            if (api.SendMode == SendModeEnum.Text)
-                            {
-                                msg.Add(valueText);
-                                return msg;
-                            }
-                            else if (api.SendMode == SendModeEnum.ImageUrl)
-                            {
-                                msg.Add(new GreenOnionsImageMessage(valueText));
-                                return msg;
-                            }
-                            else if (api.SendMode == SendModeEnum.ImageBase64)
-                            {
-                                byte[] data = Convert.FromBase64String(valueText);
-                                MemoryStream ms = new MemoryStream(data);
-                                msg.Add(new GreenOnionsImageMessage(ms));
-                                return msg;
-                            }
-                            else if (api.SendMode == SendModeEnum.ImageStream)
-                            {
-                                if (valueStream == null)
-                                    msg.Add("Api响应为空，请联系机器人管理员");
-                                else
-                                    msg.Add(new GreenOnionsImageMessage(valueStream));
-                                return msg;
-                            }
-                            else if (api.SendMode == SendModeEnum.VoiceUrl)
-                            {
-                                msg.Add(new GreenOnionsVoiceMessage(valueText));
-                                return msg;
-                            }
-                            else if (api.SendMode == SendModeEnum.VoiceBase64)
-                            {
-                                byte[] data = Convert.FromBase64String(valueText);
-                                MemoryStream ms = new MemoryStream(data);
-                                msg.Add(new GreenOnionsVoiceMessage(ms));
-                                return msg;
-                            }
-                            else if (api.SendMode == SendModeEnum.VoiceStream)
-                            {
-                                if (valueStream == null)
-                                    msg.Add("Api响应为空，请联系机器人管理员");
-                                else
-                                    msg.Add(new GreenOnionsVoiceMessage(valueStream));
-                                return msg;
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            msg.Add("Api响应成功，但不是图片或音频，请联系机器人管理员");
-                            return msg;
+                            valueText = valueLines.ToString();
+                            if (valueText.EndsWith("\r\n"))
+                                valueText = valueText.Substring(0, valueText.Length - "\r\n".Length);
                         }
                     }
+                    else if (api.ParseMode == ParseModeEnum.XPath)
+                    {
+                        string html = await response.Content.ReadAsStringAsync();
+                        if (api.ParseExpression == null || api.ParseExpression.Length == 0)
+                        {
+                            valueText = html;
+                        }
+                        else
+                        {
+                            HtmlDocument docSauceNAO = new HtmlAgilityPack.HtmlDocument();
+                            docSauceNAO.LoadHtml(html);
+                            StringBuilder valueLines = new StringBuilder();
+                            for (int i = 0; i < api.ParseExpression.Length; i++)
+                            {
+                                if (api.ParseExpression[i].Contains('.'))
+                                {
+                                    string[] xPathAndAttr = api.ParseExpression[i].Split('.');
+                                    HtmlNode itemNode = docSauceNAO.DocumentNode.SelectSingleNode(xPathAndAttr[0]);
+                                    valueLines.AppendLine(itemNode.Attributes[xPathAndAttr[1]].Value);
+                                }
+                                else
+                                {
+                                    HtmlNode itemNode = docSauceNAO.DocumentNode.SelectSingleNode(api.ParseExpression[i]);
+                                    valueLines.AppendLine(itemNode.InnerText);
+                                }
+                            }
+                            valueText = valueLines.ToString();
+                        }
+                    }
+                    else if (api.ParseMode == ParseModeEnum.Stream)
+                    {
+                        valueStream = await response.Content.ReadAsStreamAsync();
+                    }
+                }
+                catch (Exception)
+                {
+                    msg.Add("解析失败，请联系机器人管理员");
+                    return msg;
+                }
+                //解析成功
+                try
+                {
+                    if (api.SendMode == SendModeEnum.Text)
+                    {
+                        msg.Add(valueText);
+                        return msg;
+                    }
+                    else if (api.SendMode == SendModeEnum.ImageUrl)
+                    {
+                        msg.Add(new GreenOnionsImageMessage(valueText));
+                        return msg;
+                    }
+                    else if (api.SendMode == SendModeEnum.ImageBase64)
+                    {
+                        byte[] data = Convert.FromBase64String(valueText);
+                        MemoryStream ms = new MemoryStream(data);
+                        msg.Add(new GreenOnionsImageMessage(ms));
+                        return msg;
+                    }
+                    else if (api.SendMode == SendModeEnum.ImageStream)
+                    {
+                        if (valueStream == null)
+                            msg.Add("Api响应为空，请联系机器人管理员");
+                        else
+                            msg.Add(new GreenOnionsImageMessage(valueStream));
+                        return msg;
+                    }
+                    else if (api.SendMode == SendModeEnum.VoiceUrl)
+                    {
+                        msg.Add(new GreenOnionsVoiceMessage(valueText));
+                        return msg;
+                    }
+                    else if (api.SendMode == SendModeEnum.VoiceBase64)
+                    {
+                        byte[] data = Convert.FromBase64String(valueText);
+                        MemoryStream ms = new MemoryStream(data);
+                        msg.Add(new GreenOnionsVoiceMessage(ms));
+                        return msg;
+                    }
+                    else if (api.SendMode == SendModeEnum.VoiceStream)
+                    {
+                        if (valueStream == null)
+                            msg.Add("Api响应为空，请联系机器人管理员");
+                        else
+                            msg.Add(new GreenOnionsVoiceMessage(valueStream));
+                        return msg;
+                    }
+                }
+                catch (Exception)
+                {
+                    msg.Add("Api响应成功，但不是图片或音频，请联系机器人管理员");
+                    return msg;
                 }
             }
             catch (Exception ex)
@@ -422,6 +427,8 @@ namespace GreenOnions.CustomHttpApiInvoker
                 return;
 
             string editorDirect = Path.Combine("Plugins", "GreenOnions.PluginConfigEditor", "GreenOnions.PluginConfigEditor.exe");
+            if (!File.Exists(editorDirect))
+                throw new Exception("配置文件编辑器不存在，请安装 GreenOnions.PluginConfigEditor 插件。");
             Process.Start(editorDirect, new[] { new StackTrace(true).GetFrame(0)!.GetMethod()!.DeclaringType!.Namespace!, _configDirect! }).WaitForExit();
             ReloadConfig();
             if (_botApi != null)
@@ -430,12 +437,11 @@ namespace GreenOnions.CustomHttpApiInvoker
                 foreach (var item in _config!.ApiConfig)
                 {
                     if (item.Cmd!.Contains("(?<参数>"))
-                        _regexs.Add(item, new Regex(_botApi.ReplaceGreenOnionsStringTags(item.Cmd)));
+                        _regexs.Add(item, new Regex(_botApi.ReplaceGreenOnionsStringTags(item.Cmd)!));
                 }
             }
-            string _configDirec = Path.Combine(_path!, "config.json");
             string jsonConfig = JsonConvert.SerializeObject(_config, Formatting.Indented);
-            File.WriteAllText(_configDirec, jsonConfig);
+            File.WriteAllText(_configDirect!, jsonConfig);
         }
     }
 }

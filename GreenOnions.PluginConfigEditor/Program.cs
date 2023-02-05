@@ -1,4 +1,5 @@
 using GreenOnions.PluginConfigEditor.CustomHttpApiInvoker;
+using GreenOnions.PluginConfigEditor.GPT3Client;
 using GreenOnions.PluginConfigEditor.KanCollectionTimeAnnouncer;
 using GreenOnions.PluginConfigEditor.Replier;
 
@@ -11,7 +12,7 @@ namespace GreenOnions.PluginConfigEditor
         /// </summary>
         [STAThread]
         static void Main(params string[] args)
-        {
+       {
             ApplicationConfiguration.Initialize();
 
             if (args.Length != 2)
@@ -23,13 +24,16 @@ namespace GreenOnions.PluginConfigEditor
             switch (args[0])
             {
                 case "GreenOnions.CustomHttpApiInvoker":
-                    Application.Run(new FrmCustomHttpApiInvokerSettings(args[1]));
+                    Application.Run(new FrmCustomHttpApiInvokerSetting(args[1]));
                     break;
                 case "GreenOnions.KanCollectionTimeAnnouncer":
-                    Application.Run(new FrmKanCollectionTimeAnnouncerSettings(args[1]));
+                    Application.Run(new FrmKanCollectionTimeAnnouncerSetting(args[1]));
                     break;
                 case "GreenOnions.Replier":
                     Application.Run(new FrmReplierSetting(args[1]));
+                    break;
+                case "GreenOnions.GPT3Client":
+                    Application.Run(new FrmGPT3ClientSetting(args[1]));
                     break;
             }
         }

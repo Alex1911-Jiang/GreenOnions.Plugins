@@ -1,6 +1,6 @@
 ﻿namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
 {
-    partial class FrmCustomHttpApiInvokerSettings
+    partial class FrmCustomHttpApiInvokerSetting
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmCustomHttpApiInvokerSettings));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmCustomHttpApiInvokerSetting));
             this.pnlConfigList = new System.Windows.Forms.FlowLayoutPanel();
             this.btnAddConfig = new System.Windows.Forms.Button();
             this.lblHelpCmd = new System.Windows.Forms.Label();
@@ -83,7 +83,7 @@
             this.txbHelpCmd.Size = new System.Drawing.Size(648, 30);
             this.txbHelpCmd.TabIndex = 10;
             // 
-            // FrmCustomHttpApiInvokerSettings
+            // FrmCustomHttpApiInvokerSetting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -91,9 +91,9 @@
             this.Controls.Add(this.txbHelpCmd);
             this.Controls.Add(this.lblHelpCmd);
             this.Controls.Add(this.pnlConfigList);
-            this.Name = "FrmCustomHttpApiInvokerSettings";
+            this.Name = "FrmCustomHttpApiInvokerSetting";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "自定义API设置";
+            this.Text = "自定义API-设置";
             this.pnlConfigList.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

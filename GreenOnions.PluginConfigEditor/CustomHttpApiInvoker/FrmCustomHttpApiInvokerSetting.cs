@@ -5,12 +5,12 @@ using Newtonsoft.Json.Converters;
 
 namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
 {
-    internal partial class FrmCustomHttpApiInvokerSettings : Form
+    internal partial class FrmCustomHttpApiInvokerSetting : Form
     {
         private readonly string _configDirect;
         private readonly HttpApiConfig _config;
 
-        public FrmCustomHttpApiInvokerSettings(string configDirect)
+        public FrmCustomHttpApiInvokerSetting(string configDirect)
         {
             _configDirect = configDirect;
             _config = ConfigLoader.LoadConfig<HttpApiConfig>(_configDirect);

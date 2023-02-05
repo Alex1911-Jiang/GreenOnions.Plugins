@@ -27,6 +27,7 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
             {
                 Config = config;
                 txbUrl.Text = Config.Url;
+                chkUseProxy.Checked = Config.UseProxy;
                 txbCmd.Text = Config.Cmd;
                 txbRemark.Text = Config.Remark;
                 txbHelpMessage.Text = Config.HelpMessage;
@@ -487,6 +488,7 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
             dgvHeader.EndEdit();
             dgvContentFormData.EndEdit();
             Config.Url = txbUrl.Text;
+            Config.UseProxy = chkUseProxy.Checked;
             Config.Cmd = txbCmd.Text;
             Config.Remark = txbRemark.Text;
             Config.HelpMessage = txbHelpMessage.Text;

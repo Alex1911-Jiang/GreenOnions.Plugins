@@ -257,7 +257,7 @@
             this.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.Name = "FrmReplierSetting";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "自定义回复设置";
+            this.Text = "自定义回复-设置";
             ((System.ComponentModel.ISupportInitialize)(this.dgvReplies)).EndInit();
             this.pnlTop.ResumeLayout(false);
             this.pnlTop.PerformLayout();

@@ -9,16 +9,16 @@ using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace GreenOnions.PluginConfigEditor.KanCollectionTimeAnnouncer
 {
-    internal partial class FrmKanCollectionTimeAnnouncerSettings : Form
+    internal partial class FrmKanCollectionTimeAnnouncerSetting : Form
     {
         private readonly string _configDirect;
-        private readonly KanCollectionSetting? _config;
+        private readonly KanCollectionConfig? _config;
         private readonly Dictionary<int, CheckBox> _timeCheckboxes = new Dictionary<int, CheckBox>();
 
-        internal FrmKanCollectionTimeAnnouncerSettings(string configDirect)
+        internal FrmKanCollectionTimeAnnouncerSetting(string configDirect)
         {
             _configDirect = configDirect;
-            _config = ConfigLoader.LoadConfig<KanCollectionSetting>(_configDirect);
+            _config = ConfigLoader.LoadConfig<KanCollectionConfig>(_configDirect);
             InitializeComponent();
             cboDesignatedKanGirl.SelectedIndex = 0;
 

@@ -97,6 +97,7 @@
             this.rdoChangeMeToQQId = new System.Windows.Forms.RadioButton();
             this.rdoDontChangeMe = new System.Windows.Forms.RadioButton();
             this.lblChangeTypeInfo = new System.Windows.Forms.Label();
+            this.chkUseProxy = new System.Windows.Forms.CheckBox();
             this.pnlContentType.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvContentFormData)).BeginInit();
             this.pnlParse.SuspendLayout();
@@ -622,7 +623,7 @@
             // 
             this.txbUrl.Location = new System.Drawing.Point(129, 37);
             this.txbUrl.Name = "txbUrl";
-            this.txbUrl.Size = new System.Drawing.Size(793, 30);
+            this.txbUrl.Size = new System.Drawing.Size(674, 30);
             this.txbUrl.TabIndex = 39;
             // 
             // lblUrlTitle
@@ -822,11 +823,22 @@
             this.lblChangeTypeInfo.TabIndex = 70;
             this.lblChangeTypeInfo.Text = "仅限命令不包含正则且\r\n拼在命令之后的字或@\r\n消息, 只拼接在URL后";
             // 
+            // chkUseProxy
+            // 
+            this.chkUseProxy.AutoSize = true;
+            this.chkUseProxy.Location = new System.Drawing.Point(809, 39);
+            this.chkUseProxy.Name = "chkUseProxy";
+            this.chkUseProxy.Size = new System.Drawing.Size(108, 28);
+            this.chkUseProxy.TabIndex = 71;
+            this.chkUseProxy.Text = "使用代理";
+            this.chkUseProxy.UseVisualStyleBackColor = true;
+            // 
             // FrmCustomHttpApiInvokerEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(949, 971);
+            this.Controls.Add(this.chkUseProxy);
             this.Controls.Add(this.lblChangeTypeInfo);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -957,5 +969,6 @@
         private DataGridViewTextBoxColumn dgvHeaderValueColumn;
         private DataGridViewTextBoxColumn dgvContentKeyColumn;
         private DataGridViewTextBoxColumn dgvContentValueColumn;
+        private CheckBox chkUseProxy;
     }
 }
