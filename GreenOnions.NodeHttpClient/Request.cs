@@ -17,7 +17,6 @@ namespace GreenOnions.NodeHttpClient
         public async void OnLoad(string pluginPath, IBotConfig config)
         {
             _pluginPath = pluginPath;
-            Console.OutputEncoding = Encoding.UTF8;
 
             string path = Path.Combine(_pluginPath!, "node");
             if (!Directory.Exists(path))
@@ -40,39 +39,39 @@ namespace GreenOnions.NodeHttpClient
 
         }
 
-        public string GetAsString(string url)
+        public string GetString(string url)
         {
             CreateGetStringJs(url);
-            return WriteRead("requestClient.js");
+            return WriteRead("node requestClient.js");
         }
-        public Task<string> GetAsStringAsync(string url)
+        public Task<string> GetStringAsync(string url)
         {
             CreateGetStringJs(url);
-            return WriteReadAsync("requestClient.js");
+            return WriteReadAsync("node requestClient.js");
         }
 
-        public byte[] GetAsByteArray(string url)
+        public byte[] GetByteArray(string url)
         {
             CreateGetFileJs(url);
-            Write("requestClient.js");
+            Write("node requestClient.js");
             return File.ReadAllBytes(Path.Combine(_pluginPath!, "node", "data.bin"));
         }
 
-        public async Task<byte[]> GetAsByteArrayAsync(string url)
+        public async Task<byte[]> GetByteArrayAsync(string url)
         {
             CreateGetFileJs(url);
-            await WriteAsync("requestClient.js");
+            await WriteAsync("node requestClient.js");
             return await File.ReadAllBytesAsync(Path.Combine(_pluginPath!, "node", "data.bin"));
         }
 
-        public Stream GetAsStream(string url)
+        public Stream GetStream(string url)
         {
-            return new MemoryStream(GetAsByteArray(url));
+            return new MemoryStream(GetByteArray(url));
         }
 
-        public async Task<Stream> GetAsStreamAsync(string url)
+        public async Task<Stream> GetStreamAsync(string url)
         {
-            return new MemoryStream(await GetAsByteArrayAsync(url));
+            return new MemoryStream(await GetByteArrayAsync(url));
         }
 
         #region -- script --
@@ -114,6 +113,7 @@ request('" + url + @"',(error, response, body)=>{
             Process proc = new Process();
             proc.StartInfo.FileName = "cmd.exe";
             proc.StartInfo.WorkingDirectory = Path.Combine(_pluginPath!, "node");
+            proc.StartInfo.StandardOutputEncoding = Encoding.UTF8;
             proc.StartInfo.CreateNoWindow = true;
             proc.StartInfo.RedirectStandardError = true;
             proc.StartInfo.RedirectStandardInput = true;
@@ -127,7 +127,7 @@ request('" + url + @"',(error, response, body)=>{
         {
             using (Process pc = CreateCmdProcess())
             {
-                pc.StandardInput.WriteLine("node " + script);
+                pc.StandardInput.WriteLine(script);
                 pc.StandardInput.WriteLine("exit");
                 pc.StandardInput.AutoFlush = true;
                 pc.WaitForExit();
@@ -139,7 +139,7 @@ request('" + url + @"',(error, response, body)=>{
         {
             using (Process pc = CreateCmdProcess())
             {
-                await pc.StandardInput.WriteLineAsync("node " + script);
+                await pc.StandardInput.WriteLineAsync(script);
                 await pc.StandardInput.WriteLineAsync("exit");
                 pc.StandardInput.AutoFlush = true;
                 await pc.WaitForExitAsync();
@@ -151,7 +151,7 @@ request('" + url + @"',(error, response, body)=>{
         {
             using (Process pc = CreateCmdProcess())
             {
-                pc.StandardInput.WriteLine("node " + script);
+                pc.StandardInput.WriteLine(script);
                 pc.StandardInput.WriteLine("exit");
                 pc.StandardInput.AutoFlush = true;
                 bool bStart = false;
@@ -177,7 +177,7 @@ request('" + url + @"',(error, response, body)=>{
         {
             using (Process pc = CreateCmdProcess())
             {
-                await pc.StandardInput.WriteLineAsync("node " + script);
+                await pc.StandardInput.WriteLineAsync(script);
                 await pc.StandardInput.WriteLineAsync("exit");
                 pc.StandardInput.AutoFlush = true;
                 bool bStart = false;
