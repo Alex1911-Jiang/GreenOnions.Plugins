@@ -79,5 +79,10 @@ namespace GreenOnions.PluginConfigEditor.GPT3Client
         {
             Process.Start("explorer.exe", "https://platform.openai.com/docs/api-reference/completions/create#completions/create-temperature");
         }
+
+        private void lblCreateApiKey_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("explorer.exe", "https://beta.openai.com/account/api-keys");
+        }
     }
 }

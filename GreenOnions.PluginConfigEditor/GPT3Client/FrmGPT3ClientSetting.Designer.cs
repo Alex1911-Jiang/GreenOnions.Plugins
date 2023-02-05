@@ -50,6 +50,7 @@
             this.lblErrorMessage = new System.Windows.Forms.Label();
             this.lblTimeOutSecond = new System.Windows.Forms.Label();
             this.chkSendMessageByReply = new System.Windows.Forms.CheckBox();
+            this.lblCreateApiKey = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // txbApiKey
@@ -263,11 +264,27 @@
             this.chkSendMessageByReply.Text = "以“回复”方式发送消息";
             this.chkSendMessageByReply.UseVisualStyleBackColor = true;
             // 
+            // lblCreateApiKey
+            // 
+            this.lblCreateApiKey.ActiveLinkColor = System.Drawing.Color.Red;
+            this.lblCreateApiKey.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblCreateApiKey.AutoSize = true;
+            this.lblCreateApiKey.LinkColor = System.Drawing.Color.Blue;
+            this.lblCreateApiKey.Location = new System.Drawing.Point(679, 34);
+            this.lblCreateApiKey.Name = "lblCreateApiKey";
+            this.lblCreateApiKey.Size = new System.Drawing.Size(46, 24);
+            this.lblCreateApiKey.TabIndex = 22;
+            this.lblCreateApiKey.TabStop = true;
+            this.lblCreateApiKey.Text = "创建";
+            this.lblCreateApiKey.VisitedLinkColor = System.Drawing.Color.Blue;
+            this.lblCreateApiKey.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblCreateApiKey_LinkClicked);
+            // 
             // FrmGPT3ClientSetting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(771, 665);
+            this.Controls.Add(this.lblCreateApiKey);
             this.Controls.Add(this.chkSendMessageByReply);
             this.Controls.Add(this.lblTimeOutSecond);
             this.Controls.Add(this.lblErrorMessage);
@@ -324,5 +341,6 @@
         private Label lblErrorMessage;
         private Label lblTimeOutSecond;
         private CheckBox chkSendMessageByReply;
+        private LinkLabel lblCreateApiKey;
     }
 }
