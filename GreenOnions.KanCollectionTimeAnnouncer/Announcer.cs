@@ -42,12 +42,12 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                 if (nextHour >= 24)
                     nextHour = 0;
                 //下个小时要报时且没有获取报时语音地址
-                if (_settings!.DesignatedTime.Contains(nextHour) && _nextHourVoiceItem == null)
+                if (_settings!.DesignatedTime.Contains(nextHour) && _nextHourVoiceItem is null)
                 {
                     if (_settings.DesignateKanGirl)  //指定舰娘
                     {
                         _nextHourVoiceItem = await _moeGirlHelper!.GetNextHourVoiceUrlAsync(_settings.DesignatedKanGirl!, nextHour);
-                        if (_nextHourVoiceItem == null)
+                        if (_nextHourVoiceItem is null)
                         {
                             _source.Cancel();
                             SendMessageToAdmin($"葱葱舰C报时插件错误：获取音频失败，所选舰娘没有报时语音或地址需要人机验证，请重新选择和检查人机验证( https://zh.moegirl.org.cn/舰队Collection )后重连葱葱。");
@@ -58,7 +58,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                     {
                         //获取舰娘列表
                         List<string>? kanGirlsName = await _moeGirlHelper!.GetKanGrilNameListAsync();
-                        if (kanGirlsName == null)  //获取失败, 需要人机验证
+                        if (kanGirlsName is null)  //获取失败, 需要人机验证
                         {
                             _source.Cancel();
                             SendMessageToAdmin("葱葱舰C报时插件错误：获取舰娘列表失败，需要人机验证，请手动打开 https://zh.moegirl.org.cn/舰队Collection 通过验证并重启葱葱。");
@@ -69,7 +69,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                         int randomIndex = rdm.Next(0, kanGirlsName.Count);
                         string kanGirlName = kanGirlsName[randomIndex];
                         _nextHourVoiceItem = await _moeGirlHelper.GetNextHourVoiceUrlAsync(kanGirlName, nextHour);
-                        if (_nextHourVoiceItem == null)
+                        if (_nextHourVoiceItem is null)
                         {
                             kanGirlsName.Remove(kanGirlName);
                             _moeGirlHelper!.CoverSaveKanGirlList(kanGirlsName);
@@ -146,28 +146,35 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
 
         private async void RestartWorker()
         {
-            StopWorker();
-            if (_connected)
+            try
             {
-                if (_worker != null)
-                    await _worker;
+                StopWorker();
+                if (_connected)
+                {
+                    if (_worker is not null)
+                        await _worker;
 
-                CreateHelper(_pluginPath!);
+                    CreateHelper(_pluginPath!);
 
-                //没有指定报时时间
-                if (_settings!.DesignatedTime == null || _settings.DesignatedTime.Count == 0)
-                    return;
-                //仅发部分群但没有指定
-                if (_settings.DesignateGroup && (_settings.DesignatedGroups == null || _settings.DesignatedGroups.Count == 0))
-                    return;
+                    //没有指定报时时间
+                    if (_settings!.DesignatedTime is null || _settings.DesignatedTime.Count == 0)
+                        return;
+                    //仅发部分群但没有指定
+                    if (_settings.DesignateGroup && (_settings.DesignatedGroups is null || _settings.DesignatedGroups.Count == 0))
+                        return;
 
-                _worker = Task.Run(Announce, _source!.Token);
+                    _worker = Task.Run(Announce, _source!.Token);
+                }
+            }
+            catch (Exception ex)
+            {
+                SendMessageToAdmin(@"舰C报时插件启动发生错误，请检查配置文件。");
             }
         }
 
         private void StopWorker()
         {
-            if (_source != null)
+            if (_source is not null)
                 _source.Cancel();
         }
 
@@ -188,7 +195,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
         {
             if (File.Exists(_configDirect))
                 _settings = JsonConvert.DeserializeObject<KanCollectionConfig>(File.ReadAllText(_configDirect))!;
-            if (_settings == null)
+            if (_settings is null)
                 _settings = new KanCollectionConfig();
         }
 
