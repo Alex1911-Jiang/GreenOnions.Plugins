@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using System.Text.Json.Nodes;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
 using GreenOnions.Interface.Subinterface;
@@ -11,7 +10,7 @@ namespace GreenOnions.NodeHttpClient
     {
         private string? _pluginPath;
 
-        public string Name => "Node";
+        public string Name => "Http替代库";
 
         public string Description => "使用Node替代系统发起SSL/TLS请求插件";
 
@@ -124,7 +123,7 @@ namespace GreenOnions.NodeHttpClient
             string file = Path.Combine(_pluginPath!, "node", "requestClient.js");
             string options = CreateOptionsString(false, header, null);
             File.WriteAllText(file, $@"const request = require('request');
-request('{url}',{options}(err,resp,body) => {{
+request(encodeURI('{url}'),{options}(err,resp,body) => {{
   var json = '';
   if (err) {{ 
      json = err; 
@@ -143,7 +142,7 @@ request('{url}',{options}(err,resp,body) => {{
             File.WriteAllText(file, $@"const request = require('request');
 const fs = require('fs');
 var stream = fs.createWriteStream('data.bin');
-request('{url}',{options}(err,resp,body) => {{console.log('end')}}).pipe(stream);");
+request(encodeURI('{url}'),{options}(err,resp,body) => {{console.log('end')}}).pipe(stream);");
             Write("requestClient.js");
         }
 
@@ -152,7 +151,7 @@ request('{url}',{options}(err,resp,body) => {{console.log('end')}}).pipe(stream)
             string file = Path.Combine(_pluginPath!, "node", "requestClient.js");
             string options = CreateOptionsString(true, header, jsonBody);
             File.WriteAllText(file, $@"const request = require('request');
-request.post('{url}',{options}(err,resp,body) => {{
+request.post(encodeURI('{url}'),{options}(err,resp,body) => {{
   var json = '';
   if (err) {{ 
      json = err; 
@@ -171,7 +170,7 @@ request.post('{url}',{options}(err,resp,body) => {{
             File.WriteAllText(file, $@"const request = require('request');
 const fs = require('fs');
 var stream = fs.createWriteStream('data.bin');
-request.post('{url}',{options}(err,resp,body) => {{console.log('end')}}).pipe(stream);");
+request.post(encodeURI('{url}'),{options}(err,resp,body) => {{console.log('end')}}).pipe(stream);");
         }
 
         private string CreateOptionsString(bool json, IDictionary<string, string>? header, string? jsonBody)
