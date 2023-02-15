@@ -1,4 +1,5 @@
 ﻿using System.Runtime;
+using System.Text;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
 using GreenOnions.PluginConfigs.KanCollectionTimeAnnouncer;
@@ -183,7 +184,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                 var trs = doc.DocumentNode.SelectNodes(@"/html/body/template[@id='MOE_SKIN_TEMPLATE_BODYCONTENT']/div[@id='mw-content-text']/div[@class='mw-parser-output']/table[@class='wikitable'][2]/tbody/tr");
                 if (trs == null)
                 {
-                    var scrs = doc.DocumentNode.SelectNodes("script").Where(scr => scr.Attributes["src"] != null && scr.Attributes["src"].Value.Contains("ssl.captcha")).Count() > 0;
+                    var scrs = doc.DocumentNode.SelectNodes("script").Where(scr => scr.Attributes["src"] is not null && scr.Attributes["src"].Value.Contains("ssl.captcha")).Count() > 0;
                     //滑动验证
                     return null;
                 }
@@ -212,14 +213,14 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                             {
                                 findedTimeTd = true;
                                 var timeAndVoice = GetTimeAndVoiceUrl(tds[1], tds[2]);
-                                if (timeAndVoice != null)
-                                {
-                                    if (timeToPley.ContainsKey(timeAndVoice.Value.time))
-                                        timeToPley[timeAndVoice.Value.time] = timeAndVoice.Value.voiceItem;
-                                    else
-                                        timeToPley.Add(timeAndVoice.Value.time, timeAndVoice.Value.voiceItem);
-                                    await SaveMp3ChacheFile(timeAndVoice.Value.voiceItem, kanGirlName, hour);
-                                }
+                                if (timeAndVoice is null)
+                                    return null;
+
+                                if (timeToPley.ContainsKey(timeAndVoice.Value.time))
+                                    timeToPley[timeAndVoice.Value.time] = timeAndVoice.Value.voiceItem;
+                                else
+                                    timeToPley.Add(timeAndVoice.Value.time, timeAndVoice.Value.voiceItem);
+                                await SaveMp3ChacheFile(timeAndVoice.Value.voiceItem, kanGirlName, hour);
                             }
                         }
                     }
@@ -237,24 +238,18 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                 string mp3Path = Path.Combine(_pluginPath, "MP3", kanGirlName);
                 if (!Directory.Exists(mp3Path))
                     Directory.CreateDirectory(mp3Path);
-                try
+                using (HttpClient client = new HttpClient())
                 {
-                    using (HttpClient client = new HttpClient())
-                    {
-                        var res = await client.GetAsync(item.Mp3UrlOrFileName, _token);
-                        byte[] mp3Bytes = await res.Content.ReadAsByteArrayAsync(_token);
-                        await File.WriteAllBytesAsync(Path.Combine(mp3Path, $"{hour}.mp3"), mp3Bytes, _token);
-                        await File.WriteAllTextAsync(Path.Combine(mp3Path, $"{hour}_Japanese.txt"), item.JapaneseText, _token);
-                        await File.WriteAllTextAsync(Path.Combine(mp3Path, $"{hour}_Chinese.txt"), item.ChineseText, _token);
-                    }
-                }
-                catch (OperationCanceledException)
-                {
+                    var res = await client.GetAsync(item.Mp3UrlOrFileName, _token);
+                    byte[] mp3Bytes = await res.Content.ReadAsByteArrayAsync(_token);
+                    await File.WriteAllBytesAsync(Path.Combine(mp3Path, $"{hour}.mp3"), mp3Bytes, _token);
+                    await File.WriteAllTextAsync(Path.Combine(mp3Path, $"{hour}_Japanese.txt"), item.JapaneseText, _token);
+                    await File.WriteAllTextAsync(Path.Combine(mp3Path, $"{hour}_Chinese.txt"), item.ChineseText, _token);
                 }
             }
             catch (Exception ex)
             {
-                SendMessageToAdmin($"葱葱舰C报时插件错误：下载音频到本地失败。{ex}\r\n 地址为：{item.Mp3UrlOrFileName}");
+                SendMessageToAdmin($"葱葱舰C报时插件错误：下载音频到本地失败。{ex}\r\n 舰娘名为：{kanGirlName}，报时时间为：{hour}，音频地址为：{item.Mp3UrlOrFileName}");
             }
         }
 
@@ -267,7 +262,10 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
             int indexTimeEnd = font.InnerText.IndexOf("：");
             if (indexTimeEnd == -1)
                 return null;
-            var data = back.SelectSingleNode("div[2]").Attributes["data-bind"].Value.Replace("&quot;", "\"");
+            HtmlNode? voiceNode = back.SelectSingleNode("div[2]");
+            if (voiceNode is null)
+                return null;
+            var data = voiceNode.Attributes["data-bind"].Value.Replace("&quot;", "\"");
             var jData = JsonConvert.DeserializeObject<JToken>(data);
             string? voiceUrl = jData?["component"]?["params"]?["playlist"]?[0]?["audioFileUrl"]?.ToString();
             if (voiceUrl == null)
@@ -275,7 +273,10 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
 
             string strTimeStart = font.ChildNodes[0].InnerText;
             string japaneseText = font.ChildNodes[1].InnerText;
-            string chineseText = font.ChildNodes.Last().InnerText.Replace(strTimeStart, "").Replace("\n","");
+            StringBuilder sb = new StringBuilder();
+            for (int i = 2; i < font.ChildNodes.Count; i++)
+                sb.Append(font.ChildNodes[i].InnerText);
+            string chineseText = sb.ToString().Replace(strTimeStart, "").Replace("\n","");
             KanGirlVoiceItem voiceItem = new KanGirlVoiceItem(voiceUrl, chineseText, japaneseText);
             int time = Convert.ToInt32(font.InnerText[0..2]);
             return (time, voiceItem);
