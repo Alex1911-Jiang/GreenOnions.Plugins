@@ -1,5 +1,7 @@
-﻿using GreenOnions.Interface;
+﻿using System.Runtime;
+using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
+using GreenOnions.PluginConfigs.KanCollectionTimeAnnouncer;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -106,13 +108,49 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
             File.WriteAllText(kanGirlListFileName, jsonCache);
         }
 
+        internal async Task<KanGirlVoiceItem?> GetNextHourVoiceUrlAsync(KanCollectionConfig config, int hour)
+        {
+            KanGirlVoiceItem? item;
+            if (config.DesignateKanGirl)  //指定舰娘
+            {
+                item = await GetNextHourVoiceUrlInnerAsync(config.DesignatedKanGirl!, hour);
+                if (item is null)
+                {
+                    SendMessageToAdmin($"葱葱舰C报时插件错误：获取音频失败，所选舰娘没有报时语音或地址需要人机验证，请重新选择和检查人机验证( https://zh.moegirl.org.cn/舰队Collection )后重连葱葱。");
+                    return null;
+                }
+            }
+            else  //随机舰娘
+            {
+                //获取舰娘列表
+                List<string>? kanGirlsName = await GetKanGrilNameListAsync();
+                if (kanGirlsName is null)  //获取失败, 需要人机验证
+                {
+                    SendMessageToAdmin("葱葱舰C报时插件错误：获取舰娘列表失败，需要人机验证，请手动打开 https://zh.moegirl.org.cn/舰队Collection 通过验证并重启葱葱。");
+                    return null;
+                }
+            IL_Retry:;
+                Random rdm = new Random(Guid.NewGuid().GetHashCode());
+                int randomIndex = rdm.Next(0, kanGirlsName.Count);
+                string kanGirlName = kanGirlsName[randomIndex];
+                item = await GetNextHourVoiceUrlInnerAsync(kanGirlName, hour);
+                if (item is null)
+                {
+                    kanGirlsName.Remove(kanGirlName);
+                    CoverSaveKanGirlList(kanGirlsName);
+                    goto IL_Retry;  //目标舰娘没有报时语音, 重新随机一个
+                }
+            }
+            return item;
+        }
+
         /// <summary>
         /// 获取下个小时的音频对象
         /// </summary>
         /// <param name="kanGirlName">舰娘名称</param>
         /// <param name="hour">小时数</param>
         /// <returns></returns>
-        internal async Task<KanGirlVoiceItem?> GetNextHourVoiceUrlAsync(string kanGirlName, int hour)
+        private async Task<KanGirlVoiceItem?> GetNextHourVoiceUrlInnerAsync(string kanGirlName, int hour)
         {
             string mp3Path = Path.Combine(_pluginPath, "MP3", kanGirlName);
             if (!Directory.Exists(mp3Path))
@@ -229,18 +267,17 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
             int indexTimeEnd = font.InnerText.IndexOf("：");
             if (indexTimeEnd == -1)
                 return null;
-            int time = Convert.ToInt32(font.InnerText[0..2]);
-            string strTime = font.InnerText[0..5];
             var data = back.SelectSingleNode("div[2]").Attributes["data-bind"].Value.Replace("&quot;", "\"");
             var jData = JsonConvert.DeserializeObject<JToken>(data);
             string? voiceUrl = jData?["component"]?["params"]?["playlist"]?[0]?["audioFileUrl"]?.ToString();
             if (voiceUrl == null)
                 return null;
-            string br = "<br>";
-            int indexBr = font.InnerHtml.IndexOf(br);
-            string japaneseText = font.InnerHtml.Substring(5, indexBr - 5).Replace("<span lang=\"ja\">", "").Replace("</span>", "");
-            string chineseText = font.InnerHtml.Substring(indexBr + br.Length).Replace(strTime, "").Replace("\n", "");
-            KanGirlVoiceItem voiceItem = new KanGirlVoiceItem(voiceUrl, japaneseText, chineseText);
+
+            string strTimeStart = font.ChildNodes[0].InnerText;
+            string japaneseText = font.ChildNodes[1].InnerText;
+            string chineseText = font.ChildNodes.Last().InnerText.Replace(strTimeStart, "").Replace("\n","");
+            KanGirlVoiceItem voiceItem = new KanGirlVoiceItem(voiceUrl, chineseText, japaneseText);
+            int time = Convert.ToInt32(font.InnerText[0..2]);
             return (time, voiceItem);
         }
     }
