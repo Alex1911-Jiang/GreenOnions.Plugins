@@ -6,7 +6,7 @@ namespace GreenOnions.RandomLocalPictures
 {
     public class PicutreSender : IMessagePlugin, IPluginSetting
     {
-        private Dictionary<string,string> _cmdToPath = new Dictionary<string,string>();
+        private Dictionary<string, SourcesInfo> _cmdToConfig = new Dictionary<string, SourcesInfo>();
         public string Name => "本地随机色图";
 
         public string Description => "通过命令随机发送本地指定目录的图片";
@@ -36,13 +36,15 @@ namespace GreenOnions.RandomLocalPictures
                 {
                     new SourcesInfo()
                     {
-                        Cmds = new List<string>() { "setu", "色图来" },
-                        PictureSourcePath = @"C:\图库1"
+                        Cmds = new [] { "setu", "色图来" },
+                        PictureSourcePath = @"C:\图库1",
+                        SearchItemDirect = true,
                     },
                     new SourcesInfo()
                     {
-                        Cmds = new List<string>() { "本地第二个图库命令" },
-                        PictureSourcePath = @"D:\图库2"
+                        Cmds = new [] { "本地第二个图库命令" },
+                        PictureSourcePath = @"D:\图库2",
+                        SearchItemDirect = false,
                     }
                 };
             }
@@ -56,12 +58,12 @@ namespace GreenOnions.RandomLocalPictures
             {
                 for (int i = 0; i < sourcesInfos.Count; i++)
                 {
-                    for (int j = 0; j < sourcesInfos[i].Cmds.Count; j++)
+                    for (int j = 0; j < sourcesInfos[i].Cmds.Length; j++)
                     {
-                        if (_cmdToPath.ContainsKey(sourcesInfos[i].Cmds[j]))
-                            _cmdToPath[sourcesInfos[i].Cmds[j]] = sourcesInfos[i].PictureSourcePath;
+                        if (_cmdToConfig.ContainsKey(sourcesInfos[i].Cmds[j]))
+                            _cmdToConfig[sourcesInfos[i].Cmds[j]] = sourcesInfos[i];
                         else
-                            _cmdToPath.Add(sourcesInfos[i].Cmds[j], sourcesInfos[i].PictureSourcePath);
+                            _cmdToConfig.Add(sourcesInfos[i].Cmds[j], sourcesInfos[i]);
                     }
                 }
             }
@@ -71,14 +73,14 @@ namespace GreenOnions.RandomLocalPictures
         {
             if (msgs.FirstOrDefault() is GreenOnionsTextMessage textMsg)
             {
-                if (_cmdToPath.ContainsKey(textMsg.Text))
+                if (_cmdToConfig.ContainsKey(textMsg.Text))
                 {
-                    if (!Directory.Exists(_cmdToPath[textMsg.Text]))
+                    if (!Directory.Exists(_cmdToConfig[textMsg.Text].PictureSourcePath))
                     {
                         Response($"图库<{textMsg.Text}>不存在");
                         return true;
                     }
-                    string[] imgs = Directory.GetFiles(_cmdToPath[textMsg.Text]);
+                    string[] imgs = Directory.GetFiles(_cmdToConfig[textMsg.Text].PictureSourcePath, "*", _cmdToConfig[textMsg.Text].SearchItemDirect ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
                     Random rdm = new Random(Guid.NewGuid().GetHashCode());
                     Response(new GreenOnionsMessages(new GreenOnionsImageMessage(imgs[rdm.Next(0, imgs.Length)])) { Reply = false });
                     return true;
@@ -94,8 +96,9 @@ namespace GreenOnions.RandomLocalPictures
 
         public struct SourcesInfo
         {
-            public List<string> Cmds { get; set; }
+            public string[] Cmds { get; set; }
             public string PictureSourcePath { get; set; }
+            public bool SearchItemDirect { get; set; }
         }
     }
 }

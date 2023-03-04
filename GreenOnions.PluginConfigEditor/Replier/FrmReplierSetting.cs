@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Data;
 using GreenOnions.PluginConfigs.Replier;
 using Newtonsoft.Json;
@@ -7,10 +8,11 @@ namespace GreenOnions.PluginConfigEditor.Replier
 {
     public partial class FrmReplierSetting : Form
     {
-        private string _configDirect;
-        private string _pluginPath;
-        private string _ImagePath;
-        private List<ReplierConfig>? _config = null;
+        private readonly string _configDirect;
+        private readonly string _pluginPath;
+        private readonly string _imagePath;
+        private readonly string _audioPath;
+        private readonly List<ReplierConfig>? _config = null;
 
         public FrmReplierSetting(string configDirect)
         {
@@ -20,18 +22,27 @@ namespace GreenOnions.PluginConfigEditor.Replier
             _pluginPath = pluginPath;
             if (!Directory.Exists(_pluginPath))
                 Directory.CreateDirectory(_pluginPath);
-            _ImagePath = Path.Combine(_pluginPath, "Images");
-            if (!Directory.Exists(_ImagePath))
-                Directory.CreateDirectory(_ImagePath);
+            _imagePath = Path.Combine(_pluginPath, "Images");
+            if (!Directory.Exists(_imagePath))
+                Directory.CreateDirectory(_imagePath);
+            _audioPath = Path.Combine(_pluginPath, "Audios");
+            if (!Directory.Exists(_audioPath))
+                Directory.CreateDirectory(_audioPath);
 
             InitializeComponent();
 
             imageList.ImageSize = new Size(100, 100);
 
-            string[] imgFiles = Directory.GetFiles(_ImagePath);
+            int listViewIndex = 0;
+            string[] imgFiles = Directory.GetFiles(_imagePath);
             for (int i = 0; i < imgFiles.Length; i++)
             {
-                AddImage(imgFiles[i], i);
+                AddImage(imgFiles[i], listViewIndex++);
+            }
+            string[] adoFiles = Directory.GetFiles(_audioPath);
+            for (int i = 0; i < adoFiles.Length; i++)
+            {
+                AddAudio(adoFiles[i], listViewIndex++);
             }
 
             DataTable dtSource = new DataTable();
@@ -64,19 +75,36 @@ namespace GreenOnions.PluginConfigEditor.Replier
             }
         }
 
-        private void btnAddImage_Click(object sender, EventArgs e)
+        private void AddAudio(string fileName, int index)
+        {
+            imageList.Images.Add(Resource.audio);
+            lvImages.Items.Add(Path.GetFileName(fileName), index);
+            lvImages.Items[index].ImageIndex = index;
+        }
+
+        private void btnAddMedia_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
                 ofd.Multiselect = true;
-                ofd.Filter = "图片|*.bmp;*.dib;*.jpg;*.jpe;*.jpeg;*.jfif;*.png;*.tif;*.tiff;*.gif;*.heic;";
-                if (ofd.ShowDialog() == DialogResult.OK)
+                ofd.Filter = "图片|*.bmp;*.dib;*.jpg;*.jpe;*.jpeg;*.jfif;*.png;*.tif;*.tiff;*.gif;*.heic;|音频/语音|*.mp3;*.wav;*.amr;*.silk;";
+                if (ofd.ShowDialog() != DialogResult.OK)
+                    return;
+                for (int i = 0; i < ofd.FileNames.Length; i++)
                 {
-                    for (int i = 0; i < ofd.FileNames.Length; i++)
+                    string poyiedName;
+                    switch (ofd.FilterIndex)
                     {
-                        string poyiedName = Path.Combine(_ImagePath, Path.GetFileName(ofd.FileNames[i]));
-                        File.Copy(ofd.FileNames[i], poyiedName, true);
-                        AddImage(poyiedName, lvImages.Items.Count);
+                        case 1:
+                            poyiedName = Path.Combine(_imagePath, Path.GetFileName(ofd.FileNames[i]));
+                            File.Copy(ofd.FileNames[i], poyiedName, true);
+                            AddImage(poyiedName, lvImages.Items.Count);
+                            break;
+                        case 2:
+                            poyiedName = Path.Combine(_audioPath, Path.GetFileName(ofd.FileNames[i]));
+                            File.Copy(ofd.FileNames[i], poyiedName, true);
+                            AddAudio(poyiedName, lvImages.Items.Count);
+                            break;
                     }
                 }
             }
@@ -84,22 +112,21 @@ namespace GreenOnions.PluginConfigEditor.Replier
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            btnAddImage.Focus();
-            if (dgvReplies.DataSource is DataTable dt)
-            {
+            btnAddMedia.Focus();
+            if (dgvReplies.DataSource is not DataTable dt)
+                return;
             _config!.Clear();
-                foreach (DataRow row in dt.Rows)
+            foreach (DataRow row in dt.Rows)
+            {
+                _config.Add(new ReplierConfig
                 {
-                    _config.Add(new ReplierConfig
-                    {
-                        Message = row[0].ToString()!,
-                        MatchMode = ToMatchMode(row[1]),
-                        TriggerMode = ToTriggerMode(row[2]),
-                        ReplyValue = row[3].ToString()!,
-                        Priority = ToInt32(row[4]),
-                        ReplyMode = ToBoolean(row[5]),
-                    });
-                }
+                    Message = row[0].ToString()!,
+                    MatchMode = ToMatchMode(row[1]),
+                    TriggerMode = ToTriggerMode(row[2]),
+                    ReplyValue = row[3].ToString()!,
+                    Priority = ToInt32(row[4]),
+                    ReplyMode = ToBoolean(row[5]),
+                });
             }
             string strConfig = JsonConvert.SerializeObject(_config, Formatting.Indented);
             File.WriteAllText(_configDirect, strConfig);
@@ -172,7 +199,7 @@ namespace GreenOnions.PluginConfigEditor.Replier
             lvImages.Items.RemoveAt(index);
             for (int i = 0; i < lvImages.Items.Count; i++)
                 lvImages.Items[i].ImageIndex = i;
-            string imageFileName = Path.Combine(_ImagePath, name);
+            string imageFileName = Path.Combine(_imagePath, name);
             if (File.Exists(imageFileName))
                 File.Delete(imageFileName);
         }

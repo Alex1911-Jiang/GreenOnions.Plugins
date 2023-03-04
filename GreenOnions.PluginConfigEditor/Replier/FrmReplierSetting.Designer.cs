@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.dgvReplies = new System.Windows.Forms.DataGridView();
             this.colMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -45,7 +45,7 @@
             this.lblInfo = new System.Windows.Forms.Label();
             this.pnlBottom = new System.Windows.Forms.Panel();
             this.lvImages = new System.Windows.Forms.ListView();
-            this.btnAddImage = new System.Windows.Forms.Button();
+            this.btnAddMedia = new System.Windows.Forms.Button();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuItemRemove = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReplies)).BeginInit();
@@ -64,14 +64,14 @@
             // 
             this.dgvReplies.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvReplies.BackgroundColor = System.Drawing.Color.White;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvReplies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvReplies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.dgvReplies.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvReplies.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colMessage,
@@ -81,28 +81,28 @@
             this.colPriority,
             this.colReplyMode,
             this.colRemove});
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvReplies.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvReplies.DefaultCellStyle = dataGridViewCellStyle5;
             this.dgvReplies.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvReplies.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.dgvReplies.GridColor = System.Drawing.Color.Silver;
             this.dgvReplies.Location = new System.Drawing.Point(0, 30);
             this.dgvReplies.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.dgvReplies.Name = "dgvReplies";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvReplies.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvReplies.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.dgvReplies.RowHeadersVisible = false;
             this.dgvReplies.RowHeadersWidth = 62;
             this.dgvReplies.RowTemplate.Height = 25;
@@ -198,7 +198,7 @@
             // pnlBottom
             // 
             this.pnlBottom.Controls.Add(this.lvImages);
-            this.pnlBottom.Controls.Add(this.btnAddImage);
+            this.pnlBottom.Controls.Add(this.btnAddMedia);
             this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pnlBottom.Location = new System.Drawing.Point(0, 749);
             this.pnlBottom.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
@@ -219,17 +219,17 @@
             this.lvImages.UseCompatibleStateImageBehavior = false;
             this.lvImages.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lvImages_MouseUp);
             // 
-            // btnAddImage
+            // btnAddMedia
             // 
-            this.btnAddImage.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnAddImage.Location = new System.Drawing.Point(1420, 0);
-            this.btnAddImage.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.btnAddImage.Name = "btnAddImage";
-            this.btnAddImage.Size = new System.Drawing.Size(63, 212);
-            this.btnAddImage.TabIndex = 2;
-            this.btnAddImage.Text = "添加图片";
-            this.btnAddImage.UseVisualStyleBackColor = true;
-            this.btnAddImage.Click += new System.EventHandler(this.btnAddImage_Click);
+            this.btnAddMedia.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnAddMedia.Location = new System.Drawing.Point(1420, 0);
+            this.btnAddMedia.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.btnAddMedia.Name = "btnAddMedia";
+            this.btnAddMedia.Size = new System.Drawing.Size(63, 212);
+            this.btnAddMedia.TabIndex = 2;
+            this.btnAddMedia.Text = "添加媒体文件";
+            this.btnAddMedia.UseVisualStyleBackColor = true;
+            this.btnAddMedia.Click += new System.EventHandler(this.btnAddMedia_Click);
             // 
             // contextMenuStrip
             // 
@@ -272,7 +272,7 @@
         private DataGridView dgvReplies;
         private Panel pnlTop;
         private Panel pnlBottom;
-        private Button btnAddImage;
+        private Button btnAddMedia;
         private Label lblInfo;
         private ContextMenuStrip contextMenuStrip;
         private ToolStripMenuItem menuItemRemove;

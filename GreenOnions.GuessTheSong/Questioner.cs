@@ -171,53 +171,51 @@ namespace GreenOnions.GuessTheSong
                         try
                         {
                             MemoryStream? ms = CutMp3(originalMusic);
-                            if (ms != null)
-                            {
-                                using (ms)
-                                {
-                                    GreenOnionsMessages msgVoice;
-                                    if (!string.IsNullOrWhiteSpace(_config.FFmpegPath) && File.Exists(_config.FFmpegPath))  //转码成amr
-                                    {
-                                        string mp3FileName = Path.Combine(_pluginPath!, "original.mp3");
-                                        File.WriteAllBytes(mp3FileName, ms.GetBuffer());
-
-                                        string amrFileName = Path.Combine(_pluginPath!, "transcoded.amr");
-                                        if (File.Exists(amrFileName))
-                                            File.Delete(amrFileName);
-
-                                        Process p = new Process();
-                                        ProcessStartInfo startInfo = new ProcessStartInfo(_config.FFmpegPath);
-                                        startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                                        startInfo.Arguments = $" -i {mp3FileName} -c:a libopencore_amrnb -ac 1 -ar 8000 -b:a 320K -y {amrFileName}";
-                                        p.StartInfo = startInfo;
-                                        p.StartInfo.UseShellExecute = false;
-                                        p.StartInfo.CreateNoWindow = true;
-                                        p.Start();
-                                        p.WaitForExit();
-                                        msgVoice = new GreenOnionsVoiceMessage(amrFileName);
-                                        File.Delete(mp3FileName);
-                                    }
-                                    else  //原样发送mp3
-                                    {
-                                        msgVoice = new GreenOnionsVoiceMessage(ms);
-                                    }
-                                    msgVoice.Reply = false;
-                                    Response(msgVoice);
-                                    await Task.Delay(60 * 1000);
-                                    if (playerAndAnswers.ContainsKey(playerId))
-                                    {
-                                        GreenOnionsMessages msgEnd = new GreenOnionsMessages(_config!.TimeOutReplyReply.Replace("<歌曲名称>", answer));  //游戏结束，公布答案
-                                        msgEnd.Reply = false;
-                                        Response(msgEnd);
-                                        playerAndAnswers.Remove(playerId);
-                                    }
-                                }
-                            }
-                            else
+                            if (ms is null)
                             {
                                 Response($"剪歌失败，请重试");
                                 playerAndAnswers.Remove(playerId);
                                 SendMessageToAdmin($"葱葱听歌猜曲名插件剪歌失败，歌曲ID为：{musicId}，音频流为空");
+                                return;
+                            }
+                            using (ms)
+                            {
+                                GreenOnionsMessages msgVoice;
+                                if (!string.IsNullOrWhiteSpace(_config.FFmpegPath) && File.Exists(_config.FFmpegPath))  //转码成amr
+                                {
+                                    string mp3FileName = Path.Combine(_pluginPath!, "original.mp3");
+                                    File.WriteAllBytes(mp3FileName, ms.GetBuffer());
+
+                                    string amrFileName = Path.Combine(_pluginPath!, "transcoded.amr");
+                                    if (File.Exists(amrFileName))
+                                        File.Delete(amrFileName);
+
+                                    Process p = new Process();
+                                    ProcessStartInfo startInfo = new ProcessStartInfo(_config.FFmpegPath);
+                                    startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                                    startInfo.Arguments = $" -i {mp3FileName} -c:a libopencore_amrnb -ac 1 -ar 8000 -b:a 320K -y {amrFileName}";
+                                    p.StartInfo = startInfo;
+                                    p.StartInfo.UseShellExecute = false;
+                                    p.StartInfo.CreateNoWindow = true;
+                                    p.Start();
+                                    p.WaitForExit();
+                                    msgVoice = new GreenOnionsVoiceMessage(amrFileName);
+                                    File.Delete(mp3FileName);
+                                }
+                                else  //原样发送mp3
+                                {
+                                    msgVoice = new GreenOnionsVoiceMessage(ms);
+                                }
+                                msgVoice.Reply = false;
+                                Response(msgVoice);
+                                await Task.Delay(60 * 1000);
+                                if (playerAndAnswers.ContainsKey(playerId))
+                                {
+                                    GreenOnionsMessages msgEnd = new GreenOnionsMessages(_config!.TimeOutReplyReply.Replace("<歌曲名称>", answer));  //游戏结束，公布答案
+                                    msgEnd.Reply = false;
+                                    Response(msgEnd);
+                                    playerAndAnswers.Remove(playerId);
+                                }
                             }
                         }
                         catch (Exception ex)

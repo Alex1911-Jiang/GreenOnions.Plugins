@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
@@ -13,7 +14,10 @@ namespace GreenOnions.Replier
         private string? _pluginPath;
         private string? _configDirect;
         private string? _imagePath;
+        private string? _audioPath;
         private ReplierConfig[]? _commandTable;
+        private Dictionary<string, string> _imageNameAndPaths;
+        private Dictionary<string, string> _audioNameAndPaths;
 
         public string Name => "自定义回复";
 
@@ -32,6 +36,7 @@ namespace GreenOnions.Replier
         {
             _pluginPath = pluginPath;
             _imagePath = Path.Combine(_pluginPath, "Images");
+            _audioPath = Path.Combine(_pluginPath, "Audios");
             _configDirect = Path.Combine(_pluginPath, "config.json");
             ReloadConfig();
         }
@@ -40,36 +45,43 @@ namespace GreenOnions.Replier
         {
             if (File.Exists(_configDirect))
                 _commandTable = JsonConvert.DeserializeObject<ReplierConfig[]>(File.ReadAllText(_configDirect))!;
+
+            _imageNameAndPaths = new Dictionary<string, string>();
+            _audioNameAndPaths = new Dictionary<string, string>();
+
+            string[] imgs = Directory.GetFiles(_imagePath!);
+            for (int i = 0; i < imgs.Length; i++)
+            {
+                string imgTag = $"<{Path.GetFileName(imgs[i])}>";
+                _imageNameAndPaths.Add(imgTag, imgs[i]);
+            }
+            string[] ados = Directory.GetFiles(_audioPath!);
+            for (int i = 0; i < ados.Length; i++)
+            {
+                string imgTag = $"<{Path.GetFileName(ados[i])}>";
+                _audioNameAndPaths.Add(imgTag, ados[i]);
+            }
         }
 
         public bool OnMessage(GreenOnionsMessages msgs, long? senderGroup, Action<GreenOnionsMessages> Response)
         {
-            if (msgs.First() is GreenOnionsTextMessage textMsg)
+            if (_commandTable is null)
+                return false;
+            if (msgs.First() is not GreenOnionsTextMessage textMsg)
+                return false;
+            var comms = _commandTable.OrderBy(c => c.Priority);
+            foreach (var comm in comms)
             {
-                var comms = _commandTable.OrderBy(c => c.Priority);
-                foreach (var comm in comms)
-                {
-                    if ((comm.TriggerMode & TriggerModes.群组) != 0 && senderGroup != null)
-                    {
-                        GreenOnionsMessages? reply = CaeateReply(textMsg, comm);
-                        if (reply != null)
-                        {
-                            reply.Reply = comm.ReplyMode;
-                            Response(reply);
-                            return true;
-                        }
-                    }
-                    if ((comm.TriggerMode & TriggerModes.私聊) != 0 && senderGroup == null)
-                    {
-                        GreenOnionsMessages? reply = CaeateReply(textMsg, comm);
-                        if (reply != null)
-                        {
-                            reply.Reply = comm.ReplyMode;
-                            Response(reply);
-                            return true;
-                        }
-                    }
-                }
+                if (senderGroup is not null && (comm.TriggerMode & TriggerModes.群组) == 0)
+                    continue;
+                if (senderGroup is null && (comm.TriggerMode & TriggerModes.私聊) == 0)
+                    continue;
+                GreenOnionsMessages? reply = CaeateReply(textMsg, comm);
+                if (reply is null)
+                    continue;
+                reply.Reply = comm.ReplyMode;
+                Response(reply);
+                return true;
             }
             return false;
         }
@@ -96,46 +108,50 @@ namespace GreenOnions.Replier
 
         private GreenOnionsMessages RandomSamePriority(string msgCmd, int priority)
         {
-            var sameCmdAndPriorityGroup = _commandTable.Where(r => r.Message == msgCmd && r.Priority == priority).ToArray();
+            var sameCmdAndPriorityGroup = _commandTable!.Where(r => r.Message == msgCmd && r.Priority == priority).ToArray();
             if (sameCmdAndPriorityGroup.Length > 1)
-                return ReplaceImages(sameCmdAndPriorityGroup[new Random().Next(0, sameCmdAndPriorityGroup.Length)].ReplyValue);
+                return ReplaceImages(sameCmdAndPriorityGroup[new Random(Guid.NewGuid().GetHashCode()).Next(0, sameCmdAndPriorityGroup.Length)].ReplyValue);
             return ReplaceImages(sameCmdAndPriorityGroup.First().ReplyValue);
         }
 
         private GreenOnionsMessages ReplaceImages(string textMessage)
         {
-            Dictionary<string, string> imageNameAndPaths = new Dictionary<string, string>();
-            List<string> splitedText = new List<string>();
-            splitedText.Add(textMessage);
-
-            string[] imgs = Directory.GetFiles(_imagePath!);
-            for (int i = 0; i < imgs.Length; i++)
+            List<string> splitedText = new();
+            bool tagStart = false;
+            StringBuilder itemText = new StringBuilder();
+            for (int i = 0; i < textMessage.Length; i++)
             {
-                string imgTag = $"<{Path.GetFileName(imgs[i])}>";
-                imageNameAndPaths.Add(imgTag, imgs[i]);
-            IL_Research:;
-                for (int j = 0; j < splitedText.Count; j++)
+                if (!tagStart)
                 {
-                    if (splitedText[j] != imgTag && splitedText[j].Contains(imgTag))
+                    if (textMessage[i] == '<')
                     {
-                        string originalMsg = splitedText[j];
-                        splitedText.RemoveAt(j);
-                        string[] splited = originalMsg.Split(imgTag);
-                        for (int k = 0; k < splited.Length; k++)
-                        {
-                            splitedText.Add(splited[k]);
-                            if (k < splited.Length -1)
-                                splitedText.Add(imgTag);
-                        }
-                        goto IL_Research;
+                        splitedText.Add(itemText.ToString());
+                        itemText.Clear();
+                        tagStart = true;
                     }
                 }
+                else
+                {
+                    if (textMessage[i] == '>')
+                    {
+                        tagStart = false;
+                        itemText.Append(textMessage[i]);
+                        splitedText.Add(itemText.ToString());
+                        itemText.Clear();
+                        continue;
+                    }
+                }
+                itemText.Append(textMessage[i]);
             }
+            splitedText = splitedText.Where(t => !string.IsNullOrEmpty(t)).ToList();
+
             GreenOnionsMessages messages = new GreenOnionsMessages();
             for (int i = 0; i < splitedText.Count; i++)
             {
-                if (imageNameAndPaths.ContainsKey(splitedText[i]))
-                    messages.Add(new GreenOnionsImageMessage(imageNameAndPaths[splitedText[i]]));
+                if (_imageNameAndPaths.ContainsKey(splitedText[i]))
+                    messages.Add(new GreenOnionsImageMessage(_imageNameAndPaths[splitedText[i]]));
+                else if (_audioNameAndPaths.ContainsKey(splitedText[i]))
+                    messages.Add(new GreenOnionsVoiceMessage(_audioNameAndPaths[splitedText[i]]));
                 else
                     messages.Add(new GreenOnionsTextMessage(splitedText[i]));
             }
