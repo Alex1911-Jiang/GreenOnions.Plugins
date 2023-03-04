@@ -12,12 +12,12 @@ namespace GreenOnions.PluginConfigEditor
         /// </summary>
         [STAThread]
         static void Main(params string[] args)
-       {
+        {
             ApplicationConfiguration.Initialize();
 
             if (args.Length != 2)
             {
-                MessageBox.Show("请不要直接运行此程序","提示");
+                MessageBox.Show("璇蜂笉瑕佺洿鎺ヨ繍琛屾绋嬪簭", "鎻愮ず");
                 Environment.Exit(0);
             }
 

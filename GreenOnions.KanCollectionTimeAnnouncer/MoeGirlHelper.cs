@@ -65,7 +65,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                 HttpResponseMessage response = await client.GetAsync(@"https://zh.moegirl.org.cn/舰队Collection/图鉴/舰娘", _token);
                 html = await response.Content.ReadAsStringAsync(_token) + "</body></html>";
             }
-            catch (OperationCanceledException)
+            catch
             {
                 return new List<string>();
             }
@@ -173,7 +173,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                     HttpResponseMessage response = await client.GetAsync($@"https://zh.moegirl.org.cn/舰队Collection:{kanGirlName}", _token);
                     html = await response.Content.ReadAsStringAsync(_token) + "</body></html>";
                 }
-                catch (OperationCanceledException)
+                catch
                 {
                     return null;
                 }

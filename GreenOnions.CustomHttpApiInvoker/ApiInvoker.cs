@@ -42,6 +42,16 @@ namespace GreenOnions.CustomHttpApiInvoker
 
         }
 
+        private void SendToAdmin(string msg)
+        {
+            if (_botApi is null)
+                return;
+            foreach (var item in _botConfig.AdminQQ)
+            {
+                _botApi.SendFriendMessageAsync(item, msg);
+            }
+        }
+
         public void OnLoad(string pluginPath, IBotConfig config)
         {
             _path = pluginPath;
@@ -161,7 +171,8 @@ namespace GreenOnions.CustomHttpApiInvoker
             GreenOnionsMessages msg = new GreenOnionsMessages() { Reply = false };
             if (string.IsNullOrEmpty(api.Url))
             {
-                msg.Add("此API没有设置地址，请联系机器人管理员");
+                SendToAdmin("葱葱自定义API错误，没有填写地址。");
+                msg.Add("此API没有设置地址，请联系机器人管理员。");
                 return msg;
             }
             try
@@ -217,14 +228,16 @@ namespace GreenOnions.CustomHttpApiInvoker
                 {
                     response = await client.SendAsync(request);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    msg.Add("请求失败，请联系机器人管理员");
+                    SendToAdmin($"葱葱自定义API请求错误，{ex}\r\n请求地址为：{api.Url}");
+                    msg.Add("请求失败，请联系机器人管理员。");
                     return msg;
                 }
                 if ((int)response.StatusCode >= 400)
                 {
-                    msg.Add("请求被拒绝，请联系机器人管理员");
+                    SendToAdmin($"葱葱自定义API请求被拒绝，Http状态码：{(int)response.StatusCode} {response.StatusCode}\r\n请求地址为：{api.Url}");
+                    msg.Add("请求被拒绝，请联系机器人管理员。");
                     return msg;
                 }
 
@@ -353,9 +366,10 @@ namespace GreenOnions.CustomHttpApiInvoker
                         valueStream = await response.Content.ReadAsStreamAsync();
                     }
                 }
-                catch (Exception)
+                catch
                 {
-                    msg.Add("解析失败，请联系机器人管理员");
+                    SendToAdmin($"葱葱自定义API解析失败，请检查解析表达式。\r\n请求地址为：{api.Url}");
+                    msg.Add("解析失败，请联系机器人管理员。");
                     return msg;
                 }
                 //解析成功
@@ -381,7 +395,7 @@ namespace GreenOnions.CustomHttpApiInvoker
                     else if (api.SendMode == SendModeEnum.ImageStream)
                     {
                         if (valueStream == null)
-                            msg.Add("Api响应为空，请联系机器人管理员");
+                            msg.Add("Api响应为空，请联系机器人管理员。");
                         else
                             msg.Add(new GreenOnionsImageMessage(valueStream));
                         return msg;
@@ -415,7 +429,8 @@ namespace GreenOnions.CustomHttpApiInvoker
             }
             catch (Exception ex)
             {
-                msg.Add($"发生错误，请联系机器人管理员，{ex.Message}");
+                SendToAdmin($"葱葱自定义API请求错误，{ex}\r\n请求地址为：{api.Url}");
+                msg.Add($"发生错误，请联系机器人管理员。");
                 return msg;
             }
             return null;
