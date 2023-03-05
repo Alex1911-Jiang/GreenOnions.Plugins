@@ -143,6 +143,7 @@ namespace GreenOnions.Replier
                 }
                 itemText.Append(textMessage[i]);
             }
+            splitedText.Add(itemText.ToString());
             splitedText = splitedText.Where(t => !string.IsNullOrEmpty(t)).ToList();
 
             GreenOnionsMessages messages = new GreenOnionsMessages();
