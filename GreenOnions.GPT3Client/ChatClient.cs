@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 
 namespace GreenOnions.GPT3Client
 {
+    [Obsolete("建议使用ChatGPTClient插件")]
     public class ChatClient : IMessagePlugin, IPluginHelp, IPluginSetting
     {
         private string? _path;
@@ -288,7 +289,6 @@ namespace GreenOnions.GPT3Client
             ReloadConfig();
             string jsonConfig = JsonConvert.SerializeObject(_config, Formatting.Indented);
             File.WriteAllText(_configDirect!, jsonConfig);
-            
         }
     }
 }

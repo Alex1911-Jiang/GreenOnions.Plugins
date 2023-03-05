@@ -1,3 +1,4 @@
+using GreenOnions.PluginConfigEditor.ChatGPTClient;
 using GreenOnions.PluginConfigEditor.CustomHttpApiInvoker;
 using GreenOnions.PluginConfigEditor.GPT3Client;
 using GreenOnions.PluginConfigEditor.KanCollectionTimeAnnouncer;
@@ -34,6 +35,9 @@ namespace GreenOnions.PluginConfigEditor
                     break;
                 case "GreenOnions.GPT3Client":
                     Application.Run(new FrmGPT3ClientSetting(args[1]));
+                    break;
+                case "GreenOnions.ChatGPTClient":
+                    Application.Run(new FrmChatGPTClientSetting(args[1]));
                     break;
             }
         }
