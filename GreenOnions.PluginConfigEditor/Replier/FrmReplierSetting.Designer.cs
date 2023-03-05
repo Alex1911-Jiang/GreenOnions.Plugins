@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.dgvReplies = new System.Windows.Forms.DataGridView();
             this.colMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -48,6 +48,7 @@
             this.btnAddMedia = new System.Windows.Forms.Button();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuItemRemove = new System.Windows.Forms.ToolStripMenuItem();
+            this.splitter = new System.Windows.Forms.Splitter();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReplies)).BeginInit();
             this.pnlTop.SuspendLayout();
             this.pnlBottom.SuspendLayout();
@@ -62,16 +63,15 @@
             // 
             // dgvReplies
             // 
-            this.dgvReplies.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvReplies.BackgroundColor = System.Drawing.Color.White;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvReplies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvReplies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvReplies.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvReplies.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colMessage,
@@ -81,28 +81,28 @@
             this.colPriority,
             this.colReplyMode,
             this.colRemove});
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvReplies.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvReplies.DefaultCellStyle = dataGridViewCellStyle2;
             this.dgvReplies.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvReplies.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.dgvReplies.GridColor = System.Drawing.Color.Silver;
             this.dgvReplies.Location = new System.Drawing.Point(0, 30);
             this.dgvReplies.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.dgvReplies.Name = "dgvReplies";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvReplies.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvReplies.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dgvReplies.RowHeadersVisible = false;
             this.dgvReplies.RowHeadersWidth = 62;
             this.dgvReplies.RowTemplate.Height = 25;
@@ -116,6 +116,7 @@
             this.colMessage.HeaderText = "触发消息";
             this.colMessage.MinimumWidth = 8;
             this.colMessage.Name = "colMessage";
+            this.colMessage.Width = 302;
             // 
             // colMatchMode
             // 
@@ -130,6 +131,7 @@
             "正则表达式"});
             this.colMatchMode.MinimumWidth = 8;
             this.colMatchMode.Name = "colMatchMode";
+            this.colMatchMode.Width = 242;
             // 
             // colTriggerMode
             // 
@@ -142,6 +144,7 @@
             "私聊/群组消息"});
             this.colTriggerMode.MinimumWidth = 8;
             this.colTriggerMode.Name = "colTriggerMode";
+            this.colTriggerMode.Width = 241;
             // 
             // colReplyValue
             // 
@@ -149,6 +152,7 @@
             this.colReplyValue.HeaderText = "回复内容";
             this.colReplyValue.MinimumWidth = 8;
             this.colReplyValue.Name = "colReplyValue";
+            this.colReplyValue.Width = 302;
             // 
             // colPriority
             // 
@@ -157,6 +161,7 @@
             this.colPriority.HeaderText = "优先级";
             this.colPriority.MinimumWidth = 8;
             this.colPriority.Name = "colPriority";
+            this.colPriority.Width = 121;
             // 
             // colReplyMode
             // 
@@ -165,6 +170,7 @@
             this.colReplyMode.HeaderText = "以回复方式发送";
             this.colReplyMode.MinimumWidth = 8;
             this.colReplyMode.Name = "colReplyMode";
+            this.colReplyMode.Width = 181;
             // 
             // colRemove
             // 
@@ -174,6 +180,7 @@
             this.colRemove.Name = "colRemove";
             this.colRemove.Text = "删除";
             this.colRemove.UseColumnTextForButtonValue = true;
+            this.colRemove.Width = 91;
             // 
             // pnlTop
             // 
@@ -246,11 +253,21 @@
             this.menuItemRemove.Text = "删除";
             this.menuItemRemove.Click += new System.EventHandler(this.MenuItemRemove_Click);
             // 
+            // splitter
+            // 
+            this.splitter.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.splitter.Location = new System.Drawing.Point(0, 745);
+            this.splitter.Name = "splitter";
+            this.splitter.Size = new System.Drawing.Size(1483, 4);
+            this.splitter.TabIndex = 4;
+            this.splitter.TabStop = false;
+            // 
             // FrmReplierSetting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1483, 961);
+            this.Controls.Add(this.splitter);
             this.Controls.Add(this.dgvReplies);
             this.Controls.Add(this.pnlTop);
             this.Controls.Add(this.pnlBottom);
@@ -284,5 +301,6 @@
         private DataGridViewTextBoxColumn colPriority;
         private DataGridViewCheckBoxColumn colReplyMode;
         private DataGridViewButtonColumn colRemove;
+        private Splitter splitter;
     }
 }
