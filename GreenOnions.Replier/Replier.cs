@@ -36,7 +36,11 @@ namespace GreenOnions.Replier
         {
             _pluginPath = pluginPath;
             _imagePath = Path.Combine(_pluginPath, "Images");
+            if (!Directory.Exists(_imagePath))
+                Directory.CreateDirectory(_imagePath);
             _audioPath = Path.Combine(_pluginPath, "Audios");
+            if (!Directory.Exists(_audioPath))
+                Directory.CreateDirectory(_audioPath);
             _configDirect = Path.Combine(_pluginPath, "config.json");
             ReloadConfig();
         }
