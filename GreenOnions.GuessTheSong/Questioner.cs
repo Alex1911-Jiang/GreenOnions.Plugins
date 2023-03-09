@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Diagnostics;
-using System.Xml.Linq;
+﻿using System.Diagnostics;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
 using NAudio.Wave;
@@ -199,12 +197,29 @@ namespace GreenOnions.GuessTheSong
                                     p.StartInfo.CreateNoWindow = true;
                                     p.Start();
                                     p.WaitForExit();
-                                    msgVoice = new GreenOnionsVoiceMessage(amrFileName);
+                                    if (_config.SendAsFile)
+                                    {
+                                        msgVoice = new GreenOnionsVoiceMessage(amrFileName)!;
+                                    }
+                                    else
+                                    {
+                                        MemoryStream msSend = new MemoryStream(File.ReadAllBytes(amrFileName));
+                                        msgVoice = new GreenOnionsVoiceMessage(msSend)!;
+                                    }
                                     File.Delete(mp3FileName);
                                 }
                                 else  //原样发送mp3
                                 {
-                                    msgVoice = new GreenOnionsVoiceMessage(ms);
+                                    if (_config.SendAsFile)
+                                    {
+                                        string mp3FileName = Path.Combine(_pluginPath!, "original.mp3");
+                                        File.WriteAllBytes(mp3FileName, ms.ToArray());
+                                        msgVoice = new GreenOnionsVoiceMessage(mp3FileName)!;
+                                    }
+                                    else
+                                    {
+                                        msgVoice = new GreenOnionsVoiceMessage(ms)!;
+                                    }
                                 }
                                 msgVoice.Reply = false;
                                 Response(msgVoice);

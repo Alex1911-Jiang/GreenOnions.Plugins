@@ -7,6 +7,10 @@
         /// </summary>
         public string? FFmpegPath { get; set; }
         /// <summary>
+        /// 按文件方式发送语音
+        /// </summary>
+        public bool SendAsFile { get; set; } = false;
+        /// <summary>
         /// 启动猜歌游戏的命令
         /// </summary>
         public string StartCmd { get; set; } = "<机器人名称>猜歌";
