@@ -35,13 +35,13 @@ namespace GreenOnions.GuessTheSong
                 }
                 catch (Exception ex)
                 {
-                    SendMessageToAdmin($"葱葱听歌猜曲名插件解析配置文件失败，请检查config.json格式。{ex.Message}");
+                    _api?.SendMessageToAdmins($"葱葱听歌猜曲名插件解析配置文件失败，请检查config.json格式。{ex.Message}");
                     _config = new Config();
                 }
 
                 if (_config!.MusicIDAndAnswers.Count == 0 && _config.SearchKeywords.Count == 0)
                 {
-                    SendMessageToAdmin("葱葱听歌猜曲名插件配置错误：<搜索关键词>或<自定义歌曲ID和答案>至少要存在一项");
+                    _api?.SendMessageToAdmins("葱葱听歌猜曲名插件配置错误：<搜索关键词>或<自定义歌曲ID和答案>至少要存在一项");
                 }
             }
             else
@@ -99,7 +99,7 @@ namespace GreenOnions.GuessTheSong
                                         if (originalMusic.Result is null)
                                         {
                                             Response($"剪歌失败，请重试");
-                                            SendMessageToAdmin($"葱葱听歌猜曲名插件剪歌失败，歌曲ID为：{musicID}，音频流为空");
+                                            _api?.SendMessageToAdmins($"葱葱听歌猜曲名插件剪歌失败，歌曲ID为：{musicID}，音频流为空");
                                         }
                                         else
                                         {
@@ -110,7 +110,7 @@ namespace GreenOnions.GuessTheSong
                                 catch (Exception ex)
                                 {
                                     Response($"下载歌曲失败，请联系机器人管理员");
-                                    SendMessageToAdmin($"葱葱听歌猜曲名插件下载歌曲失败，歌曲ID为：{musicID}，错误信息为：{ex.Message}");
+                                    _api?.SendMessageToAdmins($"葱葱听歌猜曲名插件下载歌曲失败，歌曲ID为：{musicID}，错误信息为：{ex.Message}");
                                     throw;
                                 }
                             }
@@ -130,7 +130,7 @@ namespace GreenOnions.GuessTheSong
                             if (r.Result.MusicId == -1)  //搜索失败
                             {
                                 Response("搜索歌曲失败，请联系机器人管理员");
-                                SendMessageToAdmin($"葱葱听歌猜曲名插件搜索失败，用户搜索词为：{searchKey}");
+                                _api?.SendMessageToAdmins($"葱葱听歌猜曲名插件搜索失败，用户搜索词为：{searchKey}");
                             }
                             double duration = await GetSongDurationSeconds(r.Result.MusicId);
                             if (duration < _config.ClipLengthSecond + 20)  //歌曲总时长低于裁剪片段时长
@@ -150,7 +150,7 @@ namespace GreenOnions.GuessTheSong
                             {
                                 Response($"下载歌曲失败，请联系机器人管理员");
                                 playerAndAnswers.Remove(playerId);
-                                SendMessageToAdmin($"葱葱听歌猜曲名插件下载歌曲失败，歌曲ID为：{r.Result.MusicId}，错误信息为：{ex.Message}");
+                                _api?.SendMessageToAdmins($"葱葱听歌猜曲名插件下载歌曲失败，歌曲ID为：{r.Result.MusicId}，错误信息为：{ex.Message}");
                                 return;
                             }
 
@@ -173,7 +173,7 @@ namespace GreenOnions.GuessTheSong
                             {
                                 Response($"剪歌失败，请重试");
                                 playerAndAnswers.Remove(playerId);
-                                SendMessageToAdmin($"葱葱听歌猜曲名插件剪歌失败，歌曲ID为：{musicId}，音频流为空");
+                                _api?.SendMessageToAdmins($"葱葱听歌猜曲名插件剪歌失败，歌曲ID为：{musicId}，音频流为空");
                                 return;
                             }
                             using (ms)
@@ -237,7 +237,7 @@ namespace GreenOnions.GuessTheSong
                         {
                             Response($"剪歌失败，请重试");
                             playerAndAnswers.Remove(playerId);
-                            SendMessageToAdmin($"葱葱听歌猜曲名插件剪歌失败，歌曲ID为：{musicId}，错误信息为：{ex.Message}");
+                            _api?.SendMessageToAdmins($"葱葱听歌猜曲名插件剪歌失败，歌曲ID为：{musicId}，错误信息为：{ex.Message}");
                         }
                     }
                 }
@@ -246,17 +246,9 @@ namespace GreenOnions.GuessTheSong
             {
                 playerAndAnswers.Remove(playerId);
                 Response($"发生错误，{ex.Message}");
-                SendMessageToAdmin($"葱葱听歌猜曲名插件错误：{ex.Message}");
+                _api?.SendMessageToAdmins($"葱葱听歌猜曲名插件错误：{ex.Message}");
             }
             return false;
-        }
-
-        private async void SendMessageToAdmin(string msg)
-        {
-            foreach (long item in _botConfig!.AdminQQ)
-            {
-                await _api!.SendFriendMessageAsync(item, msg);
-            }
         }
 
         private async Task<double> GetSongDurationSeconds(long songID)

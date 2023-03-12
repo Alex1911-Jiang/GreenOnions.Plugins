@@ -75,7 +75,9 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                             await _botApi!.SendGroupMessageAsync(_settings.DesignatedGroups[j], voiceMsg);
                         }
                         _nextHourVoiceItem = null;
+#if !DEBUG
                         await Task.Delay(1000 * 60 * 30, _source.Token);
+#endif
                         break;
                     }
                     await Task.Delay(600, _source.Token);
@@ -86,16 +88,11 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
             }
         }
 
-        private async void SendMessageToAdmin(string msg)
-        {
-            foreach (long item in _botConfig!.AdminQQ)
-            {
-                await _botApi!.SendFriendMessageAsync(item, msg);
-            }
-        }
-
         private bool TimeConsistent(TimeOnly timeNow, int targetHour)
         {
+#if DEBUG
+            return true;
+#endif
             if (timeNow.Hour == targetHour &&
                 timeNow.Minute == 0 &&
                 timeNow.Second == 0)
@@ -133,7 +130,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
             }
             catch (Exception ex)
             {
-                SendMessageToAdmin(@"舰C报时插件启动发生错误，请检查配置文件。");
+                _botApi?.SendMessageToAdmins(@"舰C报时插件启动发生错误，请检查配置文件。");
             }
         }
 

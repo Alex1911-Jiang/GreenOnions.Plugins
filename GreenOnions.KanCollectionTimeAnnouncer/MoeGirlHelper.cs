@@ -25,14 +25,6 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
             _token = token;
         }
 
-        private async void SendMessageToAdmin(string msg)
-        {
-            foreach (long item in _botConfig!.AdminQQ)
-            {
-                await _api!.SendFriendMessageAsync(item, msg);
-            }
-        }
-
         /// <summary>
         /// 请求萌娘百科获取舰娘名称列表
         /// </summary>
@@ -79,7 +71,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
             if (tables == null)
             {
                 File.WriteAllText(Path.Combine(_pluginPath, "获取舰娘失败.html"), html);
-                SendMessageToAdmin("葱葱舰C报时插件获取舰娘列表失败，可能需要滑动验证，请手动打开 https://zh.moegirl.org.cn/舰队Collection/图鉴/舰娘 ，如果无需滑动验证，请打开插件目录下\"获取舰娘失败.html\"查看错误信息");
+                _api?.SendMessageToAdmins("葱葱舰C报时插件获取舰娘列表失败，可能需要滑动验证，请手动打开 https://zh.moegirl.org.cn/舰队Collection/图鉴/舰娘 ，如果无需滑动验证，请打开插件目录下\"获取舰娘失败.html\"查看错误信息");
                 return null;  //滑动验证
             }
 
@@ -117,7 +109,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                 item = await GetNextHourVoiceUrlInnerAsync(config.DesignatedKanGirl!, hour);
                 if (item is null)
                 {
-                    SendMessageToAdmin($"葱葱舰C报时插件错误：获取音频失败，所选舰娘没有报时语音或地址需要人机验证，请重新选择和检查人机验证( https://zh.moegirl.org.cn/舰队Collection )后重连葱葱。");
+                    _api?.SendMessageToAdmins($"葱葱舰C报时插件错误：获取音频失败，所选舰娘没有报时语音或地址需要人机验证，请重新选择和检查人机验证( https://zh.moegirl.org.cn/舰队Collection )后重连葱葱。");
                     return null;
                 }
             }
@@ -127,7 +119,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                 List<string>? kanGirlsName = await GetKanGrilNameListAsync();
                 if (kanGirlsName is null)  //获取失败, 需要人机验证
                 {
-                    SendMessageToAdmin("葱葱舰C报时插件错误：获取舰娘列表失败，需要人机验证，请手动打开 https://zh.moegirl.org.cn/舰队Collection 通过验证并重启葱葱。");
+                    _api?.SendMessageToAdmins("葱葱舰C报时插件错误：获取舰娘列表失败，需要人机验证，请手动打开 https://zh.moegirl.org.cn/舰队Collection 通过验证并重启葱葱。");
                     return null;
                 }
             IL_Retry:;
@@ -249,7 +241,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
             }
             catch (Exception ex)
             {
-                SendMessageToAdmin($"葱葱舰C报时插件错误：下载音频到本地失败。{ex}\r\n 舰娘名为：{kanGirlName}，报时时间为：{hour}，音频地址为：{item.Mp3UrlOrFileName}");
+                _api?.SendMessageToAdmins($"葱葱舰C报时插件错误：下载音频到本地失败。{ex}\r\n 舰娘名为：{kanGirlName}，报时时间为：{hour}，音频地址为：{item.Mp3UrlOrFileName}");
             }
         }
 

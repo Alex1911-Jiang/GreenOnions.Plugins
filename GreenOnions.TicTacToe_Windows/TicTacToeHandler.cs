@@ -162,7 +162,7 @@ namespace GreenOnions.TicTacToe_Windows
                 }
             }
             else
-                SendMessageToAdmin($"葱葱井字棋插件错误：数据异常, 时间表中存在QQ:{qqId}, 但对局表中不存在, 可能是刚刚超时了(坐标下子操作)");
+                _api?.SendMessageToAdmins($"葱葱井字棋插件错误：数据异常, 时间表中存在QQ:{qqId}, 但对局表中不存在, 可能是刚刚超时了(坐标下子操作)");
         }
 
         /// <summary>
@@ -208,13 +208,13 @@ namespace GreenOnions.TicTacToe_Windows
                 }
                 else
                 {
-                    SendMessageToAdmin("葱葱井字棋插件错误：图片转换失败");
+                    _api?.SendMessageToAdmins("葱葱井字棋插件错误：图片转换失败");
                     return _api!.ReplaceGreenOnionsStringTags("图裂了o(╥﹏╥)o");
                 }
             }
             else
             {
-                SendMessageToAdmin($"葱葱井字棋插件错误：数据异常, 时间表中存在QQ:{qqId}, 但对局表中不存在, 可能是刚刚超时了(涂鸦下子操作)");
+                _api?.SendMessageToAdmins($"葱葱井字棋插件错误：数据异常, 时间表中存在QQ:{qqId}, 但对局表中不存在, 可能是刚刚超时了(涂鸦下子操作)");
                 return _api!.ReplaceGreenOnionsStringTags("<机器人名称>把图弄丢了, 这局就当您赢了吧, 请向<机器人名称>反馈Bug o(╥﹏╥)o");
             }
         }
@@ -313,14 +313,6 @@ namespace GreenOnions.TicTacToe_Windows
             {
                 _regexTicTacToeStart = new Regex(_api.ReplaceGreenOnionsStringTags(_config!.StartTicTacToeCmd));
                 _regexTicTacToeStop = new Regex(_api.ReplaceGreenOnionsStringTags(_config!.StopTicTacToeCmd));
-            }
-        }
-
-        private async void SendMessageToAdmin(string msg)
-        {
-            foreach (long item in _botConfig!.AdminQQ)
-            {
-                await _api!.SendFriendMessageAsync(item, msg);
             }
         }
 

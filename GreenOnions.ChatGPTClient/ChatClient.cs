@@ -93,9 +93,7 @@ namespace GreenOnions.ChatGPTClient
             }
             catch (Exception ex)
             {
-                foreach (var item in _botConfig!.AdminQQ)
-                    _api!.SendFriendMessageAsync(item, ex.Message);
-                return;
+                _api.SendMessageToAdmins(ex.Message!);
             }
         }
 
@@ -212,19 +210,20 @@ namespace GreenOnions.ChatGPTClient
             }
             catch (Exception ex)
             {
-                SendMessageToAdmin($"葱葱ChatGPT插件发生错误：{ex.Message}");
+
+                _api!.SendMessageToAdmins($"葱葱ChatGPT插件发生错误：{ex.Message}");
                 return _api!.ReplaceGreenOnionsStringTags(_config.ErrorMessage ?? "", ("<错误信息>", ex.Message))!;
             }
 
             if (string.IsNullOrEmpty(respStr))
             {
-                SendMessageToAdmin($"葱葱ChatGPT插件发生错误：ChatGPT没有返回任何结果");
+                _api!.SendMessageToAdmins($"葱葱ChatGPT插件发生错误：ChatGPT没有返回任何结果");
                 return _api!.ReplaceGreenOnionsStringTags(_config.ErrorMessage ?? "", ("<错误信息>", "ChatGPT没有返回任何结果"))!;
             }
             ResponseModel? response = JsonConvert.DeserializeObject<ResponseModel>(respStr);
             if (response is null)
             {
-                SendMessageToAdmin($"葱葱ChatGPT插件发生错误：响应信息解析失败");
+                _api!.SendMessageToAdmins($"葱葱ChatGPT插件发生错误：响应信息解析失败");
                 return _api!.ReplaceGreenOnionsStringTags(_config.ErrorMessage ?? "", ("<错误信息>", "响应信息解析失败"))!;
             }
 
@@ -233,7 +232,7 @@ namespace GreenOnions.ChatGPTClient
                 Choice? _choice = response.choices.FirstOrDefault();
                 if (_choice is null)
                 {
-                    SendMessageToAdmin($"葱葱ChatGPT插件发生错误：ChatGPT返回内容为空");
+                    _api!.SendMessageToAdmins($"葱葱ChatGPT插件发生错误：ChatGPT返回内容为空");
                     return _api!.ReplaceGreenOnionsStringTags(_config.ErrorMessage ?? "", ("<错误信息>", "ChatGPT返回内容为空"))!;
                 }
                 else
@@ -258,7 +257,7 @@ namespace GreenOnions.ChatGPTClient
                     return _choice.message.content.TrimStart();  //正常回答
                 }
             }
-            SendMessageToAdmin($"葱葱ChatGPT插件发生错误：{response.error.message}");
+            _api!.SendMessageToAdmins($"葱葱ChatGPT插件发生错误：{response.error.message}");
             return _api!.ReplaceGreenOnionsStringTags(_config.ErrorMessage ?? "", ("<错误信息>", response.error.message))!;
         }
 
@@ -345,14 +344,6 @@ namespace GreenOnions.ChatGPTClient
             ReloadConfig();
             string jsonConfig = JsonConvert.SerializeObject(_config, Formatting.Indented, new StringEnumConverter());
             File.WriteAllText(_configDirect!, jsonConfig);
-        }
-
-        private async void SendMessageToAdmin(string msg)
-        {
-            foreach (long item in _botConfig!.AdminQQ)
-            {
-                await _api!.SendFriendMessageAsync(item, msg);
-            }
         }
     }
 }
