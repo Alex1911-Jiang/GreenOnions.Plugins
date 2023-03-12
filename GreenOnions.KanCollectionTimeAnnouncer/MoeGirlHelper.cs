@@ -145,81 +145,91 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
         /// <returns></returns>
         private async Task<KanGirlVoiceItem?> GetNextHourVoiceUrlInnerAsync(string kanGirlName, int hour)
         {
-            string mp3Path = Path.Combine(_pluginPath, "MP3", kanGirlName);
-            if (!Directory.Exists(mp3Path))
-                Directory.CreateDirectory(mp3Path);
-
-            string mp3FileName = Path.Combine(mp3Path, $"{hour}.mp3");
-            string jpnFileName = Path.Combine(mp3Path, $"{hour}_Japanese.txt");
-            string chsFileName = Path.Combine(mp3Path, $"{hour}_Chinese.txt");
-            if (File.Exists(mp3FileName) && new FileInfo(mp3FileName).Length > 0 && File.Exists(chsFileName) && new FileInfo(chsFileName).Length > 0 && File.Exists(jpnFileName) && new FileInfo(jpnFileName).Length > 0)
+            try
             {
-                return new KanGirlVoiceItem(mp3FileName, File.ReadAllText(jpnFileName), File.ReadAllText(chsFileName));
-            }
+                string mp3Path = Path.Combine(_pluginPath, "MP3", kanGirlName);
+                if (!Directory.Exists(mp3Path))
+                    Directory.CreateDirectory(mp3Path);
 
-            using (HttpClient client = new HttpClient())
-            {
-                string html;
-                try
+                string mp3FileName = Path.Combine(mp3Path, $"{hour}.mp3");
+                string jpnFileName = Path.Combine(mp3Path, $"{hour}_Japanese.txt");
+                string chsFileName = Path.Combine(mp3Path, $"{hour}_Chinese.txt");
+                if (File.Exists(mp3FileName) && new FileInfo(mp3FileName).Length > 0 && File.Exists(chsFileName) && new FileInfo(chsFileName).Length > 0 && File.Exists(jpnFileName) && new FileInfo(jpnFileName).Length > 0)
                 {
-                    HttpResponseMessage response = await client.GetAsync($@"https://zh.moegirl.org.cn/舰队Collection:{kanGirlName}", _token);
-                    html = await response.Content.ReadAsStringAsync(_token) + "</body></html>";
-                }
-                catch
-                {
-                    return null;
+                    return new KanGirlVoiceItem(mp3FileName, File.ReadAllText(jpnFileName), File.ReadAllText(chsFileName));
                 }
 
-                HtmlDocument doc = new HtmlDocument();
-                doc.LoadHtml(html);
-
-                var trs = doc.DocumentNode.SelectNodes(@"/html/body/template[@id='MOE_SKIN_TEMPLATE_BODYCONTENT']/div[@id='mw-content-text']/div[@class='mw-parser-output']/table[@class='wikitable'][2]/tbody/tr");
-                if (trs == null)
+                using (HttpClient client = new HttpClient())
                 {
-                    var scrs = doc.DocumentNode.SelectNodes("script").Where(scr => scr.Attributes["src"] is not null && scr.Attributes["src"].Value.Contains("ssl.captcha")).Count() > 0;
-                    //滑动验证
-                    return null;
-                }
-
-                Dictionary<int, KanGirlVoiceItem> timeToPley = new Dictionary<int, KanGirlVoiceItem>();
-                bool findedTimeTd = false;
-                for (int i = 0; i < trs.Count; i++)
-                {
-                    var tds = trs[i].SelectNodes("td");
-                    if (tds is not null && tds.Count > 0)
+                    string html;
+                    try
                     {
-                        if (findedTimeTd)
-                        {
-                            var timeAndVoice = GetTimeAndVoiceUrl(tds[0], tds[1]);
-                            if (timeAndVoice == null)
-                                break;
-                            if (timeToPley.ContainsKey(timeAndVoice.Value.time))
-                                timeToPley[timeAndVoice.Value.time] = timeAndVoice.Value.voiceItem;
-                            else
-                                timeToPley.Add(timeAndVoice.Value.time, timeAndVoice.Value.voiceItem);
-                            await SaveMp3ChacheFile(timeAndVoice.Value.voiceItem, kanGirlName, hour);
-                        }
-                        else
-                        {
-                            if (tds[0].InnerText.Contains("报时")) //从包含"报时"的格子开始往下找
-                            {
-                                findedTimeTd = true;
-                                var timeAndVoice = GetTimeAndVoiceUrl(tds[1], tds[2]);
-                                if (timeAndVoice is null)
-                                    return null;
+                        HttpResponseMessage response = await client.GetAsync($@"https://zh.moegirl.org.cn/舰队Collection:{kanGirlName}", _token);
+                        html = await response.Content.ReadAsStringAsync(_token) + "</body></html>";
+                    }
+                    catch
+                    {
+                        return null;
+                    }
 
+                    HtmlDocument doc = new HtmlDocument();
+                    doc.LoadHtml(html);
+
+                    var trs = doc.DocumentNode.SelectNodes(@"/html/body/template[@id='MOE_SKIN_TEMPLATE_BODYCONTENT']/div[@id='mw-content-text']/div[@class='mw-parser-output']/table[@class='wikitable'][2]/tbody/tr");
+                    if (trs == null)
+                    {
+                        var scrs = doc.DocumentNode.SelectNodes("script").Where(scr => scr.Attributes["src"] is not null && scr.Attributes["src"].Value.Contains("ssl.captcha")).Count() > 0;
+                        //滑动验证
+                        return null;
+                    }
+
+                    Dictionary<int, KanGirlVoiceItem> timeToPley = new Dictionary<int, KanGirlVoiceItem>();
+                    bool findedTimeTd = false;
+                    for (int i = 0; i < trs.Count; i++)
+                    {
+                        var tds = trs[i].SelectNodes("td");
+                        if (tds is not null && tds.Count > 0)
+                        {
+                            if (findedTimeTd)
+                            {
+                                var timeAndVoice = GetTimeAndVoiceUrl(tds[0], tds[1]);
+                                if (timeAndVoice == null)
+                                    break;
                                 if (timeToPley.ContainsKey(timeAndVoice.Value.time))
                                     timeToPley[timeAndVoice.Value.time] = timeAndVoice.Value.voiceItem;
                                 else
                                     timeToPley.Add(timeAndVoice.Value.time, timeAndVoice.Value.voiceItem);
                                 await SaveMp3ChacheFile(timeAndVoice.Value.voiceItem, kanGirlName, hour);
                             }
+                            else
+                            {
+                                if (tds[0].InnerText.Contains("时报") || tds[0].InnerText.Contains("报时")) //从包含"报时"的格子开始往下找(有部分舰娘写的是“时报”不知道是不是萌百写错了)
+                                {
+                                    findedTimeTd = true;
+                                    if (tds.Count < 3)
+                                        return null;
+                                    var timeAndVoice = GetTimeAndVoiceUrl(tds[1], tds[2]);
+                                    if (timeAndVoice is null)
+                                        return null;
+
+                                    if (timeToPley.ContainsKey(timeAndVoice.Value.time))
+                                        timeToPley[timeAndVoice.Value.time] = timeAndVoice.Value.voiceItem;
+                                    else
+                                        timeToPley.Add(timeAndVoice.Value.time, timeAndVoice.Value.voiceItem);
+                                    await SaveMp3ChacheFile(timeAndVoice.Value.voiceItem, kanGirlName, hour);
+                                }
+                            }
                         }
                     }
+                    if (!timeToPley.ContainsKey(hour))
+                        return null;
+                    return timeToPley[hour];
                 }
-                if (!timeToPley.ContainsKey(hour))
-                    return null;
-                return timeToPley[hour];
+            }
+            catch (Exception ex)
+            {
+                _api?.SendMessageToAdmins($"葱葱舰C报时插件错误：解析页面失败。{ex}\r\n 舰娘名为：{kanGirlName}，报时时间为：{hour}");
+                return null;
             }
         }
 
