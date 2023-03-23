@@ -23,6 +23,11 @@ namespace GreenOnions.NovelAiClient
         public void OnConnected(long selfId, IGreenOnionsApi api)
         {
             _api = api;
+            ReloadConfig();
+        }
+
+        public void ReloadConfig()
+        {
             string configPath = Path.Combine(_pluginPath!, "config.json");
             if (File.Exists(configPath))
             {

@@ -1,4 +1,5 @@
-﻿using GreenOnions.Interface;
+﻿using BingChat;
+using GreenOnions.Interface;
 
 namespace GreenOnions.ChatGPTClient
 {
@@ -6,5 +7,6 @@ namespace GreenOnions.ChatGPTClient
     {
         internal DateTime TimeOutAt { get; set; }
         internal Action<GreenOnionsMessages>? TimeOutDo { get; set; }
+        internal IBingChattable? BingClient { get; set; }
     }
 }

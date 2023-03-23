@@ -45,7 +45,7 @@ namespace GreenOnions.Replier
             ReloadConfig();
         }
 
-        private void ReloadConfig()
+        public void ReloadConfig()
         {
             if (File.Exists(_configDirect))
                 _commandTable = JsonConvert.DeserializeObject<ReplierConfig[]>(File.ReadAllText(_configDirect))!;

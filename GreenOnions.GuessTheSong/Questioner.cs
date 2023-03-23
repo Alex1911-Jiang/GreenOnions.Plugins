@@ -24,7 +24,15 @@ namespace GreenOnions.GuessTheSong
         public void OnConnected(long selfId, IGreenOnionsApi api)
         {
             _api = api;
+            ReloadConfig();
+        }
 
+        public void OnDisconnected()
+        {
+        }
+
+        public void ReloadConfig()
+        {
             string configFileName = Path.Combine(_pluginPath!, "config.json");
             if (File.Exists(configFileName))
             {
@@ -54,10 +62,6 @@ namespace GreenOnions.GuessTheSong
                 _config.MusicIDAndAnswers.Add(4888328, new[] { "炉心融解" });
             }
             File.WriteAllText(configFileName, JsonConvert.SerializeObject(_config, Formatting.Indented));
-        }
-
-        public void OnDisconnected()
-        {
         }
 
         public void OnLoad(string pluginPath, IBotConfig config)

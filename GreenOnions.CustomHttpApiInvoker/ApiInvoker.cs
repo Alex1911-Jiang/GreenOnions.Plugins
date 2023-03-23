@@ -50,7 +50,7 @@ namespace GreenOnions.CustomHttpApiInvoker
             ReloadConfig();
         }
 
-        private void ReloadConfig()
+        public void ReloadConfig()
         {
             if (File.Exists(_configDirect))
             {

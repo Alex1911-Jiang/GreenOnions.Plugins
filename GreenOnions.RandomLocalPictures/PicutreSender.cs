@@ -7,6 +7,7 @@ namespace GreenOnions.RandomLocalPictures
     public class PicutreSender : IMessagePlugin, IPluginSetting
     {
         private Dictionary<string, SourcesInfo> _cmdToConfig = new Dictionary<string, SourcesInfo>();
+        private string? _pluginPath;
         public string Name => "本地随机色图";
 
         public string Description => "通过命令随机发送本地指定目录的图片";
@@ -21,9 +22,9 @@ namespace GreenOnions.RandomLocalPictures
 
         }
 
-        public void OnLoad(string pluginPath, IBotConfig botConfig)
+        public void ReloadConfig()
         {
-            string configPath = Path.Combine(pluginPath, "config.json");
+            string configPath = Path.Combine(_pluginPath, "config.json");
             List<SourcesInfo> sourcesInfos;
             if (File.Exists(configPath))
             {
@@ -50,6 +51,12 @@ namespace GreenOnions.RandomLocalPictures
             }
             File.WriteAllText(configPath, JsonConvert.SerializeObject(sourcesInfos, Formatting.Indented));
             CreateCmdToPathDic(sourcesInfos);
+        }
+
+        public void OnLoad(string pluginPath, IBotConfig botConfig)
+        {
+            _pluginPath = pluginPath;
+            ReloadConfig();
         }
 
         private void CreateCmdToPathDic(List<SourcesInfo> sourcesInfos)

@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Text;
+using BingChat;
 using GreenOnions.ChatGPTClient.Models;
 using GreenOnions.ChatGPTClient.Models.Request;
 using GreenOnions.ChatGPTClient.Models.Response;
@@ -12,6 +13,7 @@ using GreenOnions.Interface.Configs;
 using GreenOnions.Interface.DispatchCenter;
 using GreenOnions.PluginConfigs.ChatGPTClient;
 using Markdig;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -136,15 +138,26 @@ namespace GreenOnions.ChatGPTClient
                 else  //聊天中
                 {
                     _chatingUser[msgs.SenderId].TimeOutAt = DateTime.Now.AddSeconds(_config!.TimeOutSecond);//先重置一下超时时间，避免请求过程中超时
-                    SendMessageToChatGPT(msgs.SenderId, msg.Text)?.ContinueWith(callback =>
+
+                    Func<long, string, Task<string>> SendMessage = _config.Model == "NewBing" ? SendMessageToNewBing : SendMessageToChatGPT;
+                    try
                     {
-                        GreenOnionsMessages? outMsg = _config.RemoveMarkdownExpression ? Markdown.ToPlainText(callback.Result) : callback.Result;
-                        if (outMsg is null || outMsg.Count == 0)
-                            return;
-                        outMsg!.Reply = _config.SendMessageByReply;
-                        Response(outMsg);
-                        _chatingUser[msgs.SenderId].TimeOutAt = DateTime.Now.AddSeconds(_config!.TimeOutSecond);  //消息发出去后再重置一下超时时间
-                    });
+                        SendMessage(msgs.SenderId, msg.Text)?.ContinueWith(callback =>
+                        {
+                            GreenOnionsMessages? outMsg = _config.RemoveMarkdownExpression ? Markdown.ToPlainText(callback.Result) : callback.Result;
+                            if (outMsg is null || outMsg.Count == 0)
+                                return;
+                            outMsg!.Reply = _config.SendMessageByReply;
+                            Response(outMsg);
+                            _chatingUser[msgs.SenderId].TimeOutAt = DateTime.Now.AddSeconds(_config!.TimeOutSecond);  //消息发出去后再重置一下超时时间
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        _chatingUser.TryRemove(msgs.SenderId, out _);
+                        Response(_api!.ReplaceGreenOnionsStringTags(_config.ErrorMessage ?? "", ("<错误信息>", ex.Message)));
+                        _api.SendMessageToAdmins($"葱葱ChatGPT插件错误：{ex.Message}");
+                    }
                 }
                 return true;
             }
@@ -156,11 +169,31 @@ namespace GreenOnions.ChatGPTClient
                 {
                     if (!string.IsNullOrEmpty(_config.ChatStartMessage))
                         Response(_api!.ReplaceGreenOnionsStringTags(_config.ChatStartMessage)!);
-                    _chatingUser.TryAdd(msgs.SenderId, new TimeOutWorker { TimeOutAt = DateTime.Now.AddSeconds(_config.TimeOutSecond), TimeOutDo = Response });
+                    IBingChattable? bingClient = null;
+                    if (_config.Model == "NewBing")
+                        bingClient = CreateBingClient().Result;
+                    _chatingUser.TryAdd(msgs.SenderId, new TimeOutWorker { TimeOutAt = DateTime.Now.AddSeconds(_config.TimeOutSecond), TimeOutDo = Response, BingClient = bingClient });
                     return true;
                 }
             }
             return false;
+        }
+
+        private async Task<IBingChattable> CreateBingClient()
+        {
+            var client = new BingChatClient(new BingChatClientOptions
+            {
+                // The "_U" cookie's value
+                Cookie = _config.APIkey
+            });
+            return await client.CreateConversation();
+        }
+
+        private async Task<string> SendMessageToNewBing(long qqId, string msg)
+        {
+            if (!_chatingUser.ContainsKey(qqId) || _chatingUser[qqId].BingClient is null)
+                throw new Exception("管理员切换了目标模型，请重新开启聊天。");
+            return await _chatingUser[qqId].BingClient!.AskAsync(msg);
         }
 
         private async Task<string> SendMessageToChatGPT(long qqId, string msg)
@@ -311,7 +344,7 @@ namespace GreenOnions.ChatGPTClient
             }, _timeOutWorkerTs.Token);
         }
 
-        private void ReloadConfig()
+        public void ReloadConfig()
         {
             if (!File.Exists(_configDirect))
                 return;

@@ -68,6 +68,17 @@ namespace GreenOnions.TicTacToe_Windows
             }
         }
 
+        public void ReloadConfig()
+        {
+            string configFileName = Path.Combine(_pluginPath, "config.json");
+            string strConfig = File.ReadAllText(configFileName);
+            _config = JsonSerializer.Deserialize<TicTacToeConfig>(strConfig);
+            if (_api is null)
+                return;
+            _regexTicTacToeStart = new Regex(_api!.ReplaceGreenOnionsStringTags(_config!.StartTicTacToeCmd));
+            _regexTicTacToeStop = new Regex(_api!.ReplaceGreenOnionsStringTags(_config!.StopTicTacToeCmd));
+        }
+
         public void OnConnected(long selfId, IGreenOnionsApi api)
         {
             _api = api;

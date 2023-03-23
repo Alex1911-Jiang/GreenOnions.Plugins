@@ -153,7 +153,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
             _configDirect = Path.Combine(_pluginPath!, "config.json");
         }
 
-        private void ReloadConfig()
+        public void ReloadConfig()
         {
             if (File.Exists(_configDirect))
                 _settings = JsonConvert.DeserializeObject<KanCollectionConfig>(File.ReadAllText(_configDirect))!;
