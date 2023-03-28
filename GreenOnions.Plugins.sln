@@ -29,7 +29,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.NodeHttpClient"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.PythonHttpClient", "GreenOnions.PythonHttpClient\GreenOnions.PythonHttpClient.csproj", "{D3C6B6C9-B1F6-4248-B320-FA9D10AAF1B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.ChatGPTClient", "GreenOnions.ChatGPTClient\GreenOnions.ChatGPTClient.csproj", "{1B28B7BA-AAA6-44B0-8586-0BF85078F32B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.ChatGPTClient", "GreenOnions.ChatGPTClient\GreenOnions.ChatGPTClient.csproj", "{1B28B7BA-AAA6-44B0-8586-0BF85078F32B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BingChat", "..\..\..\Github\BingChat\src\BingChat\BingChat.csproj", "{7DEED218-D12F-4089-BFD9-F6C580C770F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +95,10 @@ Global
 		{1B28B7BA-AAA6-44B0-8586-0BF85078F32B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B28B7BA-AAA6-44B0-8586-0BF85078F32B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B28B7BA-AAA6-44B0-8586-0BF85078F32B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DEED218-D12F-4089-BFD9-F6C580C770F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DEED218-D12F-4089-BFD9-F6C580C770F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DEED218-D12F-4089-BFD9-F6C580C770F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DEED218-D12F-4089-BFD9-F6C580C770F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

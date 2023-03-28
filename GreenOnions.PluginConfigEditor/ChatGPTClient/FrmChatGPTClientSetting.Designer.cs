@@ -324,11 +324,11 @@
             // 
             // cboModel
             // 
-            this.cboModel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboModel.FormattingEnabled = true;
             this.cboModel.Items.AddRange(new object[] {
             "gpt-3.5-turbo",
-            "gpt-3.5-turbo-0301"});
+            "gpt-3.5-turbo-0301",
+            "NewBing"});
             this.cboModel.Location = new System.Drawing.Point(348, 86);
             this.cboModel.Name = "cboModel";
             this.cboModel.Size = new System.Drawing.Size(343, 32);

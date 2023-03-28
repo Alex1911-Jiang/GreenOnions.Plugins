@@ -111,9 +111,13 @@
             // 
             // txbContentRaw
             // 
+            this.txbContentRaw.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txbContentRaw.Location = new System.Drawing.Point(25, 559);
             this.txbContentRaw.Multiline = true;
             this.txbContentRaw.Name = "txbContentRaw";
+            this.txbContentRaw.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txbContentRaw.Size = new System.Drawing.Size(900, 165);
             this.txbContentRaw.TabIndex = 60;
             // 
@@ -155,6 +159,9 @@
             // 
             // dgvContentFormData
             // 
+            this.dgvContentFormData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvContentFormData.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvContentFormData.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvContentFormData.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -184,6 +191,7 @@
             // 
             // btnInvokeTest
             // 
+            this.btnInvokeTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnInvokeTest.Location = new System.Drawing.Point(809, 73);
             this.btnInvokeTest.Name = "btnInvokeTest";
             this.btnInvokeTest.Size = new System.Drawing.Size(113, 32);
@@ -194,6 +202,7 @@
             // 
             // pnlParse
             // 
+            this.pnlParse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.pnlParse.Controls.Add(this.txbParseExpression);
             this.pnlParse.Controls.Add(this.lblParseExpression);
             this.pnlParse.Enabled = false;
@@ -204,7 +213,8 @@
             // 
             // txbParseExpression
             // 
-            this.txbParseExpression.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txbParseExpression.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txbParseExpression.Location = new System.Drawing.Point(0, 24);
             this.txbParseExpression.Multiline = true;
             this.txbParseExpression.Name = "txbParseExpression";
@@ -223,6 +233,7 @@
             // 
             // pnlSubText
             // 
+            this.pnlSubText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.pnlSubText.Controls.Add(this.lblSubText);
             this.pnlSubText.Controls.Add(this.chkSubTextWithSuffix);
             this.pnlSubText.Controls.Add(this.chkSubTextWithPrefix);
@@ -298,6 +309,7 @@
             // 
             // pnlSendMode
             // 
+            this.pnlSendMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.pnlSendMode.AutoSize = true;
             this.pnlSendMode.Controls.Add(this.rdoSendImageStream);
             this.pnlSendMode.Controls.Add(this.rdoSendVoiceStream);
@@ -389,6 +401,7 @@
             // 
             // pnlParseMode
             // 
+            this.pnlParseMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.pnlParseMode.AutoSize = true;
             this.pnlParseMode.Controls.Add(this.rdoParseJavaScript);
             this.pnlParseMode.Controls.Add(this.rdoParseStream);
@@ -473,6 +486,7 @@
             // 
             // lblSendMode
             // 
+            this.lblSendMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblSendMode.AutoSize = true;
             this.lblSendMode.Location = new System.Drawing.Point(25, 935);
             this.lblSendMode.Name = "lblSendMode";
@@ -482,6 +496,7 @@
             // 
             // lblParseMode
             // 
+            this.lblParseMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblParseMode.AutoSize = true;
             this.lblParseMode.Location = new System.Drawing.Point(25, 740);
             this.lblParseMode.Name = "lblParseMode";
@@ -491,6 +506,8 @@
             // 
             // txbCmd
             // 
+            this.txbCmd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txbCmd.Location = new System.Drawing.Point(129, 73);
             this.txbCmd.Name = "txbCmd";
             this.txbCmd.Size = new System.Drawing.Size(674, 30);
@@ -507,6 +524,8 @@
             // 
             // dgvHeader
             // 
+            this.dgvHeader.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvHeader.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvHeader.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvHeader.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -621,6 +640,8 @@
             // 
             // txbUrl
             // 
+            this.txbUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txbUrl.Location = new System.Drawing.Point(129, 37);
             this.txbUrl.Name = "txbUrl";
             this.txbUrl.Size = new System.Drawing.Size(674, 30);
@@ -637,6 +658,8 @@
             // 
             // txbRemark
             // 
+            this.txbRemark.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txbRemark.Location = new System.Drawing.Point(129, 112);
             this.txbRemark.Name = "txbRemark";
             this.txbRemark.Size = new System.Drawing.Size(793, 30);
@@ -653,6 +676,8 @@
             // 
             // txbHelpMessage
             // 
+            this.txbHelpMessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txbHelpMessage.Location = new System.Drawing.Point(129, 150);
             this.txbHelpMessage.Name = "txbHelpMessage";
             this.txbHelpMessage.Size = new System.Drawing.Size(793, 30);
@@ -825,6 +850,7 @@
             // 
             // chkUseProxy
             // 
+            this.chkUseProxy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkUseProxy.AutoSize = true;
             this.chkUseProxy.Location = new System.Drawing.Point(809, 39);
             this.chkUseProxy.Name = "chkUseProxy";

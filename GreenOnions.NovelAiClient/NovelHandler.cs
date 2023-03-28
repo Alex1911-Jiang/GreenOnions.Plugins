@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
+using GreenOnions.PluginConfigs.NovelAiClient;
 using Newtonsoft.Json;
 using NovelAIClient;
 
@@ -10,7 +11,7 @@ namespace GreenOnions.NovelAiClient
     public class NovelHandler : IMessagePlugin, IPluginSetting, IPluginHelp
     {
         private string? _pluginPath;
-        private Config? _config;
+        private NovelAiConfig? _config;
         private IBotConfig? _botConfig;
         private IGreenOnionsApi? _api;
         private string? _strCmd;
@@ -31,7 +32,7 @@ namespace GreenOnions.NovelAiClient
             string configPath = Path.Combine(_pluginPath!, "config.json");
             if (File.Exists(configPath))
             {
-                _config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(configPath));
+                _config = JsonConvert.DeserializeObject<NovelAiConfig>(File.ReadAllText(configPath));
                 if (_config is null)
                 {
                     for (int i = 0; i < _botConfig!.AdminQQ.Count; i++)
@@ -41,7 +42,7 @@ namespace GreenOnions.NovelAiClient
             else
             {
                 //配置文件例子
-                _config = new Config();
+                _config = new NovelAiConfig();
                 string customDataPath = Path.Combine(_pluginPath!, "custom_data.txt");
                 if (!File.Exists(customDataPath))
                     File.WriteAllText(customDataPath, "");
@@ -79,12 +80,12 @@ namespace GreenOnions.NovelAiClient
                         sw.Start();
                         try
                         {
-                            if (_config!.ConnectFrontEnd!.Equals("naifu", StringComparison.OrdinalIgnoreCase))
+                            if (_config!.ConnectFrontEnd == FrontEnd.Naifu)
                                 GetNaifuImageBytes(prompts).ContinueWith(CallBack);
-                            else if (_config.ConnectFrontEnd.Equals("customwebui", StringComparison.OrdinalIgnoreCase))
-                                GetCustomWebUIImageBytes(prompts).ContinueWith(CallBack);
-                            else if (_config.ConnectFrontEnd.Equals("webui", StringComparison.OrdinalIgnoreCase))
+                            else if (_config.ConnectFrontEnd == FrontEnd.WebUI)
                                 GetWebUIImageBytes(prompts).ContinueWith(CallBack);
+                            //else if (_config.ConnectFrontEnd.Equals("webui", StringComparison.OrdinalIgnoreCase))
+                            //    GetWebUIImageBytes(prompts).ContinueWith(CallBack);
 
                             void CallBack(Task<byte[]?> task)
                             {
@@ -126,21 +127,21 @@ namespace GreenOnions.NovelAiClient
             string defalutPrompt = _config!.DefaultPrompt!.Trim();
             if (!defalutPrompt.EndsWith(','))
                 defalutPrompt += ',';
-            return naifuClient.PostAsync(defalutPrompt + prompts, _config!.DefaultUndesired, _config.ImageWidth, _config.ImageHeight);
+            return naifuClient.PostAsync(defalutPrompt + prompts, _config!.DefaultUndesired);
         }
+
+        //private Task<byte[]?> GetWebUIImageBytes(string prompts)
+        //{
+        //    Obsolete_WebUIClient webuiClient = new NovelAIClient.WebUIClient(_config!.fn_index, _config!.URL!);
+        //    string defalutPrompt = _config!.DefaultPrompt!.Trim();
+        //    if (!defalutPrompt.EndsWith(','))
+        //        defalutPrompt += ',';
+        //    return webuiClient.PostAsync(defalutPrompt + prompts, _config!.DefaultUndesired);
+        //}
 
         private Task<byte[]?> GetWebUIImageBytes(string prompts)
         {
             WebUIClient webuiClient = new WebUIClient(_config!.fn_index, _config!.URL!);
-            string defalutPrompt = _config!.DefaultPrompt!.Trim();
-            if (!defalutPrompt.EndsWith(','))
-                defalutPrompt += ',';
-            return webuiClient.PostAsync(defalutPrompt + prompts, _config!.DefaultUndesired, _config.ImageWidth, _config.ImageHeight);
-        }
-
-        private Task<byte[]?> GetCustomWebUIImageBytes(string prompts)
-        {
-            CustomWebUIClient webuiClient = new CustomWebUIClient(_config!.fn_index, _config!.URL!);
             string defalutPrompt = _config!.DefaultPrompt!.Trim();
             if (!defalutPrompt.EndsWith(','))
                 defalutPrompt += ',';

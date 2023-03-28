@@ -144,7 +144,7 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
         {
             if (string.IsNullOrEmpty(txbUrl.Text))
             {
-                MessageBox.Show("请先输入地址", "错误");
+                MessageBox.Show("请先输入地址", "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
                 return;
             }
             try
@@ -206,13 +206,13 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show("发起请求异常。" + ex.Message, "请求失败");
+                            MessageBox.Show("发起请求异常。" + ex.Message, "请求失败", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
                             return;
                         }
                         string requestUrl = response.RequestMessage?.RequestUri!.ToString()!;
                         if ((int)response.StatusCode >= 400)
                         {
-                            MessageBox.Show($"{(int)response.StatusCode} {response.ReasonPhrase}{(requestUrl != url ? "\n发生链接跳转，请尝试使用POST进行请求。" : "")}", $"请求错误");
+                            MessageBox.Show($"{(int)response.StatusCode} {response.ReasonPhrase}{(requestUrl != url ? "\n发生链接跳转，请尝试使用POST进行请求。" : "")}", $"请求错误", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
                             return;
                         }
                         if (requestUrl != url)
@@ -317,7 +317,7 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
                                         string[] xPathAndAttr = expression[i].Split('.');
                                         if (xPathAndAttr.Length > 2)
                                         {
-                                            MessageBox.Show("表达式格式有误，通过'.'访问标签属性，每行'.'不可超过一个", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                            MessageBox.Show("表达式格式有误，通过'.'访问标签属性，每行'.'不可超过一个", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
                                             return;
                                         }
                                         HtmlNode itemNode = docSauceNAO.DocumentNode.SelectSingleNode(xPathAndAttr[0]);
@@ -344,13 +344,13 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
                         {
                             if (string.IsNullOrEmpty(valueText))
                             {
-                                MessageBox.Show(ex.Message, $"请求成功，解析失败 {(int)response.StatusCode}");
+                                MessageBox.Show(ex.Message, $"请求成功，解析失败 {(int)response.StatusCode}", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
                             }
                             else
                             {
                                 string respFileName = Path.Combine("响应.txt");
                                 File.WriteAllText(respFileName, valueText);
-                                MessageBox.Show($"{ex.Message}\n响应文已保存在\n{respFileName}", $"请求成功，解析失败 {(int)response.StatusCode}");
+                                MessageBox.Show($"{ex.Message}\n响应文已保存在\n{respFileName}", $"请求成功，解析失败 {(int)response.StatusCode}", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
                             }
                             return;
                         }
@@ -364,7 +364,7 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
                             string saveMusicFileName = Path.Combine("msuic");
                             if (rdoSendText.Checked)
                             {
-                                MessageBox.Show(valueText, $"成功 {(int)response.StatusCode}");
+                                MessageBox.Show(valueText, $"成功 {(int)response.StatusCode}", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
                             }
                             else if (rdoSendImageByUrl.Checked)
                             {
@@ -407,7 +407,7 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
                                 }
                                 else
                                 {
-                                    MessageBox.Show("流为空", $"解析成功 {(int)response.StatusCode}");
+                                    MessageBox.Show("流为空", $"解析成功 {(int)response.StatusCode}", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
                                 }
                             }
                             else if (rdoSendVoiceByUrl.Checked)
@@ -418,13 +418,13 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
                                     byte[] data = await rep.Content.ReadAsByteArrayAsync();
                                     File.WriteAllBytes(saveMusicFileName, data);
                                 }
-                                MessageBox.Show($"音频文件已保存在{saveMusicFileName}", $"成功 {(int)response.StatusCode}");
+                                MessageBox.Show($"音频文件已保存在{saveMusicFileName}", $"成功 {(int)response.StatusCode}", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
                             }
                             else if (rdoSendVoiceByBase64.Checked)
                             {
                                 byte[] data = Convert.FromBase64String(valueText);
                                 File.WriteAllBytes(saveMusicFileName, data);
-                                MessageBox.Show($"音频文件已保存在{saveMusicFileName}", $"成功 {(int)response.StatusCode}");
+                                MessageBox.Show($"音频文件已保存在{saveMusicFileName}", $"成功 {(int)response.StatusCode}", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
                             }
                             else if (rdoSendVoiceStream.Checked)
                             {
@@ -434,17 +434,17 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
                                     {
                                         valueStream.CopyTo(outStream);
                                     }
-                                    MessageBox.Show($"音频文件已保存在{saveMusicFileName}", $"成功 {(int)response.StatusCode}");
+                                    MessageBox.Show($"音频文件已保存在{saveMusicFileName}", $"成功 {(int)response.StatusCode}", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
                                 }
                                 else
                                 {
-                                    MessageBox.Show("流为空", $"解析成功 {(int)response.StatusCode}");
+                                    MessageBox.Show("流为空", $"解析成功 {(int)response.StatusCode}", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
                                 }
                             }
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show($"{ex.Message}\n{(int)response.StatusCode} {response.ReasonPhrase}", "解析成功，转换失败");
+                            MessageBox.Show($"{ex.Message}\n{(int)response.StatusCode} {response.ReasonPhrase}", "解析成功，转换失败", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
                             return;
                         }
                     }
@@ -452,7 +452,7 @@ namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "错误");
+                MessageBox.Show(ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
             }
         }
 

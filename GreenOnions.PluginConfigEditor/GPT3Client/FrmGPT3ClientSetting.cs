@@ -8,7 +8,6 @@ namespace GreenOnions.PluginConfigEditor.GPT3Client
     public partial class FrmGPT3ClientSetting : Form
     {
         private string _configDirect;
-        private string _pluginPath;
         private GPT3ClientConfig _config;
 
         public FrmGPT3ClientSetting(string configDirect)
@@ -16,9 +15,8 @@ namespace GreenOnions.PluginConfigEditor.GPT3Client
             _configDirect = configDirect;
             _config = ConfigLoader.LoadConfig<GPT3ClientConfig>(_configDirect);
             string pluginPath = Path.GetDirectoryName(configDirect)!;
-            _pluginPath = pluginPath;
-            if (!Directory.Exists(_pluginPath))
-                Directory.CreateDirectory(_pluginPath);
+            if (!Directory.Exists(pluginPath))
+                Directory.CreateDirectory(pluginPath);
 
             InitializeComponent();
         }

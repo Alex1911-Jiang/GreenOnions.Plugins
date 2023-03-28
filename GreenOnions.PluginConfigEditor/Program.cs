@@ -2,6 +2,7 @@ using GreenOnions.PluginConfigEditor.ChatGPTClient;
 using GreenOnions.PluginConfigEditor.CustomHttpApiInvoker;
 using GreenOnions.PluginConfigEditor.GPT3Client;
 using GreenOnions.PluginConfigEditor.KanCollectionTimeAnnouncer;
+using GreenOnions.PluginConfigEditor.NovelAiClient;
 using GreenOnions.PluginConfigEditor.Replier;
 
 namespace GreenOnions.PluginConfigEditor
@@ -16,7 +17,7 @@ namespace GreenOnions.PluginConfigEditor
         {
             ApplicationConfiguration.Initialize();
 
-            if (args.Length != 2)
+            if (args.Length < 2)
             {
                 MessageBox.Show("请不要直接运行此程序", "提示");
                 Environment.Exit(0);
@@ -38,6 +39,9 @@ namespace GreenOnions.PluginConfigEditor
                     break;
                 case "GreenOnions.ChatGPTClient":
                     Application.Run(new FrmChatGPTClientSetting(args[1]));
+                    break;
+                case "GreenOnions.NovelAiClient":
+                    Application.Run(new FrmNovelAiClientSetting(args[1], args[2]));
                     break;
             }
         }
