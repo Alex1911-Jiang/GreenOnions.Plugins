@@ -1,10 +1,11 @@
 ﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
 using GreenOnions.PluginConfigs.NovelAiClient;
 using Newtonsoft.Json;
-using NovelAIClient;
+using Newtonsoft.Json.Converters;
 
 namespace GreenOnions.NovelAiClient
 {
@@ -15,6 +16,7 @@ namespace GreenOnions.NovelAiClient
         private IBotConfig? _botConfig;
         private IGreenOnionsApi? _api;
         private string? _strCmd;
+        private string? _configDirect;
         public string Name => "NovelAi画图";
 
         public string Description => "NovelAi画图插件";
@@ -43,9 +45,9 @@ namespace GreenOnions.NovelAiClient
             {
                 //配置文件例子
                 _config = new NovelAiConfig();
-                string customDataPath = Path.Combine(_pluginPath!, "custom_data.txt");
-                if (!File.Exists(customDataPath))
-                    File.WriteAllText(customDataPath, "");
+                string paramFileDirect = Path.Combine(_pluginPath!, "params.txt");
+                if (!File.Exists(paramFileDirect))
+                    File.WriteAllText(paramFileDirect, "");
             }
             File.WriteAllText(configPath!, JsonConvert.SerializeObject(_config, Formatting.Indented));
             _strCmd = _config!.Cmd;
@@ -60,6 +62,7 @@ namespace GreenOnions.NovelAiClient
         {
             _pluginPath = pluginPath;
             _botConfig = botConfig;
+            _configDirect = Path.Combine(_pluginPath!, "config.json");
         }
 
         public bool OnMessage(GreenOnionsMessages msgs, long? senderGroup, Action<GreenOnionsMessages> Response)
@@ -92,7 +95,7 @@ namespace GreenOnions.NovelAiClient
                                 sw.Stop();
                                 if (task.IsFaulted || task.IsCanceled || task.Result is null)
                                 {
-                                    if (string.IsNullOrEmpty(_config!.DrawErrorMessage))
+                                    if (!string.IsNullOrEmpty(_config!.DrawErrorMessage))
                                         Response(_config!.DrawErrorMessage!.Replace("<耗时>", (sw.ElapsedMilliseconds / 1000f).ToString()));
                                     return;
                                 }
@@ -106,7 +109,7 @@ namespace GreenOnions.NovelAiClient
                         catch (Exception ex)
                         {
                             sw.Stop();
-                            if (string.IsNullOrEmpty(_config!.DrawErrorMessage))
+                            if (!string.IsNullOrEmpty(_config!.DrawErrorMessage))
                                 Response(_config!.DrawErrorMessage!.Replace("<耗时>", (sw.ElapsedMilliseconds / 1000f).ToString()));
 
                             for (int i = 0; i < _botConfig!.AdminQQ.Count; i++)
@@ -141,19 +144,29 @@ namespace GreenOnions.NovelAiClient
 
         private Task<byte[]?> GetWebUIImageBytes(string prompts)
         {
-            WebUIClient webuiClient = new WebUIClient(_config!.fn_index, _config!.URL!);
+            WebUIClient webuiClient = new WebUIClient(_config!.fn_index, _config!.URL!, _config.PromptIndex, _config.UndesiredIndex);
             string defalutPrompt = _config!.DefaultPrompt!.Trim();
             if (!defalutPrompt.EndsWith(','))
                 defalutPrompt += ',';
 
-            string customDataPath = Path.Combine(_pluginPath!, "custom_data.txt");
-            string customData = File.ReadAllText(customDataPath);
+            string paramFileDirect = Path.Combine(_pluginPath!, "params.txt");
+            string customData = File.ReadAllText(paramFileDirect);
             return webuiClient.PostAsync(customData, defalutPrompt + prompts, _config!.DefaultUndesired ?? "");
         }
 
         public void Setting()
         {
-            throw new Exception("请进入插件目录修改config.json配置文件");
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                throw new Exception("请进入插件目录修改config.json配置文件");
+
+            string editorDirect = Path.Combine("Plugins", "GreenOnions.PluginConfigEditor", "GreenOnions.PluginConfigEditor.exe");
+            if (!File.Exists(editorDirect))
+                throw new Exception("配置文件编辑器不存在，请安装 GreenOnions.PluginConfigEditor 插件。");
+            string paramFileDirect = Path.Combine(_pluginPath!, "params.txt");
+            Process.Start(editorDirect, new[] { new StackTrace(true).GetFrame(0)!.GetMethod()!.DeclaringType!.Namespace!, _configDirect!, paramFileDirect }).WaitForExit();
+            ReloadConfig();
+            string jsonConfig = JsonConvert.SerializeObject(_config, Formatting.Indented, new StringEnumConverter());
+            File.WriteAllText(_configDirect!, jsonConfig);
         }
     }
 }

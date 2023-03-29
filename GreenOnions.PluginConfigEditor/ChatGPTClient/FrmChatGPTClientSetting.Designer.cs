@@ -324,6 +324,7 @@
             // 
             // cboModel
             // 
+            this.cboModel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboModel.FormattingEnabled = true;
             this.cboModel.Items.AddRange(new object[] {
             "gpt-3.5-turbo",

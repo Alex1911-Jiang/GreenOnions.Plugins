@@ -67,6 +67,8 @@ namespace GreenOnions.NovelAiClient
                 string onceData = strDatas[i].Trim();
                 if (onceData == "null")
                     data.Add(null);
+                else if (onceData == "")
+                    data.Add(new string[] { });
                 else if (onceData.Contains('\"'))
                     data.Add(onceData.Replace("\"", ""));
                 else if (long.TryParse(onceData, out long valInt64))
@@ -90,7 +92,8 @@ namespace GreenOnions.NovelAiClient
         {
             input input = new input(_fnIndex, data);
             string json = JsonConvert.SerializeObject(input);
-            using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, $"{_host}api/predict"))
+            string url = _host.EndsWith('/') ? $"{_host}api/predict" : $"{_host}/api/predict";
+            using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url))
             {
                 request.Content = new StringContent(json, Encoding.UTF8, "application/json");
                 using (HttpClient client = new HttpClient() { Timeout = Timeout.InfiniteTimeSpan })
@@ -117,7 +120,7 @@ namespace GreenOnions.NovelAiClient
                                 }
                                 else
                                 {
-                                    string imgUrl = $@"{_host}file={fileName}";
+                                    string imgUrl = _host.EndsWith('/') ? $"{_host}file={fileName}" : $"{_host}/file={fileName}";
                                     var imgResp = await client.GetAsync(imgUrl);
                                     return await imgResp.Content.ReadAsByteArrayAsync();
                                 }

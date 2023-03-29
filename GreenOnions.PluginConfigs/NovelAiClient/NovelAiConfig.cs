@@ -53,7 +53,7 @@ namespace GreenOnions.PluginConfigs.NovelAiClient
         /// <summary>
         /// 默认屏蔽词
         /// </summary>
-        public string? DefaultUndesired { get; set; } = "lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, nsfw, r18, r-18, nude, nipple, nipples, breast, breasts, pussy, vaginal, asshole, penis, testicle, testicles, sex,";
+        public string? DefaultUndesired { get; set; } = "lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry";  //, nsfw, r18, r-18, nude, nipple, nipples, breast, breasts, pussy, vaginal, asshole, penis, testicle, testicles, sex,
     }
 
     public enum FrontEnd

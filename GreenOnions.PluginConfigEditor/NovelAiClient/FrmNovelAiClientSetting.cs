@@ -84,7 +84,12 @@ namespace GreenOnions.PluginConfigEditor.NovelAiClient
             {
                 Test_WebUIClient test_WebUIClient = new Test_WebUIClient(txbURL.Text, fn_index, promptIndex, undesiredIndex);
                 string strDatas = File.ReadAllText(_paramConfigDirect);
-                byte[] img = await test_WebUIClient.PostAsync(strDatas, txbTestPrompt.Text);
+
+                List<string> prompts = txbDefaultPrompt.Text.Split(',').Where(p => !string.IsNullOrWhiteSpace(p)).ToList();
+                prompts.Add(txbTestPrompt.Text);
+                string prompt = string.Join(',', prompts);
+
+                byte[] img = await test_WebUIClient.PostAsync(strDatas, prompt, txbUndesiredIndex.Text);
                 picTest.Image = Image.FromStream(new MemoryStream(img));
             }
             catch (Exception ex)
