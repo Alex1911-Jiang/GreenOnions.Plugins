@@ -17,8 +17,6 @@ namespace GreenOnions.PluginConfigEditor
         {
             ApplicationConfiguration.Initialize();
 
-            args = new string[] { "GreenOnions.NovelAiClient", @"E:\Code\Mirai\GreenOnions\bin\debug\net6.0-windows\Plugins\GreenOnions.NovelAiClient\config.json", @"E:\Code\Mirai\GreenOnions\bin\debug\net6.0-windows\Plugins\GreenOnions.NovelAiClient\params.txt" };
-
             if (args.Length < 2)
             {
                 MessageBox.Show("请不要直接运行此程序", "提示");
