@@ -6,9 +6,6 @@
 
 默认命令 “**葱葱画图：关键词**” #多个关键词用英文逗号隔开
 
-初次运行后会在当前插件目录生成config.json配置文件（修改配置文件后需要重新运行葱葱）<br>
-支持跨平台，所以没有做设置界面（其实是懒）
-
 效果预览：
 ![Naifu](https://user-images.githubusercontent.com/50268952/203353603-a94af9cd-5e50-4369-b409-9745facd78be.jpg)
 ![WebUI](https://user-images.githubusercontent.com/50268952/203338626-80dc28ec-c5df-429c-ac15-367b17dea13c.jpg)
