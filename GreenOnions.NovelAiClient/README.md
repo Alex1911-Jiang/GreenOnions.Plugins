@@ -9,16 +9,13 @@
 初次运行后会在当前插件目录生成config.json配置文件（修改配置文件后需要重新运行葱葱）<br>
 支持跨平台，所以没有做设置界面（其实是懒）
 
-配置文件说明：
-![配置文件参考](https://user-images.githubusercontent.com/50268952/203332679-71541d29-59b0-4b1b-a710-8020a4f30638.jpg)
-
 效果预览：
 ![Naifu](https://user-images.githubusercontent.com/50268952/203353603-a94af9cd-5e50-4369-b409-9745facd78be.jpg)
 ![WebUI](https://user-images.githubusercontent.com/50268952/203338626-80dc28ec-c5df-429c-ac15-367b17dea13c.jpg)
 
 <br>
 <br>
-特别的，如果使用魔改版 WebUI，您需要将 ConnectFrontEnd 修改为"CustomWebUI"，还需要手动在浏览器上请求一次绘制并将以下参数拷贝到 custom_data.txt 文件中
+对于WebUI，你需要手动在浏览器上请求一次绘制并将以下参数拷贝到 params.txt 文件中（或Windows端“编辑参数”窗口中）
 
 ![fn_indexAndData](https://user-images.githubusercontent.com/50268952/209811793-778448f5-9cef-4f47-ac0c-ce57161080de.jpg)
 
