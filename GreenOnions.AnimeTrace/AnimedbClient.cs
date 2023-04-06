@@ -55,7 +55,7 @@ namespace GreenOnions.AnimeTrace
                 return false;
             }
 
-            models model = models.pre_stable;
+            models model = _config.model;
             if (cmd == _startSearchInAnimeCommand)
                 model = models.anime;
             else if (cmd == _startSearchInGameCommand)
