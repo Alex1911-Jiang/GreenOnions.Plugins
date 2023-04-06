@@ -68,7 +68,7 @@ namespace GreenOnions.AnimeTrace
             else
             {
                 _searingUser.Add(msgs.SenderId, model);
-                Response(_config.StartSearchCommand);  //进入搜索模式
+                Response(_config.SearchStartReply);  //进入搜索模式
             }
             return true;
         }
