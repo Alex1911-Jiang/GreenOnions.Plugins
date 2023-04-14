@@ -89,7 +89,11 @@ namespace GreenOnions.CustomHttpApiInvoker
                             Task<GreenOnionsMessages?>? task = null;
                             if (_regexs.ContainsKey(_config.ApiConfig[i]))  //含有正则，可以提取参数
                             {
-                                if (_regexs[_config.ApiConfig[i]].IsMatch(msg.Text) && _regexs[_config.ApiConfig[i]].Match(msg.Text).Value == msg.Text)
+                                string matchValue = _regexs[_config.ApiConfig[i]].Match(msg.Text).Value;
+                                string firstLine = msg.Text;
+                                if (firstLine.Contains("\n"))
+                                    firstLine = firstLine.Substring(0, firstLine.IndexOf('\n'));
+                                if (_regexs[_config.ApiConfig[i]].IsMatch(msg.Text) && (matchValue == msg.Text || matchValue == firstLine))
                                 {
                                     Match match = _regexs[_config.ApiConfig[i]].Match(msg.Text);
                                     string param = string.Empty;
