@@ -36,7 +36,8 @@ namespace GreenOnions.NovelAiClient
         /// <returns>图片字节</returns>
         public async Task<byte[]?> PostAsync(string strDatas)
         {
-            ArrayList data = StringToArrayListData(strDatas);
+            JArray ja = JsonConvert.DeserializeObject<JArray>(strDatas);
+            ArrayList data = JArrayToArrayListData(ja);
             return await PostAsync(data);
         }
 
@@ -50,12 +51,14 @@ namespace GreenOnions.NovelAiClient
         /// <returns>图片字节</returns>
         public async Task<byte[]?> PostAsync(string strDatas, string prompt, string negativePrompt = "")
         {
-            ArrayList data = StringToArrayListData(strDatas);
+            JArray ja = JsonConvert.DeserializeObject<JArray>(strDatas);
+            ArrayList data = JArrayToArrayListData(ja);
             data[_promptIndex] = prompt;
             data[_undesiredIndex] = negativePrompt;
             return await PostAsync(data);
         }
 
+        [Obsolete]
         private ArrayList StringToArrayListData(string strData)
         {
             string[] strDatas = strData.Replace("\r", "").Replace("\n", "").Replace("[", "").Replace("]", "").Split(",");
@@ -81,6 +84,16 @@ namespace GreenOnions.NovelAiClient
             return data;
         }
 
+        private ArrayList JArrayToArrayListData(JArray ja)
+        {
+            ArrayList data = new ArrayList();
+            for (int i = 0; i < ja.Count; i++)
+            {
+                data.Add(ja[i]);
+            }
+            return data;
+        }
+
         /// <summary>
         /// 使用自定义参数调用WebUI（适用于魔改版本）
         /// </summary>
@@ -89,52 +102,36 @@ namespace GreenOnions.NovelAiClient
         public async Task<byte[]?> PostAsync(ArrayList data)
         {
             input input = new input(_fnIndex, data);
-            string json = JsonConvert.SerializeObject(input);
+            string json = JsonConvert.SerializeObject(input, Formatting.Indented);
             string url = _host.EndsWith('/') ? $"{_host}api/predict" : $"{_host}/api/predict";
-            using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url))
+            using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            using HttpClient client = new HttpClient() { Timeout = Timeout.InfiniteTimeSpan };
+            var response = await client.SendAsync(request);
+            string result = await response.Content.ReadAsStringAsync();
+            JToken? jToken = JsonConvert.DeserializeObject<JToken>(result);
+            if (jToken is null)
+                throw new Exception($"Novel返回为空：{(int)response.StatusCode} {response.StatusCode} 请联系机器人管理员检查地址、端口是否正确，以及是否已启用API");
+            if (jToken["error"] is not null)
+                throw new Exception($"Novel返回值中含有错误：{jToken["error"]} 请联系机器人管理员");
+
+            bool isFile = Convert.ToBoolean(jToken["data"]![0]![0]!["is_file"]);
+            if (!isFile)  //不知道怎么让它返回非文件, 猜测是base64, 没测试过
+                return Convert.FromBase64String(jToken["data"]![0]![0]!["data"]!.ToString());
+
+            string fileName = jToken["data"]![0]![0]!["name"]!.ToString();
+            if (File.Exists(fileName))  //如果是绝对路径
             {
-                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
-                using (HttpClient client = new HttpClient() { Timeout = Timeout.InfiniteTimeSpan })
-                {
-                    var response = await client.SendAsync(request);
-                    string result = await response.Content.ReadAsStringAsync();
-                    JToken? jToken = JsonConvert.DeserializeObject<JToken>(result);
-                    if (jToken != null)
-                    {
-                        if (jToken["error"] is null)
-                        {
-                            bool isFile = Convert.ToBoolean(jToken["data"]![0]![0]!["is_file"]);
-                            if (isFile)
-                            {
-                                string fileName = jToken["data"]![0]![0]!["name"]!.ToString();
-                                if (File.Exists(fileName))  //如果是绝对路径
-                                {
-                                    using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                                    {
-                                        byte[] imageBytes = new byte[fs.Length];
-                                        await fs.ReadAsync(imageBytes, 0, imageBytes.Length);
-                                        return imageBytes;
-                                    }
-                                }
-                                else
-                                {
-                                    string imgUrl = _host.EndsWith('/') ? $"{_host}file={fileName}" : $"{_host}/file={fileName}";
-                                    var imgResp = await client.GetAsync(imgUrl);
-                                    return await imgResp.Content.ReadAsByteArrayAsync();
-                                }
-                            }
-                            else  //不知道怎么让它返回非文件, 猜测是base64, 没测试过
-                            {
-                                return Convert.FromBase64String(jToken["data"]![0]![0]!["data"]!.ToString());
-                            }
-                        }
-                        else
-                        {
-                            throw new Exception("参数有误，请核对");
-                        }
-                    }
-                    return null;
-                }
+                using FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                byte[] imageBytes = new byte[fs.Length];
+                await fs.ReadAsync(imageBytes, 0, imageBytes.Length);
+                return imageBytes;
+            }
+            else  //相对路径
+            {
+                string imgUrl = _host.EndsWith('/') ? $"{_host}file={fileName}" : $"{_host}/file={fileName}";
+                var imgResp = await client.GetAsync(imgUrl);
+                return await imgResp.Content.ReadAsByteArrayAsync();
             }
         }
     }

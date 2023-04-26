@@ -89,7 +89,7 @@ namespace GreenOnions.PluginConfigEditor.NovelAiClient
                 prompts.Add(txbTestPrompt.Text);
                 string prompt = string.Join(',', prompts);
 
-                byte[] img = await test_WebUIClient.PostAsync(strDatas, prompt, txbUndesiredIndex.Text);
+                byte[] img = await test_WebUIClient.PostAsync(strDatas, prompt, txbDefaultUndesired.Text);
                 picTest.Image = Image.FromStream(new MemoryStream(img));
             }
             catch (Exception ex)
