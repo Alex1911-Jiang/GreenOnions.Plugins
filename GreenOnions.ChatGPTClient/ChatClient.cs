@@ -13,7 +13,6 @@ using GreenOnions.Interface.Configs;
 using GreenOnions.Interface.DispatchCenter;
 using GreenOnions.PluginConfigs.ChatGPTClient;
 using Markdig;
-using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
