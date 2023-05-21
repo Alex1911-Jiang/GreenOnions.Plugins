@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace GreenOnions.PluginConfigs.NovelAiClient.Models
+namespace GreenOnions.NovelAiClient.Models
 {
     public class input
     {

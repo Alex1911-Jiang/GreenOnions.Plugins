@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace GreenOnions.PluginConfigs.NovelAiClient
+namespace GreenOnions.NovelAiClient
 {
     public class NovelAiConfig
     {

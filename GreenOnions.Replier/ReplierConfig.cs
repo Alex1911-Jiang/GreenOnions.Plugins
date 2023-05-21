@@ -1,4 +1,4 @@
-﻿namespace GreenOnions.PluginConfigs.Replier
+﻿namespace GreenOnions.Replier
 {
     public struct ReplierConfig
     {

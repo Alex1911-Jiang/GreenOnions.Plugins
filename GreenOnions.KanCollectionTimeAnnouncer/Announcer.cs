@@ -2,7 +2,6 @@
 using System.Runtime.InteropServices;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
-using GreenOnions.PluginConfigs.KanCollectionTimeAnnouncer;
 using Newtonsoft.Json;
 
 namespace GreenOnions.KanCollectionTimeAnnouncer
@@ -75,9 +74,9 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                             await _botApi!.SendGroupMessageAsync(_settings.DesignatedGroups[j], voiceMsg);
                         }
                         _nextHourVoiceItem = null;
-#if !DEBUG
-                        await Task.Delay(1000 * 60 * 30, _source.Token);
-#endif
+
+                        if (_botConfig is null || !_botConfig.DebugMode)
+                            await Task.Delay(1000 * 60 * 30, _source.Token);
                         break;
                     }
                     await Task.Delay(600, _source.Token);
@@ -90,9 +89,9 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
 
         private bool TimeConsistent(TimeOnly timeNow, int targetHour)
         {
-#if DEBUG
-            return true;
-#endif
+            if (_botConfig is not null && _botConfig.DebugMode)
+                return true;
+
             if (timeNow.Hour == targetHour &&
                 timeNow.Minute == 0 &&
                 timeNow.Second == 0)

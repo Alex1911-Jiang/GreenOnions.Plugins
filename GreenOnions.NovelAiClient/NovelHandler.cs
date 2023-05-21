@@ -3,7 +3,6 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
-using GreenOnions.PluginConfigs.NovelAiClient;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 

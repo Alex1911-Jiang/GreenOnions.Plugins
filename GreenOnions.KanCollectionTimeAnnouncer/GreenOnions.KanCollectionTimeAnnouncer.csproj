@@ -14,11 +14,11 @@
 
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\GreenOnions\GreenOnions.Interface\GreenOnions.Interface.csproj" />
-    <ProjectReference Include="..\GreenOnions.PluginConfigs\GreenOnions.PluginConfigs.csproj" />
   </ItemGroup>
 
 </Project>

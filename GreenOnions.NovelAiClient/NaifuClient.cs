@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using GreenOnions.PluginConfigs.NovelAiClient.Models;
+using GreenOnions.NovelAiClient.Models;
 using Newtonsoft.Json;
 
 namespace GreenOnions.NovelAiClient

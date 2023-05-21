@@ -1,4 +1,4 @@
-﻿namespace GreenOnions.PluginConfigs.GPT3Client
+﻿namespace GreenOnions.GPT3Client
 {
     public class GPT3ClientConfig
     {

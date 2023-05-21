@@ -1,7 +1,6 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Data;
-using GreenOnions.PluginConfigs.Replier;
+using GreenOnions.Replier;
 using Newtonsoft.Json;
 
 namespace GreenOnions.PluginConfigEditor.Replier
@@ -13,7 +12,7 @@ namespace GreenOnions.PluginConfigEditor.Replier
         private readonly string _imagePath;
         private readonly string _audioPath;
         private readonly List<ReplierConfig>? _config = null;
-
+        
         public FrmReplierSetting(string configDirect)
         {
             _configDirect = configDirect;

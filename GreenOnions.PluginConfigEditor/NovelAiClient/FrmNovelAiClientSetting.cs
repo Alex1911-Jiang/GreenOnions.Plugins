@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using GreenOnions.NovelAiClient;
-using GreenOnions.PluginConfigs.NovelAiClient;
 using Newtonsoft.Json;
 
 namespace GreenOnions.PluginConfigEditor.NovelAiClient

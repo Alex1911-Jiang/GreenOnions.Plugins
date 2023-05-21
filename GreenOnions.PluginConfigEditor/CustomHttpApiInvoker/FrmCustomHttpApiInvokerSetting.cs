@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel;
-using GreenOnions.PluginConfigs.CustomHttpApiInvoker;
+using GreenOnions.CustomHttpApiInvoker;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 

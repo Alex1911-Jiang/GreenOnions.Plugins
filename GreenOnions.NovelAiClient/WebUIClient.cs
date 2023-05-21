@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Text;
-using GreenOnions.PluginConfigs.NovelAiClient.Models;
+using GreenOnions.NovelAiClient.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

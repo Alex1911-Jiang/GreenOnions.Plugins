@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace GreenOnions.PluginConfigs.ChatGPTClient
+namespace GreenOnions.ChatGPTClient
 {
     public class ChatGPTClientConfig
     {

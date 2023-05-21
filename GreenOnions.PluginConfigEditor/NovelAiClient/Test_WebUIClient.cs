@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Text;
+using GreenOnions.NovelAiClient.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using GreenOnions.PluginConfigs.NovelAiClient.Models;
 
 namespace GreenOnions.NovelAiClient
 {

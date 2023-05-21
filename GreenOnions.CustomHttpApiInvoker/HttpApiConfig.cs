@@ -1,4 +1,4 @@
-﻿namespace GreenOnions.PluginConfigs.CustomHttpApiInvoker
+﻿namespace GreenOnions.CustomHttpApiInvoker
 {
     public class HttpApiConfig
     {

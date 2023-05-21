@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
-using GreenOnions.PluginConfigs.CustomHttpApiInvoker;
-using GreenOnions.PluginConfigs.KanCollectionTimeAnnouncer;
+using GreenOnions.KanCollectionTimeAnnouncer;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace GreenOnions.PluginConfigEditor.KanCollectionTimeAnnouncer

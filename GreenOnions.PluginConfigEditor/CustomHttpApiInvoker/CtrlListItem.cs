@@ -1,4 +1,4 @@
-﻿using GreenOnions.PluginConfigs.CustomHttpApiInvoker;
+﻿using GreenOnions.CustomHttpApiInvoker;
 
 namespace GreenOnions.PluginConfigEditor.CustomHttpApiInvoker
 {

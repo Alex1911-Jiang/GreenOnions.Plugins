@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace GreenOnions.PluginConfigs.NovelAiClient.Models
+namespace GreenOnions.NovelAiClient.Models
 {
     /// <summary>
     /// Naifu请求参数实体类

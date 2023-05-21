@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Net.Http.Headers;
 using System.Text;
-using GreenOnions.PluginConfigs.CustomHttpApiInvoker;
+using GreenOnions.CustomHttpApiInvoker;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

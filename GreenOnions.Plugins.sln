@@ -17,8 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.GPT3Client", "G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.PluginConfigEditor", "GreenOnions.PluginConfigEditor\GreenOnions.PluginConfigEditor.csproj", "{840C607A-77D9-47B3-84EC-9B449FCA1177}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.PluginConfigs", "GreenOnions.PluginConfigs\GreenOnions.PluginConfigs.csproj", "{2ADF0E29-E56E-42B4-8B85-E8EF321266FD}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.CustomHttpApiInvoker", "GreenOnions.CustomHttpApiInvoker\GreenOnions.CustomHttpApiInvoker.csproj", "{04995A60-1F84-4D9A-A12A-85183D958B20}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenOnions.KanCollectionTimeAnnouncer", "GreenOnions.KanCollectionTimeAnnouncer\GreenOnions.KanCollectionTimeAnnouncer.csproj", "{D49614D8-1131-43F9-9B45-C7919F03D0DC}"
@@ -71,10 +69,6 @@ Global
 		{840C607A-77D9-47B3-84EC-9B449FCA1177}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{840C607A-77D9-47B3-84EC-9B449FCA1177}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{840C607A-77D9-47B3-84EC-9B449FCA1177}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2ADF0E29-E56E-42B4-8B85-E8EF321266FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2ADF0E29-E56E-42B4-8B85-E8EF321266FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2ADF0E29-E56E-42B4-8B85-E8EF321266FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2ADF0E29-E56E-42B4-8B85-E8EF321266FD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{04995A60-1F84-4D9A-A12A-85183D958B20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{04995A60-1F84-4D9A-A12A-85183D958B20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04995A60-1F84-4D9A-A12A-85183D958B20}.Release|Any CPU.ActiveCfg = Release|Any CPU

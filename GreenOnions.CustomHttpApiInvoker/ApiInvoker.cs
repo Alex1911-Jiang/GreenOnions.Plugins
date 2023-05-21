@@ -6,7 +6,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
-using GreenOnions.PluginConfigs.CustomHttpApiInvoker;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

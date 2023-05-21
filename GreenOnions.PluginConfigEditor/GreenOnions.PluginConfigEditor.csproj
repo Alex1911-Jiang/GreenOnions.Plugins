@@ -14,7 +14,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GreenOnions.PluginConfigs\GreenOnions.PluginConfigs.csproj" />
+    <ProjectReference Include="..\GreenOnions.ChatGPTClient\GreenOnions.ChatGPTClient.csproj" />
+    <ProjectReference Include="..\GreenOnions.CustomHttpApiInvoker\GreenOnions.CustomHttpApiInvoker.csproj" />
+    <ProjectReference Include="..\GreenOnions.GPT3Client\GreenOnions.GPT3Client.csproj" />
+    <ProjectReference Include="..\GreenOnions.GuessTheSong\GreenOnions.GuessTheSong.csproj" />
+    <ProjectReference Include="..\GreenOnions.KanCollectionTimeAnnouncer\GreenOnions.KanCollectionTimeAnnouncer.csproj" />
+    <ProjectReference Include="..\GreenOnions.NovelAiClient\GreenOnions.NovelAiClient.csproj" />
+    <ProjectReference Include="..\GreenOnions.Replier\GreenOnions.Replier.csproj" />
   </ItemGroup>
 
   <ItemGroup>

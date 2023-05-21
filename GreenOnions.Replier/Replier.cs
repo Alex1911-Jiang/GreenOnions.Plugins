@@ -4,7 +4,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
-using GreenOnions.PluginConfigs.Replier;
 using Newtonsoft.Json;
 
 namespace GreenOnions.Replier

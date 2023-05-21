@@ -1,8 +1,6 @@
-﻿using System.Runtime;
-using System.Text;
+﻿using System.Text;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
-using GreenOnions.PluginConfigs.KanCollectionTimeAnnouncer;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

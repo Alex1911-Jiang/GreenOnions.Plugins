@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
-using GreenOnions.PluginConfigs.GPT3Client;
+using GreenOnions.GPT3Client;
 using Newtonsoft.Json;
 
 namespace GreenOnions.PluginConfigEditor.GPT3Client

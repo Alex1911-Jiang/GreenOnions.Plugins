@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
-using GreenOnions.PluginConfigs.ChatGPTClient;
+using GreenOnions.ChatGPTClient;
 using Newtonsoft.Json;
 
 namespace GreenOnions.PluginConfigEditor.ChatGPTClient

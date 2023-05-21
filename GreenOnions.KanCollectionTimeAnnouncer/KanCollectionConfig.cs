@@ -1,4 +1,4 @@
-﻿namespace GreenOnions.PluginConfigs.KanCollectionTimeAnnouncer
+﻿namespace GreenOnions.KanCollectionTimeAnnouncer
 {
     public class KanCollectionConfig
     {

@@ -8,7 +8,6 @@ using GreenOnions.GPT3Client.Models;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
 using GreenOnions.Interface.DispatchCenter;
-using GreenOnions.PluginConfigs.GPT3Client;
 using Newtonsoft.Json;
 
 namespace GreenOnions.GPT3Client

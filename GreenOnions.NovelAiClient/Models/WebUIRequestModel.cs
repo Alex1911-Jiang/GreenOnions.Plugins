@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-namespace GreenOnions.PluginConfigs.NovelAiClient.Models
+namespace GreenOnions.NovelAiClient.Models
 {
     /// <summary>
     /// WebUI请求参数实体类

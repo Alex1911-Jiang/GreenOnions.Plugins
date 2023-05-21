@@ -11,7 +11,6 @@ using GreenOnions.ChatGPTClient.Models.Response;
 using GreenOnions.Interface;
 using GreenOnions.Interface.Configs;
 using GreenOnions.Interface.DispatchCenter;
-using GreenOnions.PluginConfigs.ChatGPTClient;
 using Markdig;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;

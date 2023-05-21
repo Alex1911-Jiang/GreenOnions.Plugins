@@ -14,11 +14,11 @@
 
   <ItemGroup>
     <PackageReference Include="GPT-3-Encoder-Sharp" Version="1.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\GreenOnions\GreenOnions.Interface\GreenOnions.Interface.csproj" />
-    <ProjectReference Include="..\GreenOnions.PluginConfigs\GreenOnions.PluginConfigs.csproj" />
   </ItemGroup>
 
 </Project>
