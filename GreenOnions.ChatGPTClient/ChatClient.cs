@@ -182,7 +182,7 @@ namespace GreenOnions.ChatGPTClient
             var client = new BingChatClient(new BingChatClientOptions
             {
                 // The "_U" cookie's value
-                Cookie = _config.APIkey,
+                CookieU = _config.APIkey,
                 ProxyUrl = _botConfig.ProxyUrl
             });
             return await client.CreateConversation();
