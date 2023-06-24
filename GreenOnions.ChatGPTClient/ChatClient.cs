@@ -195,6 +195,7 @@ namespace GreenOnions.ChatGPTClient
             return await _chatingUser[qqId].BingClient!.AskAsync(msg);
         }
 
+
         private async Task<string> SendMessageToChatGPT(long qqId, string msg)
         {
             RequestModel requestModel = new RequestModel(_config!.Model!, _config.Temperature);
@@ -206,13 +207,20 @@ namespace GreenOnions.ChatGPTClient
             switch (_config.Context)
             {
                 case ContextSetting.尽量保持上下文:
-                    int remainingTokens = 4096;
+                    int remainingTokens = _config.Model switch
+                    {
+                        "gpt-3.5-turbo" or "gpt-3.5-turbo-0301" or "3.5-turbo-0613" => 4096,
+                        "gpt-3.5-turbo-16k" or "gpt-3.5-turbo-16k-0613" => 16384,
+                        "gpt-4" or "gpt-4-0613" => 16384,
+                        "gpt-4-32k" or "gpt-4-32k-0613" => 16384,
+                        _ => 4096,
+                    };
                     remainingTokens -= _gptEncoder!.Encode(msg).Count;
                     //倒序计算可分配的Token数
                     for (int i = 0; i < userMsgs.Length; i++)
                     {
                         remainingTokens -= _gptEncoder!.Encode(userMsgs[i].content).Count;
-                        if (remainingTokens <= 0)
+                        if (remainingTokens < 1024)
                             break;
                         requestModel.messages.Add(userMsgs[i]);
                     }
