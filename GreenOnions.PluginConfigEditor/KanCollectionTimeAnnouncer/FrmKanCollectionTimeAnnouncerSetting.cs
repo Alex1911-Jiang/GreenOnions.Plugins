@@ -124,7 +124,7 @@ namespace GreenOnions.PluginConfigEditor.KanCollectionTimeAnnouncer
         private async void btnRefreshKanGirlList_Click(object sender, EventArgs e)
         {
             cboDesignatedKanGirl.DataSource = null;
-            cboDesignatedKanGirl.Items.AddRange(new [] {"获取中..."});
+            cboDesignatedKanGirl.Items.AddRange(new[] { "获取中..." });
             cboDesignatedKanGirl.SelectedIndex = 0;
             cboDesignatedKanGirl.Enabled = false;
 
@@ -211,6 +211,19 @@ namespace GreenOnions.PluginConfigEditor.KanCollectionTimeAnnouncer
             jsonCache = JsonConvert.SerializeObject(kanGirlList, Formatting.Indented);
             File.WriteAllText(kanGirlListFileName, jsonCache);
             return kanGirlList;
+        }
+
+        private async void btnTest_Click(object sender, EventArgs e)
+        {
+            Announcer announcer = new Announcer();
+            if (await announcer.Test(_configDirect))
+            {
+                MessageBox.Show("成功");
+            }
+            else
+            {
+                MessageBox.Show("下载失败，请打开萌娘百科（https://zh.moegirl.org.cn/舰队Collection/图鉴/舰娘）查看是否需要滑动验证");
+            }
         }
     }
 }

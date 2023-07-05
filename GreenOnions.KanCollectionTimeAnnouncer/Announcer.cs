@@ -8,7 +8,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
 {
     public class Announcer : IMessagePlugin, IPluginSetting
     {
-        private KanCollectionConfig? _settings;
+        private KanCollectionConfig? _config;
         private MoeGirlHelper? _moeGirlHelper;
         private string? _pluginPath;
         private string? _configDirect;
@@ -44,34 +44,34 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                     if (nextHour >= 24)
                         nextHour = 0;
 
-                    if (!_settings!.DesignatedTime.Contains(nextHour))
+                    if (!_config!.DesignatedTime.Contains(nextHour))
                     {
                         await Task.Delay(1000 * 60 * 30, _source.Token);
                         continue;
                     }
 
                     //没有获取报时语音地址
-                    _nextHourVoiceItem  ??= await _moeGirlHelper!.GetNextHourVoiceUrlAsync(_settings, nextHour);  //预先下载好音频
+                    _nextHourVoiceItem  ??= await _moeGirlHelper!.GetNextHourVoiceUrlAsync(_config, nextHour);  //预先下载好音频
 
                     TimeOnly t = TimeOnly.FromDateTime(DateTime.Now);
 
                     //报时的时间
-                    for (int i = 0; i < _settings.DesignatedTime.Count; i++)
+                    for (int i = 0; i < _config.DesignatedTime.Count; i++)
                     {
-                        int iHour = _settings.DesignatedTime[i];
+                        int iHour = _config.DesignatedTime[i];
                         if (!TimeConsistent(t, iHour))  //这个小时需要报时且现在是0分0秒
                             continue;
 
                         GreenOnionsVoiceMessage voiceMsg = new GreenOnionsVoiceMessage(_nextHourVoiceItem!.Mp3UrlOrFileName);  //音频消息
 
                         //发送报时消息
-                        for (int j = 0; j < _settings.DesignatedGroups.Count; j++)
+                        for (int j = 0; j < _config.DesignatedGroups.Count; j++)
                         {
-                            if (_settings.SendJapaneseText)
-                                await _botApi!.SendGroupMessageAsync(_settings.DesignatedGroups[j], _nextHourVoiceItem!.JapaneseText);
-                            if (_settings.SendChineseText)
-                                await _botApi!.SendGroupMessageAsync(_settings.DesignatedGroups[j], _nextHourVoiceItem!.ChineseText);
-                            await _botApi!.SendGroupMessageAsync(_settings.DesignatedGroups[j], voiceMsg);
+                            if (_config.SendJapaneseText)
+                                await _botApi!.SendGroupMessageAsync(_config.DesignatedGroups[j], _nextHourVoiceItem!.JapaneseText);
+                            if (_config.SendChineseText)
+                                await _botApi!.SendGroupMessageAsync(_config.DesignatedGroups[j], _nextHourVoiceItem!.ChineseText);
+                            await _botApi!.SendGroupMessageAsync(_config.DesignatedGroups[j], voiceMsg);
                         }
                         _nextHourVoiceItem = null;
 
@@ -87,7 +87,17 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
             }
         }
 
-        private bool TimeConsistent(TimeOnly timeNow, int targetHour)
+        public async Task<bool> Test(string configDirect)
+        {
+            ReloadConfig();
+            var moeGirlHelper = new MoeGirlHelper(Path.GetDirectoryName(configDirect), _config, null, _botConfig!, CancellationToken.None);
+            KanGirlVoiceItem? voice = await moeGirlHelper!.GetNextHourVoiceUrlAsync(_config, new Random().Next(0,24));  //预先下载好音频
+            if (voice is null)
+                return false;
+            return true;
+        }
+
+            private bool TimeConsistent(TimeOnly timeNow, int targetHour)
         {
             if (_botConfig is not null && _botConfig.DebugMode)
                 return true;
@@ -102,7 +112,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
         private void CreateHelper(string pluginPath)
         {
             _source = new CancellationTokenSource();
-            _moeGirlHelper = new MoeGirlHelper(pluginPath, _botApi!, _botConfig!, _source.Token);
+            _moeGirlHelper = new MoeGirlHelper(pluginPath, _config, _botApi!, _botConfig!, _source.Token);
         }
 
         private async void RestartWorker()
@@ -118,10 +128,10 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                     CreateHelper(_pluginPath!);
 
                     //没有指定报时时间
-                    if (_settings!.DesignatedTime is null || _settings.DesignatedTime.Count == 0)
+                    if (_config!.DesignatedTime is null || _config.DesignatedTime.Count == 0)
                         return;
                     //仅发部分群但没有指定
-                    if (_settings.DesignateGroup && (_settings.DesignatedGroups is null || _settings.DesignatedGroups.Count == 0))
+                    if (_config.DesignateGroup && (_config.DesignatedGroups is null || _config.DesignatedGroups.Count == 0))
                         return;
 
                     _worker = Task.Run(Announce, _source!.Token);
@@ -155,9 +165,9 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
         public void ReloadConfig()
         {
             if (File.Exists(_configDirect))
-                _settings = JsonConvert.DeserializeObject<KanCollectionConfig>(File.ReadAllText(_configDirect))!;
-            if (_settings is null)
-                _settings = new KanCollectionConfig();
+                _config = JsonConvert.DeserializeObject<KanCollectionConfig>(File.ReadAllText(_configDirect))!;
+            if (_config is null)
+                _config = new KanCollectionConfig();
         }
 
         public bool OnMessage(GreenOnionsMessages msgs, long? senderGroup, Action<GreenOnionsMessages> Response)

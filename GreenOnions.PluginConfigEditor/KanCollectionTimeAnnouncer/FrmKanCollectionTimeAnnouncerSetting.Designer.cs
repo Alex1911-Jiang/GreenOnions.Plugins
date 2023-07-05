@@ -28,311 +28,313 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.rdoDesignateGroup = new System.Windows.Forms.RadioButton();
-            this.rdoAllGroup = new System.Windows.Forms.RadioButton();
-            this.txbDesignatedGroups = new System.Windows.Forms.TextBox();
-            this.pnlGroup = new System.Windows.Forms.Panel();
-            this.pnlKanGirl = new System.Windows.Forms.Panel();
-            this.btnRefreshKanGirlList = new System.Windows.Forms.Button();
-            this.cboDesignatedKanGirl = new System.Windows.Forms.ComboBox();
-            this.rdoRandomKanGirl = new System.Windows.Forms.RadioButton();
-            this.rdoDesignateKanGirl = new System.Windows.Forms.RadioButton();
-            this.pnlTime = new System.Windows.Forms.Panel();
-            this.pnlDesignatedTime = new System.Windows.Forms.FlowLayoutPanel();
-            this.lblGroup = new System.Windows.Forms.Label();
-            this.lblKanGirl = new System.Windows.Forms.Label();
-            this.lblTime = new System.Windows.Forms.Label();
-            this.chkSendChineseText = new System.Windows.Forms.CheckBox();
-            this.chkSendJapaneseText = new System.Windows.Forms.CheckBox();
-            this.chkSelectAll = new System.Windows.Forms.CheckBox();
-            this.lblGoCqhttpInfoFront = new System.Windows.Forms.Label();
-            this.lblGoCqhttpInfoBack = new System.Windows.Forms.Label();
-            this.lnkFFMPEG = new System.Windows.Forms.LinkLabel();
-            this.pnlGroup.SuspendLayout();
-            this.pnlKanGirl.SuspendLayout();
-            this.pnlTime.SuspendLayout();
-            this.SuspendLayout();
+            rdoDesignateGroup = new RadioButton();
+            rdoAllGroup = new RadioButton();
+            txbDesignatedGroups = new TextBox();
+            pnlGroup = new Panel();
+            pnlKanGirl = new Panel();
+            btnRefreshKanGirlList = new Button();
+            cboDesignatedKanGirl = new ComboBox();
+            rdoRandomKanGirl = new RadioButton();
+            rdoDesignateKanGirl = new RadioButton();
+            pnlTime = new Panel();
+            pnlDesignatedTime = new FlowLayoutPanel();
+            lblGroup = new Label();
+            lblKanGirl = new Label();
+            lblTime = new Label();
+            chkSendChineseText = new CheckBox();
+            chkSendJapaneseText = new CheckBox();
+            chkSelectAll = new CheckBox();
+            lblGoCqhttpInfoFront = new Label();
+            lblGoCqhttpInfoBack = new Label();
+            lnkFFMPEG = new LinkLabel();
+            btnTest = new Button();
+            pnlGroup.SuspendLayout();
+            pnlKanGirl.SuspendLayout();
+            pnlTime.SuspendLayout();
+            SuspendLayout();
             // 
             // rdoDesignateGroup
             // 
-            this.rdoDesignateGroup.AutoSize = true;
-            this.rdoDesignateGroup.Checked = true;
-            this.rdoDesignateGroup.Location = new System.Drawing.Point(5, 4);
-            this.rdoDesignateGroup.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.rdoDesignateGroup.Name = "rdoDesignateGroup";
-            this.rdoDesignateGroup.Size = new System.Drawing.Size(107, 28);
-            this.rdoDesignateGroup.TabIndex = 0;
-            this.rdoDesignateGroup.TabStop = true;
-            this.rdoDesignateGroup.Text = "指定群组";
-            this.rdoDesignateGroup.UseVisualStyleBackColor = true;
-            this.rdoDesignateGroup.CheckedChanged += new System.EventHandler(this.rdo_CheckedChanged);
+            rdoDesignateGroup.AutoSize = true;
+            rdoDesignateGroup.Checked = true;
+            rdoDesignateGroup.Location = new Point(5, 4);
+            rdoDesignateGroup.Margin = new Padding(5, 4, 5, 4);
+            rdoDesignateGroup.Name = "rdoDesignateGroup";
+            rdoDesignateGroup.Size = new Size(107, 28);
+            rdoDesignateGroup.TabIndex = 0;
+            rdoDesignateGroup.TabStop = true;
+            rdoDesignateGroup.Text = "指定群组";
+            rdoDesignateGroup.UseVisualStyleBackColor = true;
+            rdoDesignateGroup.CheckedChanged += rdo_CheckedChanged;
             // 
             // rdoAllGroup
             // 
-            this.rdoAllGroup.AutoSize = true;
-            this.rdoAllGroup.Location = new System.Drawing.Point(332, 4);
-            this.rdoAllGroup.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.rdoAllGroup.Name = "rdoAllGroup";
-            this.rdoAllGroup.Size = new System.Drawing.Size(107, 28);
-            this.rdoAllGroup.TabIndex = 1;
-            this.rdoAllGroup.Text = "所有群组";
-            this.rdoAllGroup.UseVisualStyleBackColor = true;
-            this.rdoAllGroup.CheckedChanged += new System.EventHandler(this.rdo_CheckedChanged);
+            rdoAllGroup.AutoSize = true;
+            rdoAllGroup.Location = new Point(332, 4);
+            rdoAllGroup.Margin = new Padding(5, 4, 5, 4);
+            rdoAllGroup.Name = "rdoAllGroup";
+            rdoAllGroup.Size = new Size(107, 28);
+            rdoAllGroup.TabIndex = 1;
+            rdoAllGroup.Text = "所有群组";
+            rdoAllGroup.UseVisualStyleBackColor = true;
+            rdoAllGroup.CheckedChanged += rdo_CheckedChanged;
             // 
             // txbDesignatedGroups
             // 
-            this.txbDesignatedGroups.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txbDesignatedGroups.Enabled = false;
-            this.txbDesignatedGroups.Location = new System.Drawing.Point(5, 42);
-            this.txbDesignatedGroups.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.txbDesignatedGroups.Multiline = true;
-            this.txbDesignatedGroups.Name = "txbDesignatedGroups";
-            this.txbDesignatedGroups.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txbDesignatedGroups.Size = new System.Drawing.Size(598, 106);
-            this.txbDesignatedGroups.TabIndex = 2;
+            txbDesignatedGroups.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txbDesignatedGroups.Enabled = false;
+            txbDesignatedGroups.Location = new Point(5, 42);
+            txbDesignatedGroups.Margin = new Padding(5, 4, 5, 4);
+            txbDesignatedGroups.Multiline = true;
+            txbDesignatedGroups.Name = "txbDesignatedGroups";
+            txbDesignatedGroups.ScrollBars = ScrollBars.Vertical;
+            txbDesignatedGroups.Size = new Size(598, 106);
+            txbDesignatedGroups.TabIndex = 2;
             // 
             // pnlGroup
             // 
-            this.pnlGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlGroup.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlGroup.Controls.Add(this.txbDesignatedGroups);
-            this.pnlGroup.Controls.Add(this.rdoDesignateGroup);
-            this.pnlGroup.Controls.Add(this.rdoAllGroup);
-            this.pnlGroup.Location = new System.Drawing.Point(19, 41);
-            this.pnlGroup.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.pnlGroup.Name = "pnlGroup";
-            this.pnlGroup.Size = new System.Drawing.Size(612, 153);
-            this.pnlGroup.TabIndex = 3;
+            pnlGroup.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pnlGroup.BorderStyle = BorderStyle.FixedSingle;
+            pnlGroup.Controls.Add(txbDesignatedGroups);
+            pnlGroup.Controls.Add(rdoDesignateGroup);
+            pnlGroup.Controls.Add(rdoAllGroup);
+            pnlGroup.Location = new Point(19, 41);
+            pnlGroup.Margin = new Padding(5, 4, 5, 4);
+            pnlGroup.Name = "pnlGroup";
+            pnlGroup.Size = new Size(612, 153);
+            pnlGroup.TabIndex = 3;
             // 
             // pnlKanGirl
             // 
-            this.pnlKanGirl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlKanGirl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlKanGirl.Controls.Add(this.btnRefreshKanGirlList);
-            this.pnlKanGirl.Controls.Add(this.cboDesignatedKanGirl);
-            this.pnlKanGirl.Controls.Add(this.rdoRandomKanGirl);
-            this.pnlKanGirl.Controls.Add(this.rdoDesignateKanGirl);
-            this.pnlKanGirl.Location = new System.Drawing.Point(19, 227);
-            this.pnlKanGirl.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.pnlKanGirl.Name = "pnlKanGirl";
-            this.pnlKanGirl.Size = new System.Drawing.Size(612, 81);
-            this.pnlKanGirl.TabIndex = 4;
+            pnlKanGirl.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pnlKanGirl.BorderStyle = BorderStyle.FixedSingle;
+            pnlKanGirl.Controls.Add(btnRefreshKanGirlList);
+            pnlKanGirl.Controls.Add(cboDesignatedKanGirl);
+            pnlKanGirl.Controls.Add(rdoRandomKanGirl);
+            pnlKanGirl.Controls.Add(rdoDesignateKanGirl);
+            pnlKanGirl.Location = new Point(19, 227);
+            pnlKanGirl.Margin = new Padding(5, 4, 5, 4);
+            pnlKanGirl.Name = "pnlKanGirl";
+            pnlKanGirl.Size = new Size(612, 81);
+            pnlKanGirl.TabIndex = 4;
             // 
             // btnRefreshKanGirlList
             // 
-            this.btnRefreshKanGirlList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefreshKanGirlList.Location = new System.Drawing.Point(487, 42);
-            this.btnRefreshKanGirlList.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.btnRefreshKanGirlList.Name = "btnRefreshKanGirlList";
-            this.btnRefreshKanGirlList.Size = new System.Drawing.Size(118, 32);
-            this.btnRefreshKanGirlList.TabIndex = 3;
-            this.btnRefreshKanGirlList.Text = "刷新";
-            this.btnRefreshKanGirlList.UseVisualStyleBackColor = true;
-            this.btnRefreshKanGirlList.Click += new System.EventHandler(this.btnRefreshKanGirlList_Click);
+            btnRefreshKanGirlList.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnRefreshKanGirlList.Location = new Point(487, 42);
+            btnRefreshKanGirlList.Margin = new Padding(5, 4, 5, 4);
+            btnRefreshKanGirlList.Name = "btnRefreshKanGirlList";
+            btnRefreshKanGirlList.Size = new Size(118, 32);
+            btnRefreshKanGirlList.TabIndex = 3;
+            btnRefreshKanGirlList.Text = "刷新";
+            btnRefreshKanGirlList.UseVisualStyleBackColor = true;
+            btnRefreshKanGirlList.Click += btnRefreshKanGirlList_Click;
             // 
             // cboDesignatedKanGirl
             // 
-            this.cboDesignatedKanGirl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cboDesignatedKanGirl.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboDesignatedKanGirl.Enabled = false;
-            this.cboDesignatedKanGirl.FormattingEnabled = true;
-            this.cboDesignatedKanGirl.Items.AddRange(new object[] {
-            "获取中..."});
-            this.cboDesignatedKanGirl.Location = new System.Drawing.Point(5, 42);
-            this.cboDesignatedKanGirl.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.cboDesignatedKanGirl.Name = "cboDesignatedKanGirl";
-            this.cboDesignatedKanGirl.Size = new System.Drawing.Size(471, 32);
-            this.cboDesignatedKanGirl.TabIndex = 2;
+            cboDesignatedKanGirl.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cboDesignatedKanGirl.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboDesignatedKanGirl.Enabled = false;
+            cboDesignatedKanGirl.FormattingEnabled = true;
+            cboDesignatedKanGirl.Items.AddRange(new object[] { "获取中..." });
+            cboDesignatedKanGirl.Location = new Point(5, 42);
+            cboDesignatedKanGirl.Margin = new Padding(5, 4, 5, 4);
+            cboDesignatedKanGirl.Name = "cboDesignatedKanGirl";
+            cboDesignatedKanGirl.Size = new Size(471, 32);
+            cboDesignatedKanGirl.TabIndex = 2;
             // 
             // rdoRandomKanGirl
             // 
-            this.rdoRandomKanGirl.AutoSize = true;
-            this.rdoRandomKanGirl.Location = new System.Drawing.Point(332, 4);
-            this.rdoRandomKanGirl.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.rdoRandomKanGirl.Name = "rdoRandomKanGirl";
-            this.rdoRandomKanGirl.Size = new System.Drawing.Size(107, 28);
-            this.rdoRandomKanGirl.TabIndex = 1;
-            this.rdoRandomKanGirl.Text = "随机舰娘";
-            this.rdoRandomKanGirl.UseVisualStyleBackColor = true;
-            this.rdoRandomKanGirl.CheckedChanged += new System.EventHandler(this.rdo_CheckedChanged);
+            rdoRandomKanGirl.AutoSize = true;
+            rdoRandomKanGirl.Location = new Point(332, 4);
+            rdoRandomKanGirl.Margin = new Padding(5, 4, 5, 4);
+            rdoRandomKanGirl.Name = "rdoRandomKanGirl";
+            rdoRandomKanGirl.Size = new Size(107, 28);
+            rdoRandomKanGirl.TabIndex = 1;
+            rdoRandomKanGirl.Text = "随机舰娘";
+            rdoRandomKanGirl.UseVisualStyleBackColor = true;
+            rdoRandomKanGirl.CheckedChanged += rdo_CheckedChanged;
             // 
             // rdoDesignateKanGirl
             // 
-            this.rdoDesignateKanGirl.AutoSize = true;
-            this.rdoDesignateKanGirl.Checked = true;
-            this.rdoDesignateKanGirl.Location = new System.Drawing.Point(5, 4);
-            this.rdoDesignateKanGirl.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.rdoDesignateKanGirl.Name = "rdoDesignateKanGirl";
-            this.rdoDesignateKanGirl.Size = new System.Drawing.Size(107, 28);
-            this.rdoDesignateKanGirl.TabIndex = 0;
-            this.rdoDesignateKanGirl.TabStop = true;
-            this.rdoDesignateKanGirl.Text = "指定舰娘";
-            this.rdoDesignateKanGirl.UseVisualStyleBackColor = true;
-            this.rdoDesignateKanGirl.CheckedChanged += new System.EventHandler(this.rdo_CheckedChanged);
+            rdoDesignateKanGirl.AutoSize = true;
+            rdoDesignateKanGirl.Checked = true;
+            rdoDesignateKanGirl.Location = new Point(5, 4);
+            rdoDesignateKanGirl.Margin = new Padding(5, 4, 5, 4);
+            rdoDesignateKanGirl.Name = "rdoDesignateKanGirl";
+            rdoDesignateKanGirl.Size = new Size(107, 28);
+            rdoDesignateKanGirl.TabIndex = 0;
+            rdoDesignateKanGirl.TabStop = true;
+            rdoDesignateKanGirl.Text = "指定舰娘";
+            rdoDesignateKanGirl.UseVisualStyleBackColor = true;
+            rdoDesignateKanGirl.CheckedChanged += rdo_CheckedChanged;
             // 
             // pnlTime
             // 
-            this.pnlTime.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlTime.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlTime.Controls.Add(this.pnlDesignatedTime);
-            this.pnlTime.Location = new System.Drawing.Point(19, 342);
-            this.pnlTime.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.pnlTime.Name = "pnlTime";
-            this.pnlTime.Size = new System.Drawing.Size(612, 157);
-            this.pnlTime.TabIndex = 5;
+            pnlTime.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            pnlTime.BorderStyle = BorderStyle.FixedSingle;
+            pnlTime.Controls.Add(pnlDesignatedTime);
+            pnlTime.Location = new Point(19, 342);
+            pnlTime.Margin = new Padding(5, 4, 5, 4);
+            pnlTime.Name = "pnlTime";
+            pnlTime.Size = new Size(612, 157);
+            pnlTime.TabIndex = 5;
             // 
             // pnlDesignatedTime
             // 
-            this.pnlDesignatedTime.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlDesignatedTime.Location = new System.Drawing.Point(5, 4);
-            this.pnlDesignatedTime.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.pnlDesignatedTime.Name = "pnlDesignatedTime";
-            this.pnlDesignatedTime.Size = new System.Drawing.Size(600, 145);
-            this.pnlDesignatedTime.TabIndex = 2;
+            pnlDesignatedTime.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            pnlDesignatedTime.Location = new Point(5, 4);
+            pnlDesignatedTime.Margin = new Padding(5, 4, 5, 4);
+            pnlDesignatedTime.Name = "pnlDesignatedTime";
+            pnlDesignatedTime.Size = new Size(600, 145);
+            pnlDesignatedTime.TabIndex = 2;
             // 
             // lblGroup
             // 
-            this.lblGroup.AutoSize = true;
-            this.lblGroup.Location = new System.Drawing.Point(19, 13);
-            this.lblGroup.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
-            this.lblGroup.Name = "lblGroup";
-            this.lblGroup.Size = new System.Drawing.Size(122, 24);
-            this.lblGroup.TabIndex = 3;
-            this.lblGroup.Text = "发送报时群组:";
+            lblGroup.AutoSize = true;
+            lblGroup.Location = new Point(19, 13);
+            lblGroup.Margin = new Padding(5, 0, 5, 0);
+            lblGroup.Name = "lblGroup";
+            lblGroup.Size = new Size(122, 24);
+            lblGroup.TabIndex = 3;
+            lblGroup.Text = "发送报时群组:";
             // 
             // lblKanGirl
             // 
-            this.lblKanGirl.AutoSize = true;
-            this.lblKanGirl.Location = new System.Drawing.Point(19, 199);
-            this.lblKanGirl.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
-            this.lblKanGirl.Name = "lblKanGirl";
-            this.lblKanGirl.Size = new System.Drawing.Size(122, 24);
-            this.lblKanGirl.TabIndex = 6;
-            this.lblKanGirl.Text = "报时语音舰娘:";
+            lblKanGirl.AutoSize = true;
+            lblKanGirl.Location = new Point(19, 199);
+            lblKanGirl.Margin = new Padding(5, 0, 5, 0);
+            lblKanGirl.Name = "lblKanGirl";
+            lblKanGirl.Size = new Size(122, 24);
+            lblKanGirl.TabIndex = 6;
+            lblKanGirl.Text = "报时语音舰娘:";
             // 
             // lblTime
             // 
-            this.lblTime.AutoSize = true;
-            this.lblTime.Location = new System.Drawing.Point(19, 313);
-            this.lblTime.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
-            this.lblTime.Name = "lblTime";
-            this.lblTime.Size = new System.Drawing.Size(230, 24);
-            this.lblTime.TabIndex = 7;
-            this.lblTime.Text = "在勾选的时间发送报时消息:";
+            lblTime.AutoSize = true;
+            lblTime.Location = new Point(19, 313);
+            lblTime.Margin = new Padding(5, 0, 5, 0);
+            lblTime.Name = "lblTime";
+            lblTime.Size = new Size(230, 24);
+            lblTime.TabIndex = 7;
+            lblTime.Text = "在勾选的时间发送报时消息:";
             // 
             // chkSendChineseText
             // 
-            this.chkSendChineseText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkSendChineseText.AutoSize = true;
-            this.chkSendChineseText.Location = new System.Drawing.Point(19, 510);
-            this.chkSendChineseText.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.chkSendChineseText.Name = "chkSendChineseText";
-            this.chkSendChineseText.Size = new System.Drawing.Size(144, 28);
-            this.chkSendChineseText.TabIndex = 8;
-            this.chkSendChineseText.Text = "发送中文文字";
-            this.chkSendChineseText.UseVisualStyleBackColor = true;
+            chkSendChineseText.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            chkSendChineseText.AutoSize = true;
+            chkSendChineseText.Location = new Point(19, 510);
+            chkSendChineseText.Margin = new Padding(5, 4, 5, 4);
+            chkSendChineseText.Name = "chkSendChineseText";
+            chkSendChineseText.Size = new Size(144, 28);
+            chkSendChineseText.TabIndex = 8;
+            chkSendChineseText.Text = "发送中文文字";
+            chkSendChineseText.UseVisualStyleBackColor = true;
             // 
             // chkSendJapaneseText
             // 
-            this.chkSendJapaneseText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkSendJapaneseText.AutoSize = true;
-            this.chkSendJapaneseText.Location = new System.Drawing.Point(184, 510);
-            this.chkSendJapaneseText.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.chkSendJapaneseText.Name = "chkSendJapaneseText";
-            this.chkSendJapaneseText.Size = new System.Drawing.Size(144, 28);
-            this.chkSendJapaneseText.TabIndex = 9;
-            this.chkSendJapaneseText.Text = "发送日文文字";
-            this.chkSendJapaneseText.UseVisualStyleBackColor = true;
+            chkSendJapaneseText.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            chkSendJapaneseText.AutoSize = true;
+            chkSendJapaneseText.Location = new Point(184, 510);
+            chkSendJapaneseText.Margin = new Padding(5, 4, 5, 4);
+            chkSendJapaneseText.Name = "chkSendJapaneseText";
+            chkSendJapaneseText.Size = new Size(144, 28);
+            chkSendJapaneseText.TabIndex = 9;
+            chkSendJapaneseText.Text = "发送日文文字";
+            chkSendJapaneseText.UseVisualStyleBackColor = true;
             // 
             // chkSelectAll
             // 
-            this.chkSelectAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.chkSelectAll.AutoSize = true;
-            this.chkSelectAll.Location = new System.Drawing.Point(560, 313);
-            this.chkSelectAll.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.chkSelectAll.Name = "chkSelectAll";
-            this.chkSelectAll.Size = new System.Drawing.Size(72, 28);
-            this.chkSelectAll.TabIndex = 10;
-            this.chkSelectAll.Text = "全选";
-            this.chkSelectAll.UseVisualStyleBackColor = true;
-            this.chkSelectAll.CheckedChanged += new System.EventHandler(this.chkSelectAll_CheckedChanged);
+            chkSelectAll.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            chkSelectAll.AutoSize = true;
+            chkSelectAll.Location = new Point(560, 313);
+            chkSelectAll.Margin = new Padding(5, 4, 5, 4);
+            chkSelectAll.Name = "chkSelectAll";
+            chkSelectAll.Size = new Size(72, 28);
+            chkSelectAll.TabIndex = 10;
+            chkSelectAll.Text = "全选";
+            chkSelectAll.UseVisualStyleBackColor = true;
+            chkSelectAll.CheckedChanged += chkSelectAll_CheckedChanged;
             // 
             // lblGoCqhttpInfoFront
             // 
-            this.lblGoCqhttpInfoFront.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblGoCqhttpInfoFront.AutoSize = true;
-            this.lblGoCqhttpInfoFront.Location = new System.Drawing.Point(19, 542);
-            this.lblGoCqhttpInfoFront.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
-            this.lblGoCqhttpInfoFront.Name = "lblGoCqhttpInfoFront";
-            this.lblGoCqhttpInfoFront.Size = new System.Drawing.Size(360, 24);
-            this.lblGoCqhttpInfoFront.TabIndex = 11;
-            this.lblGoCqhttpInfoFront.Text = "如果您使用的是go-cqhttp平台, 需要先安装";
+            lblGoCqhttpInfoFront.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            lblGoCqhttpInfoFront.AutoSize = true;
+            lblGoCqhttpInfoFront.Location = new Point(19, 542);
+            lblGoCqhttpInfoFront.Margin = new Padding(5, 0, 5, 0);
+            lblGoCqhttpInfoFront.Name = "lblGoCqhttpInfoFront";
+            lblGoCqhttpInfoFront.Size = new Size(360, 24);
+            lblGoCqhttpInfoFront.TabIndex = 11;
+            lblGoCqhttpInfoFront.Text = "如果您使用的是go-cqhttp平台, 需要先安装";
             // 
             // lblGoCqhttpInfoBack
             // 
-            this.lblGoCqhttpInfoBack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblGoCqhttpInfoBack.AutoSize = true;
-            this.lblGoCqhttpInfoBack.Location = new System.Drawing.Point(464, 542);
-            this.lblGoCqhttpInfoBack.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
-            this.lblGoCqhttpInfoBack.Name = "lblGoCqhttpInfoBack";
-            this.lblGoCqhttpInfoBack.Size = new System.Drawing.Size(172, 24);
-            this.lblGoCqhttpInfoBack.TabIndex = 12;
-            this.lblGoCqhttpInfoBack.Text = "才能支持发送语音。";
+            lblGoCqhttpInfoBack.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            lblGoCqhttpInfoBack.AutoSize = true;
+            lblGoCqhttpInfoBack.Location = new Point(464, 542);
+            lblGoCqhttpInfoBack.Margin = new Padding(5, 0, 5, 0);
+            lblGoCqhttpInfoBack.Name = "lblGoCqhttpInfoBack";
+            lblGoCqhttpInfoBack.Size = new Size(172, 24);
+            lblGoCqhttpInfoBack.TabIndex = 12;
+            lblGoCqhttpInfoBack.Text = "才能支持发送语音。";
             // 
             // lnkFFMPEG
             // 
-            this.lnkFFMPEG.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lnkFFMPEG.AutoSize = true;
-            this.lnkFFMPEG.LinkColor = System.Drawing.Color.Blue;
-            this.lnkFFMPEG.Location = new System.Drawing.Point(391, 542);
-            this.lnkFFMPEG.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
-            this.lnkFFMPEG.Name = "lnkFFMPEG";
-            this.lnkFFMPEG.Size = new System.Drawing.Size(73, 24);
-            this.lnkFFMPEG.TabIndex = 13;
-            this.lnkFFMPEG.TabStop = true;
-            this.lnkFFMPEG.Text = "ffmpeg";
-            this.lnkFFMPEG.VisitedLinkColor = System.Drawing.Color.Blue;
-            this.lnkFFMPEG.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkFFMPEG_LinkClicked);
+            lnkFFMPEG.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            lnkFFMPEG.AutoSize = true;
+            lnkFFMPEG.LinkColor = Color.Blue;
+            lnkFFMPEG.Location = new Point(391, 542);
+            lnkFFMPEG.Margin = new Padding(5, 0, 5, 0);
+            lnkFFMPEG.Name = "lnkFFMPEG";
+            lnkFFMPEG.Size = new Size(73, 24);
+            lnkFFMPEG.TabIndex = 13;
+            lnkFFMPEG.TabStop = true;
+            lnkFFMPEG.Text = "ffmpeg";
+            lnkFFMPEG.VisitedLinkColor = Color.Blue;
+            lnkFFMPEG.LinkClicked += lnkFFMPEG_LinkClicked;
             // 
-            // FrmKanCollectionTimeAnnouncerSettings
+            // btnTest
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(651, 579);
-            this.Controls.Add(this.lnkFFMPEG);
-            this.Controls.Add(this.lblGoCqhttpInfoFront);
-            this.Controls.Add(this.chkSendJapaneseText);
-            this.Controls.Add(this.chkSendChineseText);
-            this.Controls.Add(this.lblTime);
-            this.Controls.Add(this.lblKanGirl);
-            this.Controls.Add(this.lblGroup);
-            this.Controls.Add(this.pnlTime);
-            this.Controls.Add(this.pnlKanGirl);
-            this.Controls.Add(this.pnlGroup);
-            this.Controls.Add(this.chkSelectAll);
-            this.Controls.Add(this.lblGoCqhttpInfoBack);
-            this.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "FrmKanCollectionTimeAnnouncerSettings";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "舰C报时-设置";
-            this.pnlGroup.ResumeLayout(false);
-            this.pnlGroup.PerformLayout();
-            this.pnlKanGirl.ResumeLayout(false);
-            this.pnlKanGirl.PerformLayout();
-            this.pnlTime.ResumeLayout(false);
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            btnTest.Location = new Point(519, 505);
+            btnTest.Name = "btnTest";
+            btnTest.Size = new Size(112, 34);
+            btnTest.TabIndex = 14;
+            btnTest.Text = "测试下载";
+            btnTest.UseVisualStyleBackColor = true;
+            btnTest.Click += btnTest_Click;
+            // 
+            // FrmKanCollectionTimeAnnouncerSetting
+            // 
+            AutoScaleDimensions = new SizeF(11F, 24F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(651, 579);
+            Controls.Add(btnTest);
+            Controls.Add(lnkFFMPEG);
+            Controls.Add(lblGoCqhttpInfoFront);
+            Controls.Add(chkSendJapaneseText);
+            Controls.Add(chkSendChineseText);
+            Controls.Add(lblTime);
+            Controls.Add(lblKanGirl);
+            Controls.Add(lblGroup);
+            Controls.Add(pnlTime);
+            Controls.Add(pnlKanGirl);
+            Controls.Add(pnlGroup);
+            Controls.Add(chkSelectAll);
+            Controls.Add(lblGoCqhttpInfoBack);
+            Margin = new Padding(5, 4, 5, 4);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "FrmKanCollectionTimeAnnouncerSetting";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "舰C报时-设置";
+            pnlGroup.ResumeLayout(false);
+            pnlGroup.PerformLayout();
+            pnlKanGirl.ResumeLayout(false);
+            pnlKanGirl.PerformLayout();
+            pnlTime.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -357,5 +359,6 @@
         private Label lblGoCqhttpInfoFront;
         private Label lblGoCqhttpInfoBack;
         private LinkLabel lnkFFMPEG;
+        private Button btnTest;
     }
 }

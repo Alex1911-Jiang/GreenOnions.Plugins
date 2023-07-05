@@ -10,14 +10,16 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
 {
     internal class MoeGirlHelper
     {
+        private KanCollectionConfig _config;
         private string _pluginPath;
         private CancellationToken _token;
         private IGreenOnionsApi _api;
         private IBotConfig _botConfig;
 
-        internal MoeGirlHelper(string pluginPath, IGreenOnionsApi api, IBotConfig botConfig, CancellationToken token)
+        internal MoeGirlHelper(string pluginPath, KanCollectionConfig config, IGreenOnionsApi api, IBotConfig botConfig, CancellationToken token)
         {
             _pluginPath = pluginPath;
+            _config = config;
             _api = api;
             _botConfig = botConfig;
             _token = token;
@@ -59,6 +61,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
             {
                 return new List<string>();
             }
+
 
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(html);
@@ -154,7 +157,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                 string chsFileName = Path.Combine(mp3Path, $"{hour}_Chinese.txt");
                 if (File.Exists(mp3FileName) && new FileInfo(mp3FileName).Length > 0 && File.Exists(chsFileName) && new FileInfo(chsFileName).Length > 0 && File.Exists(jpnFileName) && new FileInfo(jpnFileName).Length > 0)
                 {
-                    return new KanGirlVoiceItem(mp3FileName, File.ReadAllText(jpnFileName), File.ReadAllText(chsFileName));
+                    return new KanGirlVoiceItem(mp3FileName, File.ReadAllText(chsFileName), File.ReadAllText(jpnFileName));
                 }
 
                 using (HttpClient client = new HttpClient())
@@ -242,9 +245,11 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                 {
                     var res = await client.GetAsync(item.Mp3UrlOrFileName, _token);
                     byte[] mp3Bytes = await res.Content.ReadAsByteArrayAsync(_token);
-                    await File.WriteAllBytesAsync(Path.Combine(mp3Path, $"{hour}.mp3"), mp3Bytes, _token);
+                    string localFileName = Path.Combine(mp3Path, $"{hour}.mp3");
+                    await File.WriteAllBytesAsync(localFileName, mp3Bytes, _token);
                     await File.WriteAllTextAsync(Path.Combine(mp3Path, $"{hour}_Japanese.txt"), item.JapaneseText, _token);
                     await File.WriteAllTextAsync(Path.Combine(mp3Path, $"{hour}_Chinese.txt"), item.ChineseText, _token);
+                    item.Mp3UrlOrFileName = localFileName;
                 }
             }
             catch (Exception ex)

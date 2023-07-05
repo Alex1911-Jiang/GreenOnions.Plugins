@@ -8,7 +8,7 @@
         /// <summary>
         /// 语音Url
         /// </summary>
-        public string Mp3UrlOrFileName { get; }
+        public string Mp3UrlOrFileName { get; set; }
         /// <summary>
         /// 日文文本
         /// </summary>
@@ -21,8 +21,8 @@
         internal KanGirlVoiceItem(string mp3UrlOrFileName, string chineseText, string japanText)
         {
             Mp3UrlOrFileName = mp3UrlOrFileName;
-            JapaneseText = japanText;
             ChineseText = chineseText;
+            JapaneseText = japanText;
         }
     }
 }
