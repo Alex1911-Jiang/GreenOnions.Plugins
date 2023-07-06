@@ -51,7 +51,7 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                     }
 
                     //没有获取报时语音地址
-                    _nextHourVoiceItem  ??= await _moeGirlHelper!.GetNextHourVoiceUrlAsync(_config, nextHour);  //预先下载好音频
+                    _nextHourVoiceItem ??= await _moeGirlHelper!.GetNextHourVoiceUrlAsync(_config, nextHour);  //预先下载好音频
 
                     TimeOnly t = TimeOnly.FromDateTime(DateTime.Now);
 
@@ -65,13 +65,13 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                         GreenOnionsVoiceMessage voiceMsg = new GreenOnionsVoiceMessage(_nextHourVoiceItem!.Mp3UrlOrFileName);  //音频消息
 
                         //发送报时消息
-                        for (int j = 0; j < _config.DesignatedGroups.Count; j++)
+                        foreach (var group in _config.DesignatedGroups)
                         {
-                            if (_config.SendJapaneseText)
-                                await _botApi!.SendGroupMessageAsync(_config.DesignatedGroups[j], _nextHourVoiceItem!.JapaneseText);
                             if (_config.SendChineseText)
-                                await _botApi!.SendGroupMessageAsync(_config.DesignatedGroups[j], _nextHourVoiceItem!.ChineseText);
-                            await _botApi!.SendGroupMessageAsync(_config.DesignatedGroups[j], voiceMsg);
+                                await _botApi!.SendGroupMessageAsync(group, _nextHourVoiceItem!.ChineseText);
+                            if (_config.SendJapaneseText)
+                                await _botApi!.SendGroupMessageAsync(group, _nextHourVoiceItem!.JapaneseText);
+                            await _botApi!.SendGroupMessageAsync(group, voiceMsg);
                         }
                         _nextHourVoiceItem = null;
 
@@ -83,6 +83,10 @@ namespace GreenOnions.KanCollectionTimeAnnouncer
                 }
                 catch (TaskCanceledException)
                 {
+                }
+                catch (Exception ex)
+                {
+                    _botApi.SendMessageToAdmins($"葱葱报时插件发送消息异常。{ex.Message}");
                 }
             }
         }

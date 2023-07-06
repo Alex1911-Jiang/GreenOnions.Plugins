@@ -38,8 +38,8 @@ namespace GreenOnions.PluginConfigEditor.KanCollectionTimeAnnouncer
 
             rdoDesignateGroup.Checked = _config!.DesignateGroup;
             rdoAllGroup.Checked = !_config.DesignateGroup;
-            for (int i = 0; i < _config.DesignatedGroups.Count; i++)
-                txbDesignatedGroups.AppendText($"{_config.DesignatedGroups[i]}\r\n");
+            foreach (var group in _config.DesignatedGroups)
+                txbDesignatedGroups.AppendText($"{group}\r\n");
 
             rdoDesignateKanGirl.Checked = _config.DesignateKanGirl;
             rdoRandomKanGirl.Checked = !_config.DesignateKanGirl;
@@ -83,7 +83,7 @@ namespace GreenOnions.PluginConfigEditor.KanCollectionTimeAnnouncer
             if (cboDesignatedKanGirl.DataSource != null)
             {
                 _config.DesignateGroup = rdoDesignateGroup.Checked;
-                _config.DesignatedGroups = new List<long>();
+                _config.DesignatedGroups = new HashSet<long>();
                 foreach (string strGroup in txbDesignatedGroups.Text.Split("\r\n"))
                 {
                     if (long.TryParse(strGroup, out long lGroup))

@@ -9,7 +9,7 @@
         /// <summary>
         /// 指定的群
         /// </summary>
-        public List<long> DesignatedGroups { get; set; } = new List<long>();
+        public HashSet<long> DesignatedGroups { get; set; } = new HashSet<long>();
         /// <summary>
         /// 是否指定舰娘
         /// </summary>
