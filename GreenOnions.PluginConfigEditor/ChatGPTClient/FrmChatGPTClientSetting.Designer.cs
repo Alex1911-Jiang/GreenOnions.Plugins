@@ -312,9 +312,8 @@
             // 
             // cboModel
             // 
-            cboModel.DropDownStyle = ComboBoxStyle.DropDownList;
             cboModel.FormattingEnabled = true;
-            cboModel.Items.AddRange(new object[] { "gpt-3.5-turbo", "gpt-3.5-turbo-0301", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613", "gpt-4", "gpt-4-0613", "gpt-4-32k", "gpt-4-32k-0613", "NewBing" });
+            cboModel.Items.AddRange(new object[] { "gpt-3.5-turbo", "gpt-3.5-turbo-0301", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613", "gpt-4", "gpt-4-0613", "gpt-4-32k", "gpt-4-32k-0613", "gpt-4-turbo", "gpt-4o", "gpt-4o-mini", "NewBing" });
             cboModel.Location = new Point(348, 86);
             cboModel.Name = "cboModel";
             cboModel.Size = new Size(343, 32);
