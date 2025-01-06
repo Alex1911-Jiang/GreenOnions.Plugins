@@ -27,19 +27,19 @@ namespace GreenOnions.NT.HPictures
         /// Pixiv代理地址
         /// </summary>
         [YamlMember(Description = "Pixiv代理地址")]
-        public string PrixvProxy { get; set; } = "pixiv.re";
+        public string PrixvProxy { get; set; } = "i.pixiv.re";
 
         /// <summary>
         /// 启用的色图图库
         /// </summary>
-        [YamlMember(Description = "启用的图库（支持Lolicon,Yande_re,Lolisuki3,Yuban10703,Lolibooru,Konachan_net）")]
+        [YamlMember(Description = "启用的图库（支持Lolicon,Yande_re,Lolisuki,Yuban10703,Konachan_net）")]
         public HashSet<HPictureSource> EnabledSource { get; set; } = new HashSet<HPictureSource>() { HPictureSource.Lolicon };
 
         /// <summary>
         /// 使用浏览器请求Lolicon Api
         /// </summary>
-        [YamlMember(Description = "使用浏览器请求Lolicon（解决 Windows Server 2012 R2 没有钥匙串导致无法建立安全连接的问题）")]
-        public bool LoliconRequestByChromium { get; set; } = false;
+        [YamlMember(Description = "使用浏览器请求接口（解决 Windows Server 2012 R2 没有钥匙串导致无法建立安全连接的问题）")]
+        public bool RequestApiByChromium { get; set; } = false;
 
         /// <summary>
         /// 反和谐（需要先开启 所有图片下载到本地发送文件 功能）

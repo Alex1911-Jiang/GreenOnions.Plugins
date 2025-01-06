@@ -4,9 +4,8 @@
     {
         Lolicon,
         Yande_re,
-        Lolisuki3,
+        Lolisuki,
         Yuban10703,
-        Lolibooru,
         Konachan_net,
     }
 }

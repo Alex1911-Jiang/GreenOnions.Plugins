@@ -2,6 +2,7 @@
 using GreenOnions.NT.Base;
 using GreenOnions.NT.HPictures.Clients;
 using GreenOnions.NT.HPictures.Enums;
+using GreenOnions.NT.HPictures.Helpers;
 using Lagrange.Core;
 using Lagrange.Core.Common.Interface.Api;
 using Lagrange.Core.Event.EventArg;
@@ -14,7 +15,7 @@ namespace GreenOnions.NT.HPictures
     {
         private Config? _config;
         private ICommonConfig? _commonConfig;
-        public Regex? ModuleRegex { get; private set; }
+        private Regex? _commandRegex;
 
         public string Name => "随机色图";
 
@@ -23,7 +24,7 @@ namespace GreenOnions.NT.HPictures
         public void OnConfigUpdate(ICommonConfig commonConfig)
         {
             _commonConfig = commonConfig;
-            ModuleRegex = new Regex(_config!.Command.Replace("<机器人名称>", commonConfig.BotName));
+            _commandRegex = new Regex(_config!.Command.Replace("<机器人名称>", commonConfig.BotName));
         }
 
         public void OnLoad(string pluginPath, BotContext bot, ICommonConfig commonConfig)
@@ -41,7 +42,7 @@ namespace GreenOnions.NT.HPictures
 
             File.WriteAllText(configPath, YamlConvert.SerializeObject(_config));
 
-            ModuleRegex = new Regex(_config.Command.Replace("<机器人名称>", commonConfig.BotName));
+            _commandRegex = new Regex(_config.Command.Replace("<机器人名称>", commonConfig.BotName));
 
             bot.Invoker.OnFriendMessageReceived += OnFriendMessage;
             bot.Invoker.OnGroupMessageReceived += OnGroupMessage;
@@ -72,6 +73,9 @@ namespace GreenOnions.NT.HPictures
                 return;
             }
 
+            if (!_config.Enabled)  //没有启用色图
+                return;
+
             if (_commonConfig.DebugMode && chain.GroupUin is not null && !_commonConfig.DebugGroups.Contains(chain.GroupUin.Value))
                 return;
             if (_commonConfig.DebugMode && chain.GroupUin is null && !_commonConfig.AdminQQ.Contains(chain.FriendUin))
@@ -96,37 +100,89 @@ namespace GreenOnions.NT.HPictures
                     return;
                 }
 
-                LogHelper.LogMessage($"开始为 {chain.FriendUin} 查找色图");
-                await context.ReplyAsync(chain, _config.DownloadingReply);  //开始查找回复
-
-                await SendHPictures(_commonConfig, _config, context, chain);
+                await SendHPictures("", 1, false, _commonConfig, _config, context, chain);
                 return;
             }
+
+            if (_commandRegex is null)
+            {
+                LogHelper.LogWarning("没有色图命令匹配式");
+                return;
+            }
+
+            //常规色图命令
+            if (!_commandRegex!.IsMatch(msg))  //命中常规色图命令
+                return;
+
+            Match matchHPcitureCmd = _commandRegex!.Match(msg);
+
+            LogHelper.LogMessage($"{chain.FriendUin}的消息命中了常规色图命令");
+            if (!await CheckPermissions(context, _commonConfig, _config, chain))  //检查权限
+            {
+                LogHelper.LogMessage($"{chain.FriendUin}无权使用色图");
+                return;
+            }
+
+            (string keyword, int num, bool r18) = RegexMatchHelper.ExtractParameter(matchHPcitureCmd);
+
+            if (num < 1)
+            {
+                LogHelper.LogMessage($"{chain.FriendUin}请求了少于1张色图，不响应命令");
+                return;
+            }
+
+            num = GetHPictureQuota(num, _commonConfig, _config, chain);  //剩余次数
+
+            if (num < 1) //请求大于等于1张，但次数已耗尽
+            {
+                LogHelper.LogMessage($"{chain.FriendUin}色图次数耗尽");
+                await context.ReplyAsync(chain, _config.OutOfLimitReply);  //次数用尽
+                return;
+            }
+
+            if (_config.ShieldingWords.Contains(keyword))  //屏蔽词
+            {
+                LogHelper.LogMessage($"{chain.FriendUin}的色图命令 '{msg}' 中包含屏蔽词，不响应该命令");
+                return;
+            }
+
+            if (r18 && !_config.AllowR18)  //不允许R18
+                return;
+            if (r18 && chain.GroupUin is uint groupUin && _config.R18WhiteGroupOnly && _config.WhiteGroup.Contains(groupUin))  // 仅限白名单但此群不在白名单中, 不响应R18命令
+                return;
+
+            await SendHPictures(keyword, num, r18, _commonConfig, _config, context, chain);
         }
 
-        private async Task SendHPictures(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain)
+        private async Task SendHPictures(string keyword, int num, bool r18, ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain)
         {
             HPictureSource pictureSource = RandomHPictureSource(config);
 
+            LogHelper.LogMessage($"开始为 {chain.FriendUin} 在 {pictureSource} 查找色图");
+
+            await context.ReplyAsync(chain, config.DownloadingReply);  //开始查找回复
+
             IAsyncEnumerable<MessageBuilder> builders = pictureSource switch
             {
-                HPictureSource.Lolicon => LoliconClient.CreateMessage("", 1, false, config, commonConfig, context, chain),
-                HPictureSource.Yande_re => throw new NotImplementedException(),
-                HPictureSource.Lolisuki3 => throw new NotImplementedException(),
-                HPictureSource.Yuban10703 => throw new NotImplementedException(),
-                HPictureSource.Lolibooru => throw new NotImplementedException(),
-                HPictureSource.Konachan_net => throw new NotImplementedException(),
+                HPictureSource.Lolicon => LoliconClient.CreateMessage(keyword, num, r18, config, commonConfig, context, chain),
+                HPictureSource.Yande_re => Yande_re_Client.CreateMessage(keyword, num, r18, config, commonConfig, context, chain),
+                HPictureSource.Lolisuki => LolisukiClient.CreateMessage(keyword, num, r18, config, commonConfig, context, chain),
+                HPictureSource.Yuban10703 => Yuban10703Client.CreateMessage(keyword, num, r18, config, commonConfig, context, chain),
+                HPictureSource.Konachan_net => Konachan_net_Client.CreateMessage(keyword, num, r18, config, commonConfig, context, chain),
                 _ => throw new NotImplementedException("图库设置有误或指定图库已失效，请联系机器人管理员"),
             };
 
-            await foreach (var builder in builders)
+            bool anySuccess = false;
+
+            try
             {
-                try
+                await foreach (var builder in builders)
                 {
                     if (chain.GroupUin is null)
                     {
                         MessageResult messageResult = await context.SendMessage(builder.Build());
                         RecordLimit(commonConfig, config, chain, LimitType.Number);  //记录张数限制
+                        anySuccess = true;
                         if (config.PrivateMessageRecallSecond > 0)
                             _ = Task.Delay(1000 * config.PrivateMessageRecallSecond).ContinueWith(_ => context.RecallFriendMessage(chain.FriendUin, messageResult));
                     }
@@ -134,6 +190,7 @@ namespace GreenOnions.NT.HPictures
                     {
                         MessageResult messageResult = await context.SendMessage(builder.Build());
                         RecordLimit(commonConfig, config, chain, LimitType.Number);  //记录张数限制
+                        anySuccess = true;
                         Task delay;
                         if (config.WhiteGroup.Contains(chain.GroupUin.Value) && config.WhiteGroupRecallSecond > 0)
                             delay = Task.Delay(1000 * config.WhiteGroupRecallSecond);
@@ -144,11 +201,13 @@ namespace GreenOnions.NT.HPictures
                         _ = delay.ContinueWith(_ => context.RecallGroupMessage(chain.GroupUin.Value, messageResult));
                     }
                 }
-                catch (Exception ex)
-                {
-                    await context.ReplyAsync(chain, config.ErrorReply.Replace("<错误信息>", ex.Message));
-                }
             }
+            catch (Exception ex)
+            {
+                await context.ReplyAsync(chain, config.ErrorReply.Replace("<错误信息>", ex.Message));
+            }
+            if (!anySuccess)
+                return;
             RecordLimit(commonConfig, config, chain, LimitType.Frequency);  //记录次数限制
         }
 
@@ -188,12 +247,6 @@ namespace GreenOnions.NT.HPictures
         /// </summary>
         private async Task<bool> CheckPermissions(BotContext bot, ICommonConfig commonConfig, Config config, MessageChain chain)
         {
-            if (!config.Enabled)  //没有启用色图
-            {
-                LogHelper.LogMessage($"没有启用色图插件，不响应命令");
-                return false;
-            }
-
             if (GetHPictureQuota(1, commonConfig, config, chain) <= 0)
             {
                 LogHelper.LogMessage($"{chain.FriendUin}色图次数耗尽");
@@ -208,21 +261,16 @@ namespace GreenOnions.NT.HPictures
                 return false;
             }
 
-            if (chain.GroupUin is null)
+            if (chain.GroupUin is null && !config.AllowPrivateMessage)//私聊 并且不允许私聊
             {
-                if (!config.AllowPrivateMessage) //不允许私聊
-                {
-                    LogHelper.LogMessage($"没有启动私聊色图，不响应私聊色图命令");
-                    return false;
-                }
+                LogHelper.LogMessage($"没有启动私聊色图，不响应私聊色图命令");
+                return false;
             }
-            else
+
+            if (chain.GroupUin is not null && config.WhiteGroupOnly && !config.WhiteGroup.Contains(chain.GroupUin.Value))  //群聊 且仅限白名单，但当前群不在白名单中
             {
-                if (config.WhiteGroupOnly && !config.WhiteGroup.Contains(chain.GroupUin.Value))  //仅限白名单但当前群不在白名单中
-                {
-                    LogHelper.LogMessage($"启用了仅限白名单但{chain.GroupUin.Value}不在白名单中");
-                    return false;
-                }
+                LogHelper.LogMessage($"启用了仅限白名单但{chain.GroupUin.Value}不在白名单中");
+                return false;
             }
             return true;
         }
