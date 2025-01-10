@@ -15,7 +15,7 @@ namespace GreenOnions.NT.HPictures
         /// 色图完整命令(正则表达式)
         /// </summary>
         [YamlMember(Description = "色图命令(正则表达式)")]
-        public string Command { get; set; } = "(?<前缀><机器人名称>[我再]?[要来來发發给給])(?<数量>[0-9零一壹二两贰兩三叁四肆五伍六陆陸七柒八捌九玖十拾百佰千仟万萬亿億]+)?(?<单位>[张張个個幅份])(?<r18>[Rr]-?18的?)?(?<关键词>.+?)?(?<色图后缀>[的得地滴の]?[色瑟涩铯啬渋][图圖図])";
+        public string Command { get; set; } = "(?<前缀><机器人名称>[我再]?[要来來发發给給])(?<数量>[0-9零一壹二两贰兩三叁四肆五伍六陆陸七柒八捌九玖十拾百佰千仟万萬亿億]+)?(?<单位>[张張个個幅份])(?<r18>[Rr]-?18的?)?(?<关键词>.+?)?(?<后缀>[的得地滴の]?[色瑟涩铯啬渋][图圖図])";
 
         /// <summary>
         /// 使用代理
@@ -218,7 +218,7 @@ namespace GreenOnions.NT.HPictures
         /// <summary>
         /// 一条色图命令最多允许返回多少张色图
         /// </summary>
-        [YamlMember(Description = "单次请求最大图片数量(支持1-20, 不建议超过10, 容易导致无法撤回)")]
+        [YamlMember(Description = "单次请求最大图片数量(支持1-20, 不建议超过10, 容易无法撤回)")]
         public int OnceMessageMaxImageCount { get; set; } = 10;
 
     }

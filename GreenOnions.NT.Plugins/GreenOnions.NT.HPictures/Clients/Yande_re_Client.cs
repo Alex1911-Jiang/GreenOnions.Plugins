@@ -15,6 +15,8 @@ namespace GreenOnions.NT.HPictures.Clients
                 _api = await YandeClient.CreateNew(true, false, keyword, config.UseProxy ? commonConfig.ProxyUrl : null);
             _lastTag = keyword;
 
+            LogHelper.LogMessage($"在Yande.re查找{num}张{(r18 ? "R-18" : "")}的{keyword}色图");
+
             await foreach (var item in Base_Yande_re_Client.CreateMessage(_api, keyword, num, r18, config, commonConfig, context, chain))
                 yield return item;
         }

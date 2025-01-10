@@ -13,6 +13,8 @@ namespace GreenOnions.NT.HPictures.Clients
     {
         internal static async IAsyncEnumerable<MessageBuilder> CreateMessage(string keyword, int num, bool r18, Config config, ICommonConfig commonConfig, BotContext context, MessageChain chain)
         {
+            LogHelper.LogMessage($"在Yuban10703C查找{num}张{(r18 ? "R-18" : "")}的{keyword}色图");
+
             string keywordParam = keyword.KeyworkToParams();
             string numParam = $"num={num}";
             string r18Param = $"r18={(r18 ? 1 : 0)}";
@@ -40,7 +42,7 @@ namespace GreenOnions.NT.HPictures.Clients
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, $"访问 Yuban10703 色图API发生错误，请求地址为：{strUrl}");
+                LogHelper.LogException(ex, $"访问Yuban10703色图API发生错误，请求地址为：{strUrl}");
                 throw;
             }
             Yuban10703RestResult? restResult = JsonConvert.DeserializeObject<Yuban10703RestResult>(respJson);

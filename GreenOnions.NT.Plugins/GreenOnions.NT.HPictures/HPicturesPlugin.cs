@@ -93,7 +93,7 @@ namespace GreenOnions.NT.HPictures
             //自定义色图命令
             if (_config.UserCmd.Contains(msg))  //命中自定义色图命令
             {
-                LogHelper.LogMessage($"{chain.FriendUin}的消息 '{msg}' 命中了自定义色图命令");
+                LogHelper.LogMessage($"{chain.FriendUin}的消息'{msg}'命中了自定义色图命令");
                 if (!await CheckPermissions(context, _commonConfig, _config, chain))  //检查权限
                 {
                     LogHelper.LogMessage($"{chain.FriendUin}无权使用色图");
@@ -111,12 +111,12 @@ namespace GreenOnions.NT.HPictures
             }
 
             //常规色图命令
-            if (!_commandRegex!.IsMatch(msg))  //命中常规色图命令
+            if (!_commandRegex.IsMatch(msg))  //命中常规色图命令
                 return;
 
-            Match matchHPcitureCmd = _commandRegex!.Match(msg);
+            Match matchHPcitureCmd = _commandRegex.Match(msg);
 
-            LogHelper.LogMessage($"{chain.FriendUin}的消息命中了常规色图命令");
+            LogHelper.LogMessage($"{chain.FriendUin}的消息'{msg}'命中了常规色图命令");
             if (!await CheckPermissions(context, _commonConfig, _config, chain))  //检查权限
             {
                 LogHelper.LogMessage($"{chain.FriendUin}无权使用色图");
@@ -131,6 +131,9 @@ namespace GreenOnions.NT.HPictures
                 return;
             }
 
+            if (num > _config.OnceMessageMaxImageCount)
+                num = _config.OnceMessageMaxImageCount;
+
             num = GetHPictureQuota(num, _commonConfig, _config, chain);  //剩余次数
 
             if (num < 1) //请求大于等于1张，但次数已耗尽
@@ -142,7 +145,7 @@ namespace GreenOnions.NT.HPictures
 
             if (_config.ShieldingWords.Contains(keyword))  //屏蔽词
             {
-                LogHelper.LogMessage($"{chain.FriendUin}的色图命令 '{msg}' 中包含屏蔽词，不响应该命令");
+                LogHelper.LogMessage($"{chain.FriendUin}的色图命令'{msg}'中包含屏蔽词，不响应该命令");
                 return;
             }
 
@@ -158,7 +161,7 @@ namespace GreenOnions.NT.HPictures
         {
             HPictureSource pictureSource = RandomHPictureSource(config);
 
-            LogHelper.LogMessage($"开始为 {chain.FriendUin} 在 {pictureSource} 查找色图");
+            LogHelper.LogMessage($"开始为{chain.FriendUin}在{pictureSource}查找色图");
 
             await context.ReplyAsync(chain, config.DownloadingReply);  //开始查找回复
 
@@ -180,6 +183,7 @@ namespace GreenOnions.NT.HPictures
                 {
                     if (chain.GroupUin is null)
                     {
+                        LogHelper.LogMessage($"向好友{chain.FriendUin}发送色图");
                         MessageResult messageResult = await context.SendMessage(builder.Build());
                         RecordLimit(commonConfig, config, chain, LimitType.Number);  //记录张数限制
                         anySuccess = true;
@@ -188,6 +192,7 @@ namespace GreenOnions.NT.HPictures
                     }
                     else
                     {
+                        LogHelper.LogMessage($"向群{chain.GroupUin}发送色图");
                         MessageResult messageResult = await context.SendMessage(builder.Build());
                         RecordLimit(commonConfig, config, chain, LimitType.Number);  //记录张数限制
                         anySuccess = true;

@@ -41,7 +41,7 @@ namespace GreenOnions.NT.HPictures.Clients
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, $"访问 {apiName} 色图API发生错误，请求地址为：{strUrl}");
+                LogHelper.LogException(ex, $"访问{apiName}色图API发生错误，请求地址为：{strUrl}");
                 throw;
             }
             LoliconRestResult? restResult = JsonConvert.DeserializeObject<LoliconRestResult>(respJson);
@@ -74,19 +74,28 @@ namespace GreenOnions.NT.HPictures.Clients
                 if (config.SendTags)
                     sb.AppendLine($"标签:{string.Join(',', item.tags)}");
 
+                MessageBuilder msg;
+
+                if (chain.GroupUin is null)
+                    msg = MessageBuilder.Friend(chain.FriendUin).Text(sb.ToString());
+                else
+                    msg = MessageBuilder.Group(chain.GroupUin.Value).Forward(chain).Text(sb.ToString());
+
                 HttpClientHandler httpClientHandler = new HttpClientHandler();
                 if (config.UseProxy && !string.IsNullOrWhiteSpace(commonConfig.ProxyUrl)) { httpClientHandler.Proxy = new WebProxy(commonConfig.ProxyUrl) { Credentials = new NetworkCredential(commonConfig.ProxyUserName, commonConfig.ProxyPassword) }; }
                 using HttpClient client = new HttpClient(httpClientHandler);
 
-                byte[] img = await client.GetByteArrayAsync(item.urls.original);
+                var resp = await client.GetAsync(item.urls.original);
+
+                if (!resp.IsSuccessStatusCode)
+                    yield return msg.Text(config.DownloadFailReply.Replace("<错误信息>", $"{(int)resp.StatusCode} {resp.StatusCode}"));
+
+                byte[] img = await resp.Content.ReadAsByteArrayAsync();
 
                 if (config.AntiShielding)
                     img = ImageHelper.AntiShielding(img);
 
-                if (chain.GroupUin is null)
-                    yield return MessageBuilder.Friend(chain.FriendUin).Text(sb.ToString()).Image(img);
-                else
-                    yield return MessageBuilder.Group(chain.GroupUin.Value).Forward(chain).Text(sb.ToString()).Image(img);
+                yield return msg.Image(img);
             }
         }
 
