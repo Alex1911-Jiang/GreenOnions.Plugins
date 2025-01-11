@@ -29,7 +29,6 @@ namespace GreenOnions.NT.HPictures
 
         public void OnLoad(string pluginPath, BotContext bot, ICommonConfig commonConfig)
         {
-            Console.WriteLine("色图插件加载成功");
             _commonConfig = commonConfig;
 
             var configPath = Path.Combine(pluginPath, "config.yml");
