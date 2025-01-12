@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.NT.HPictures", "GreenOnions.NT.HPictures\GreenOnions.NT.HPictures.csproj", "{15B38F7B-9984-426D-AFB9-1CD1A6F06650}"
 EndProject
@@ -10,6 +10,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.NT", "..\..\GreenOnions\GreenOnions.NT\GreenOnions.NT\GreenOnions.NT.csproj", "{6CF807F4-CC0D-4CB7-97F2-6F6535EC7B1F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.NT.Core", "..\..\GreenOnions\GreenOnions.NT\GreenOnions.NT.Core\GreenOnions.NT.Core.csproj", "{DC50DCB7-F859-4914-9BF5-F10AD9181FF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.NT.PictureSearcher", "GreenOnions.NT.PictureSearcher\GreenOnions.NT.PictureSearcher.csproj", "{4111A3E9-29C9-4632-8582-70A1B91170B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lagrange.Core", "..\..\Lagrange.Core\Lagrange.Core\Lagrange.Core.csproj", "{939EB7B1-0882-455C-A866-1C7A943F7F71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{DC50DCB7-F859-4914-9BF5-F10AD9181FF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC50DCB7-F859-4914-9BF5-F10AD9181FF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC50DCB7-F859-4914-9BF5-F10AD9181FF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4111A3E9-29C9-4632-8582-70A1B91170B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4111A3E9-29C9-4632-8582-70A1B91170B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4111A3E9-29C9-4632-8582-70A1B91170B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4111A3E9-29C9-4632-8582-70A1B91170B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{939EB7B1-0882-455C-A866-1C7A943F7F71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{939EB7B1-0882-455C-A866-1C7A943F7F71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{939EB7B1-0882-455C-A866-1C7A943F7F71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{939EB7B1-0882-455C-A866-1C7A943F7F71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -14,6 +14,7 @@ namespace GreenOnions.NT.HPictures
     public class HPicturesPlugin : IPlugin
     {
         private Config? _config;
+        private string? _pluginPath;
         private ICommonConfig? _commonConfig;
         private Regex? _commandRegex;
 
@@ -24,13 +25,16 @@ namespace GreenOnions.NT.HPictures
         public void OnConfigUpdate(ICommonConfig commonConfig)
         {
             _commonConfig = commonConfig;
-            _commandRegex = new Regex(_config!.Command.Replace("<机器人名称>", commonConfig.BotName));
+            if (_pluginPath is null)
+                return;
+            LoadConfig(_pluginPath);
+            if (_config is null)
+                return;
+            _commandRegex = new Regex(_config.Command.Replace("<机器人名称>", commonConfig.BotName));
         }
 
-        public void OnLoad(string pluginPath, BotContext bot, ICommonConfig commonConfig)
+        private Config LoadConfig(string pluginPath)
         {
-            _commonConfig = commonConfig;
-
             var configPath = Path.Combine(pluginPath, "config.yml");
             if (File.Exists(configPath))
             {
@@ -38,10 +42,18 @@ namespace GreenOnions.NT.HPictures
                 _config = YamlConvert.DeserializeObject<Config>(yamlConfig);
             }
             _config ??= new Config();
-
             File.WriteAllText(configPath, YamlConvert.SerializeObject(_config));
+            return _config;
+        }
 
-            _commandRegex = new Regex(_config.Command.Replace("<机器人名称>", commonConfig.BotName));
+        public void OnLoad(string pluginPath, BotContext bot, ICommonConfig commonConfig)
+        {
+            _pluginPath = pluginPath;
+            _commonConfig = commonConfig;
+
+            Config config = LoadConfig(pluginPath);
+
+            _commandRegex = new Regex(config.Command.Replace("<机器人名称>", commonConfig.BotName));
 
             bot.Invoker.OnFriendMessageReceived += OnFriendMessage;
             bot.Invoker.OnGroupMessageReceived += OnGroupMessage;
@@ -243,7 +255,7 @@ namespace GreenOnions.NT.HPictures
                 else
                     LimitCache.LimitNumber.TryAdd(chain.FriendUin, 1);
             }
-            RecordHPictureCD(commonConfig, config, chain);  //色图记录CD
+            RecordHPictureCoolDown(commonConfig, config, chain);  //色图记录CD
         }
 
         /// <summary>
@@ -258,7 +270,7 @@ namespace GreenOnions.NT.HPictures
                 return false;
             }
 
-            if (CheckHPictureCD(commonConfig, config, chain))
+            if (CheckHPictureCoolDown(commonConfig, config, chain))
             {
                 LogHelper.LogMessage($"{chain.FriendUin}色图冷却中");
                 await bot.ReplyAsync(chain, config.CoolDownUnreadyReply);
@@ -303,7 +315,7 @@ namespace GreenOnions.NT.HPictures
         /// <summary>
         /// 检查冷却时间，true为冷却中
         /// </summary>
-        internal bool CheckHPictureCD(ICommonConfig commonConfig, Config config, MessageChain chain)
+        internal bool CheckHPictureCoolDown(ICommonConfig commonConfig, Config config, MessageChain chain)
         {
             //机器人管理员且启用了管理员无限制
             if (commonConfig.AdminQQ.Contains(chain.FriendUin) && config.AdminNoLimit)
@@ -328,7 +340,7 @@ namespace GreenOnions.NT.HPictures
         /// <summary>
         /// 记录色图冷却时间
         /// </summary>
-        internal void RecordHPictureCD(ICommonConfig commonConfig, Config config, MessageChain chain)
+        internal void RecordHPictureCoolDown(ICommonConfig commonConfig, Config config, MessageChain chain)
         {
             //机器人管理员且启用了管理员无限制，不记录
             if (commonConfig.AdminQQ.Contains(chain.FriendUin) && config.AdminNoLimit)

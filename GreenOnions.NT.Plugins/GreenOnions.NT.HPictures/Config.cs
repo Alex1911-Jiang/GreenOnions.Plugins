@@ -42,7 +42,7 @@ namespace GreenOnions.NT.HPictures
         public bool RequestApiByChromium { get; set; } = false;
 
         /// <summary>
-        /// 反和谐（需要先开启 所有图片下载到本地发送文件 功能）
+        /// 反和谐
         /// </summary>
         [YamlMember(Description = "反和谐")]
         public bool AntiShielding { get; set; } = false;

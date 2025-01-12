@@ -75,14 +75,14 @@ namespace GreenOnions.NT.HPictures.Clients
                     sb.AppendLine($"标签:{string.Join(',', item.tags)}");
 
                 MessageBuilder msg;
-
                 if (chain.GroupUin is null)
                     msg = MessageBuilder.Friend(chain.FriendUin).Text(sb.ToString());
                 else
                     msg = MessageBuilder.Group(chain.GroupUin.Value).Forward(chain).Text(sb.ToString());
 
                 HttpClientHandler httpClientHandler = new HttpClientHandler();
-                if (config.UseProxy && !string.IsNullOrWhiteSpace(commonConfig.ProxyUrl)) { httpClientHandler.Proxy = new WebProxy(commonConfig.ProxyUrl) { Credentials = new NetworkCredential(commonConfig.ProxyUserName, commonConfig.ProxyPassword) }; }
+                if (config.UseProxy && !string.IsNullOrWhiteSpace(commonConfig.ProxyUrl))
+                    httpClientHandler.Proxy = new WebProxy(commonConfig.ProxyUrl) { Credentials = new NetworkCredential(commonConfig.ProxyUserName, commonConfig.ProxyPassword) };
                 using HttpClient client = new HttpClient(httpClientHandler);
 
                 var resp = await client.GetAsync(item.urls.original);
