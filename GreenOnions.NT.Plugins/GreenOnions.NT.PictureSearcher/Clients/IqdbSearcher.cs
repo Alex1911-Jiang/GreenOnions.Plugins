@@ -14,17 +14,17 @@ namespace GreenOnions.NT.PictureSearcher.Clients
     {
         public static async Task<double> SearchAnime(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl)
         {
-            return await Search(commonConfig, config, context, chain, imageUrl, IqdbMode.Anime);
+            return await Search(commonConfig, config, context, chain, imageUrl, IqdbModes.Anime);
         }
 
         public static async Task<double> Search3d(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl)
         {
-            return await Search(commonConfig, config, context, chain, imageUrl, IqdbMode.ThreeDimensional);
+            return await Search(commonConfig, config, context, chain, imageUrl, IqdbModes.ThreeDimensional);
         }
 
-        private static async Task<double> Search(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl, IqdbMode mode)
+        private static async Task<double> Search(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl, IqdbModes mode)
         {
-            string hostName = mode == IqdbMode.Anime ? "anime" : "3d;";
+            string hostName = mode == IqdbModes.Anime ? "anime" : "3d;";
 
             LogHelper.LogMessage($"请求{hostName}.iqdb.org搜索{imageUrl}");
 
@@ -61,7 +61,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
                 return firstItem.Similarity;
             }
 
-            bool sendThuImg = mode == IqdbMode.Anime ? config.IqdbAnimeSendThuImg : config.Iqdb3dSendThuImg;
+            bool sendThuImg = mode == IqdbModes.Anime ? config.IqdbAnimeSendThuImg : config.Iqdb3dSendThuImg;
             if (!sendThuImg || firstItem.Similarity < config.SendThuImgSimilarity)
             {
                 await context.SendMessage(msg.Build());  //没有打开发送缩略图或低于发送缩略图的相似度，但没有回复语
@@ -81,7 +81,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             using HttpClient client = new HttpClient(httpClientHandler);
             try
             {
-                string domain = mode == IqdbMode.Anime ? "www" : "3d;";
+                string domain = mode == IqdbModes.Anime ? "www" : "3d;";
                 string thuImgUrl = $"https://{domain}.iqdb.org{firstItem.PreviewUrl}";
                 var resp = await client.GetAsync(thuImgUrl);
                 if (!resp.IsSuccessStatusCode)  //下载缩略图失败

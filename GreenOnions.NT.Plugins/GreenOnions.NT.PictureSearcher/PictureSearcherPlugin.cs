@@ -1,11 +1,7 @@
-﻿using System;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using GreenOnions.NT.Base;
 using GreenOnions.NT.PictureSearcher.Clients;
 using GreenOnions.NT.PictureSearcher.Enums;
-using HtmlAgilityPack;
 using Lagrange.Core;
 using Lagrange.Core.Event.EventArg;
 using Lagrange.Core.Message;
@@ -22,7 +18,7 @@ namespace GreenOnions.NT.PictureSearcher
         private string? _pluginPath;
         private ICommonConfig? _commonConfig;
         private List<SearchingUser> _searchingUsers = new();
-        private Timer? timeOutChecker;
+        private Timer? timeOutChecker = null;
 
         public string Name => "搜图";
 
@@ -55,6 +51,9 @@ namespace GreenOnions.NT.PictureSearcher
 
         public void OnLoad(string pluginPath, BotContext bot, ICommonConfig commonConfig)
         {
+            if (timeOutChecker is not null)
+                timeOutChecker.Dispose();
+
             _pluginPath = pluginPath;
             _bot = bot;
             _commonConfig = commonConfig;
@@ -64,6 +63,8 @@ namespace GreenOnions.NT.PictureSearcher
             _searchOnCommandRegex = new Regex(config.SearchModeOnCmd.Replace("<机器人名称>", commonConfig.BotName));
             _searchOffCommandRegex = new Regex(config.SearchModeOffCmd.Replace("<机器人名称>", commonConfig.BotName));
 
+            bot.Invoker.OnFriendMessageReceived -= OnFriendMessage;
+            bot.Invoker.OnGroupMessageReceived -= OnGroupMessage;
             bot.Invoker.OnFriendMessageReceived += OnFriendMessage;
             bot.Invoker.OnGroupMessageReceived += OnGroupMessage;
 
@@ -91,12 +92,26 @@ namespace GreenOnions.NT.PictureSearcher
         {
             if (e.Chain.FriendUin == context.BotUin)  //自己的消息
                 return;
-            await OnMessage(context, e.Chain);
+            try
+            {
+                await OnMessage(context, e.Chain);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogException(ex, "搜图插件发生了不在遇见范围内的异常");
+            }
         }
 
         private async void OnFriendMessage(BotContext context, FriendMessageEvent e)
         {
-            await OnMessage(context, e.Chain);
+            try
+            {
+                await OnMessage(context, e.Chain);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogException(ex, "搜图插件发生了不在遇见范围内的异常");
+            }
         }
 
         private async Task OnMessage(BotContext context, MessageChain chain)
@@ -176,31 +191,20 @@ namespace GreenOnions.NT.PictureSearcher
             if (!string.IsNullOrWhiteSpace(config.SearchingReply))  //开始搜索回复
                 await context.ReplyAsync(chain, config.SearchingReply.Replace("<机器人名称>", commonConfig.BotName));
 
+            int animeTracModelIndex = 0;
             foreach (var item in config.EnabledSources)
             {
-                double similarity = 0;
-                switch (item)
+                double similarity = item switch
                 {
-                    case SearcherSources.SauceNAO:
-                        similarity = await SauceNAOSearcher.Search(commonConfig, config, context, chain, imageUrl);
-                        break;
-                    case SearcherSources.Ascii2d:
-                        similarity = await Ascii2dSearcher.Search(commonConfig, config, context, chain, imageUrl);
-                        break;
-                    case SearcherSources.TraceMoe:
-                        similarity = await TraceMoeSearcher.Search(commonConfig, config, context, chain, imageUrl);
-                        break;
-                    case SearcherSources.IqdbAnime:
-                        similarity = await IqdbSearcher.SearchAnime(commonConfig, config, context, chain, imageUrl);
-                        break;
-                    case SearcherSources.Iqdb3d:
-                        similarity = await IqdbSearcher.Search3d(commonConfig, config, context, chain, imageUrl);
-                        break;
-                    case SearcherSources.AnimeTrace:
-                        break;
-                    default:
-                        break;
-                }
+                    SearcherSources.SauceNAO => await SauceNAOSearcher.Search(commonConfig, config, context, chain, imageUrl),
+                    SearcherSources.Ascii2d => await Ascii2dSearcher.Search(commonConfig, config, context, chain, imageUrl),
+                    SearcherSources.TraceMoe => await TraceMoeSearcher.Search(commonConfig, config, context, chain, imageUrl),
+                    SearcherSources.IqdbAnime => await IqdbSearcher.SearchAnime(commonConfig, config, context, chain, imageUrl),
+                    SearcherSources.Iqdb3d => await IqdbSearcher.Search3d(commonConfig, config, context, chain, imageUrl),
+                    SearcherSources.AnimeTrace => await AnimeTraceSearcher.Search(commonConfig, config, context, chain, imageUrl, animeTracModelIndex++),
+                    _ => throw new NotImplementedException("不支持的搜索引擎"),
+                };
+                
                 if (similarity >= config.BreakSimilarity)
                     break;
             }

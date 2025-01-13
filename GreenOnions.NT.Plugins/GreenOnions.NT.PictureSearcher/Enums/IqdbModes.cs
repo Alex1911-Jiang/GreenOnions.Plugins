@@ -1,6 +1,6 @@
 ﻿namespace GreenOnions.NT.PictureSearcher.Enums
 {
-    internal enum IqdbMode
+    internal enum IqdbModes
     {
         Anime,
         ThreeDimensional
