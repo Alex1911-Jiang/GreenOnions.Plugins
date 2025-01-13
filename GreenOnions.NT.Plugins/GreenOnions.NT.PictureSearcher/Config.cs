@@ -109,7 +109,7 @@ namespace GreenOnions.NT.PictureSearcher
         /// Iqdb 只发送分级为安全的缩略图
         /// </summary>
         [YamlMember(Description = "是否只发送Iqdb搜索结果分级为安全的缩略图")]
-        public bool IqdbMustSafe { get; set; } = true;
+        public bool IqdbSendThuImageMustSafe { get; set; } = true;
 
         #endregion -- Iqdb --
 

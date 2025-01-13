@@ -190,8 +190,10 @@ namespace GreenOnions.NT.PictureSearcher
                     case SearcherSources.TraceMoe:
                         break;
                     case SearcherSources.IqdbAnime:
+                        similarity = await IqdbAnimeClient.Search(commonConfig, config, context, chain, imageUrl);
                         break;
                     case SearcherSources.Iqdb3d:
+                        similarity = await Iqdb3DClient.Search(commonConfig, config, context, chain, imageUrl);
                         break;
                     case SearcherSources.AnimeTrace:
                         break;

@@ -31,6 +31,8 @@ namespace GreenOnions.NT.PictureSearcher.Clients
 
         private async static Task<double> SearchWithHttpClient(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl)
         {
+            LogHelper.LogMessage($"通过HttpClient请求SauceNAO搜索{imageUrl}");
+
             bool withApiKey = config.SauceNAOApiKey.Count > 0;
 
             MultipartFormDataContent content = new MultipartFormDataContent
@@ -72,6 +74,8 @@ namespace GreenOnions.NT.PictureSearcher.Clients
 
         private static async Task<double> SearchWithChromium(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl)
         {
+            LogHelper.LogMessage($"通过Chromium请求SauceNAO搜索{imageUrl}");
+
             bool withApiKey = config.SauceNAOApiKey.Count > 0;
             string apiKeyStr = "";
             if (withApiKey)
@@ -103,6 +107,8 @@ namespace GreenOnions.NT.PictureSearcher.Clients
 
         public static async Task<double> AnalysisJson(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string json)
         {
+            LogHelper.LogMessage($"解析SauceNAO返回的Json");
+
             SauceNAOJsonResult sauceNAOJsonResult;
             try
             {
@@ -172,6 +178,8 @@ namespace GreenOnions.NT.PictureSearcher.Clients
 
         public static async Task<double> AnalysisHtml(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string html)
         {
+            LogHelper.LogMessage($"解析SauceNAO返回的Html");
+
             HtmlDocument sauceNAOdoc = new HtmlDocument();
             sauceNAOdoc.LoadHtml(html);
             string thuImgUrl;
@@ -208,6 +216,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
                 sb.AppendLine($"作者：{author}");
 
             double similarity = Convert.ToDouble(similarityText.Replace("%", ""));
+            LogHelper.LogMessage("执行SauceNAO搜索成功");
             await SendSearchResult(commonConfig, config, context, chain, sb.ToString(), thuImgUrl, similarity);
             return similarity;
         }
@@ -223,13 +232,13 @@ namespace GreenOnions.NT.PictureSearcher.Clients
 
             if (similarity < config.SendThuImgSimilarity && !string.IsNullOrWhiteSpace(config.LowSimilarityReply))
             {
-                await context.SendMessage(msg.Text(config.LowSimilarityReply).Build());  //低于发送缩略图的相似度，并且有回复语
+                await context.SendMessage(msg.Text(config.LowSimilarityReply.Replace("<SendThuImgSimilarity>", config.SendThuImgSimilarity.ToString())).Build());  //低于发送缩略图的相似度，并且有回复语
                 return;
             }
 
-            if (similarity < config.SendThuImgSimilarity)
+            if (!config.SauceNAOSendThuImage || similarity < config.SendThuImgSimilarity)
             {
-                await context.SendMessage(msg.Build());  //低于发送缩略图的相似度，但没有回复语
+                await context.SendMessage(msg.Build());  //没有打开发送缩略图或低于发送缩略图的相似度，但没有回复语
                 return;
             }
 
@@ -243,6 +252,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
                 var resp = await client.GetAsync(thuImgUrl);
                 if (!resp.IsSuccessStatusCode)  //下载缩略图失败
                 {
+                    LogHelper.LogError($"下载SauceNAO搜索结果缩略图{thuImgUrl}失败 {$"{(int)resp.StatusCode} {resp.StatusCode}"}");
                     await context.SendMessage(msg.Text(config.DownloadThuImageFailReply.Replace("<机器人名称>", commonConfig.BotName).Replace("<错误信息>", $"{(int)resp.StatusCode} {resp.StatusCode}")).Build());
                     return;
                 }
@@ -251,6 +261,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
             catch (Exception ex)
             {
+                LogHelper.LogException(ex, $"下载SauceNAO搜索结果缩略图{thuImgUrl}失败");
                 await context.SendMessage(msg.Text(config.DownloadThuImageFailReply.Replace("<机器人名称>", commonConfig.BotName).Replace("<错误信息>", ex.Message)).Build());
             }
         }
