@@ -33,7 +33,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
         {
             bool withApiKey = config.SauceNAOApiKey.Count > 0;
 
-            MultipartFormDataContent content = new MultipartFormDataContent()
+            MultipartFormDataContent content = new MultipartFormDataContent
             {
                 {new StringContent("999"), "db" },
                 {new StringContent("1"), "testmode" },
@@ -150,7 +150,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
 
             StringBuilder sb = new StringBuilder();
             foreach (var item in ext_urls)
-                sb.AppendLine($"地址：{item}");
+                sb.AppendLine($"作品页：{item}");
 
             if (!string.IsNullOrEmpty(source))
                 sb.AppendLine($"图片来源：{source}");
@@ -234,7 +234,10 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
 
             //高于或等于发送缩略图的相似度
-            using HttpClient client = new HttpClient();
+            HttpClientHandler httpClientHandler = new HttpClientHandler();
+            if (config.UseProxy && !string.IsNullOrWhiteSpace(commonConfig.ProxyUrl))
+                httpClientHandler.Proxy = new WebProxy(commonConfig.ProxyUrl) { Credentials = new NetworkCredential(commonConfig.ProxyUserName, commonConfig.ProxyPassword) };
+            using HttpClient client = new HttpClient(httpClientHandler);
             try
             {
                 var resp = await client.GetAsync(thuImgUrl);

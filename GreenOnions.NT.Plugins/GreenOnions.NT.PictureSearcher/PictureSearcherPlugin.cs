@@ -1,5 +1,5 @@
-﻿using System.Net;
-using System.Net.NetworkInformation;
+﻿using System;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using GreenOnions.NT.Base;
@@ -157,7 +157,7 @@ namespace GreenOnions.NT.PictureSearcher
                     if (user is null)  //不是搜图的图片消息
                         return;
 
-                    user.TimeOut = DateTime.Now.AddMinutes(2);  //将搜图时间延长到2分钟后
+                    user.TimeOut = DateTime.Now.AddMinutes(2);  //将搜图超时时间延长到2分钟后
                     await Search(_commonConfig, _config, context, chain, image.ImageUrl);
                 }
             }
@@ -185,6 +185,7 @@ namespace GreenOnions.NT.PictureSearcher
                         similarity = await SauceNAOClient.Search(commonConfig, config, context, chain, imageUrl);
                         break;
                     case SearcherSources.Ascii2d:
+                        similarity = await Ascii2dClient.Search(commonConfig, config, context, chain, imageUrl);
                         break;
                     case SearcherSources.TraceMoe:
                         break;
@@ -198,9 +199,7 @@ namespace GreenOnions.NT.PictureSearcher
                         break;
                 }
                 if (similarity >= config.BreakSimilarity)
-                {
                     break;
-                }
             }
         }
 
@@ -209,7 +208,7 @@ namespace GreenOnions.NT.PictureSearcher
             SearchingUser? user = GetSearchingUser(chain);
             if (user is not null)
             {
-                user.TimeOut = DateTime.Now.AddMinutes(2);  //将搜图时间延长到2分钟后
+                user.TimeOut = DateTime.Now.AddMinutes(2);  //将搜图超时时间延长到2分钟后
                 await context.ReplyAsync(chain, config.SearchModeAlreadyOnReply.Replace("<机器人名称>", commonConfig.BotName));  //已经在连续搜图模式中回复
                 return;
             }
