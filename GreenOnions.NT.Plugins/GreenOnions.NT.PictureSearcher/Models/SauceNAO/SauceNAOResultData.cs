@@ -1,6 +1,6 @@
 ﻿namespace GreenOnions.NT.PictureSearcher.Models.SauceNAO
 {
-    public class SauceNAOResultData
+    internal class SauceNAOResultData
     {
         public string[] ext_urls { get; set; }
         public string? title { get; set; }

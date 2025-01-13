@@ -47,7 +47,7 @@ namespace GreenOnions.NT.PictureSearcher
         /// SauceNAO是否发送缩略图
         /// </summary>
         [YamlMember(Description = "SauceNAO发送缩略图")]
-        public bool SauceNAOSendThuImage { get; set; } = true;
+        public bool SauceNAOSendThuImg { get; set; } = true;
 
         /// <summary>
         /// 使用浏览器访问SauceNAO搜索
@@ -69,7 +69,7 @@ namespace GreenOnions.NT.PictureSearcher
         /// Ascii2d是否发送缩略图
         /// </summary>
         [YamlMember(Description = "发送缩略图")]
-        public bool Ascii2dSendThuImage { get; set; } = true;
+        public bool Ascii2dSendThuImg { get; set; } = true;
 
         /// <summary>
         /// 使用浏览器访问Ascii2d搜索
@@ -91,13 +91,13 @@ namespace GreenOnions.NT.PictureSearcher
         /// Iqdb anime是否发送缩略图
         /// </summary>
         [YamlMember(Description = "是否发送Iqdb搜索结果缩略图")]
-        public bool IqdbAnimeSendThuImage { get; set; } = true;
+        public bool IqdbAnimeSendThuImg { get; set; } = true;
 
         /// <summary>
         /// Iqdb 3d是否发送缩略图
         /// </summary>
         [YamlMember(Description = "是否发送3d Iqdb搜索结果缩略图")]
-        public bool Iqdb3dSendThuImage { get; set; } = true;
+        public bool Iqdb3dSendThuImg { get; set; } = true;
 
         /// <summary>
         /// Iqdb 是否发送标签
@@ -109,7 +109,7 @@ namespace GreenOnions.NT.PictureSearcher
         /// Iqdb 只发送分级为安全的缩略图
         /// </summary>
         [YamlMember(Description = "是否只发送Iqdb搜索结果分级为安全的缩略图")]
-        public bool IqdbSendThuImageMustSafe { get; set; } = true;
+        public bool IqdbSendThuImgMustSafe { get; set; } = true;
 
         #endregion -- Iqdb --
 
@@ -119,7 +119,7 @@ namespace GreenOnions.NT.PictureSearcher
         /// TraceMoe是否发送缩略图
         /// </summary>
         [YamlMember(Description = "是否发送TraceMoe搜索结果的缩略图")]
-        public bool TraceMoeSendThuImage { get; set; } = true;
+        public bool TraceMoeSendThuImg { get; set; } = true;
 
         /// <summary>
         /// TraceMoe搜番结果为里番时是否发送缩略图
@@ -193,7 +193,7 @@ namespace GreenOnions.NT.PictureSearcher
         /// 下载缩略图失败时追加回复
         /// </summary>
         [YamlMember(Description = "下载缩略图失败时追加回复")]
-        public string DownloadThuImageFailReply { get; set; } = "缩略图下载失败。";
+        public string DownloadThuImgFailReply { get; set; } = "缩略图下载失败。";
 
     }
 }

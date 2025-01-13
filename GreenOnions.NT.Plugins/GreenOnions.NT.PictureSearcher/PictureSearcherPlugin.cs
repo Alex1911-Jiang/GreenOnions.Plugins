@@ -182,18 +182,19 @@ namespace GreenOnions.NT.PictureSearcher
                 switch (item)
                 {
                     case SearcherSources.SauceNAO:
-                        similarity = await SauceNAOClient.Search(commonConfig, config, context, chain, imageUrl);
+                        similarity = await SauceNAOSearcher.Search(commonConfig, config, context, chain, imageUrl);
                         break;
                     case SearcherSources.Ascii2d:
-                        similarity = await Ascii2dClient.Search(commonConfig, config, context, chain, imageUrl);
+                        similarity = await Ascii2dSearcher.Search(commonConfig, config, context, chain, imageUrl);
                         break;
                     case SearcherSources.TraceMoe:
+                        similarity = await TraceMoeSearcher.Search(commonConfig, config, context, chain, imageUrl);
                         break;
                     case SearcherSources.IqdbAnime:
-                        similarity = await IqdbAnimeClient.Search(commonConfig, config, context, chain, imageUrl);
+                        similarity = await IqdbSearcher.SearchAnime(commonConfig, config, context, chain, imageUrl);
                         break;
                     case SearcherSources.Iqdb3d:
-                        similarity = await Iqdb3DClient.Search(commonConfig, config, context, chain, imageUrl);
+                        similarity = await IqdbSearcher.Search3d(commonConfig, config, context, chain, imageUrl);
                         break;
                     case SearcherSources.AnimeTrace:
                         break;

@@ -1,6 +1,6 @@
 ﻿namespace GreenOnions.NT.PictureSearcher.Models.SauceNAO
 {
-    public class SauceNAOResultHeader
+    internal class SauceNAOResultHeader
     {
         public double similarity { get; set; }
         public string thumbnail { get; set; }

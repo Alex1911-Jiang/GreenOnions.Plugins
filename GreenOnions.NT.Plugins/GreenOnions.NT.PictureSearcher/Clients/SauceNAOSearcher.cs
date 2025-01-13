@@ -11,16 +11,16 @@ using Newtonsoft.Json;
 
 namespace GreenOnions.NT.PictureSearcher.Clients
 {
-    internal static class SauceNAOClient
+    internal static class SauceNAOSearcher
     {
         public static async Task<double> Search(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl)
         {
             try
             {
                 if (config.SauceNAOUseChromium)
-                    return await SearchWithChromium(commonConfig, config, context, chain, imageUrl);
+                    return await SearchByChromium(commonConfig, config, context, chain, imageUrl);
                 else
-                    return await SearchWithHttpClient(commonConfig, config, context, chain, imageUrl);
+                    return await SearchByHttpClient(commonConfig, config, context, chain, imageUrl);
             }
             catch (Exception ex)
             {
@@ -29,7 +29,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
         }
 
-        private async static Task<double> SearchWithHttpClient(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl)
+        private async static Task<double> SearchByHttpClient(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl)
         {
             LogHelper.LogMessage($"通过HttpClient请求SauceNAO搜索{imageUrl}");
 
@@ -52,7 +52,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
                 content.Add(new StringContent("2"), "output_type");
             }
 
-            HttpClientHandler httpClientHandler = new HttpClientHandler();
+            using HttpClientHandler httpClientHandler = new HttpClientHandler();
             if (config.UseProxy && !string.IsNullOrWhiteSpace(commonConfig.ProxyUrl))
                 httpClientHandler.Proxy = new WebProxy(commonConfig.ProxyUrl) { Credentials = new NetworkCredential(commonConfig.ProxyUserName, commonConfig.ProxyPassword) };
             using HttpClient client = new HttpClient(httpClientHandler);
@@ -72,7 +72,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
                 return await AnalysisHtml(commonConfig, config, context, chain, sauceNAOResult);
         }
 
-        private static async Task<double> SearchWithChromium(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl)
+        private static async Task<double> SearchByChromium(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl)
         {
             LogHelper.LogMessage($"通过Chromium请求SauceNAO搜索{imageUrl}");
 
@@ -236,14 +236,14 @@ namespace GreenOnions.NT.PictureSearcher.Clients
                 return;
             }
 
-            if (!config.SauceNAOSendThuImage || similarity < config.SendThuImgSimilarity)
+            if (!config.SauceNAOSendThuImg || similarity < config.SendThuImgSimilarity)
             {
                 await context.SendMessage(msg.Build());  //没有打开发送缩略图或低于发送缩略图的相似度，但没有回复语
                 return;
             }
 
             //高于或等于发送缩略图的相似度
-            HttpClientHandler httpClientHandler = new HttpClientHandler();
+            using HttpClientHandler httpClientHandler = new HttpClientHandler();
             if (config.UseProxy && !string.IsNullOrWhiteSpace(commonConfig.ProxyUrl))
                 httpClientHandler.Proxy = new WebProxy(commonConfig.ProxyUrl) { Credentials = new NetworkCredential(commonConfig.ProxyUserName, commonConfig.ProxyPassword) };
             using HttpClient client = new HttpClient(httpClientHandler);
@@ -253,7 +253,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
                 if (!resp.IsSuccessStatusCode)  //下载缩略图失败
                 {
                     LogHelper.LogError($"下载SauceNAO搜索结果缩略图{thuImgUrl}失败 {$"{(int)resp.StatusCode} {resp.StatusCode}"}");
-                    await context.SendMessage(msg.Text(config.DownloadThuImageFailReply.Replace("<机器人名称>", commonConfig.BotName).Replace("<错误信息>", $"{(int)resp.StatusCode} {resp.StatusCode}")).Build());
+                    await context.SendMessage(msg.Text(config.DownloadThuImgFailReply.Replace("<机器人名称>", commonConfig.BotName).Replace("<错误信息>", $"{(int)resp.StatusCode} {resp.StatusCode}")).Build());
                     return;
                 }
                 byte[] img = await resp.Content.ReadAsByteArrayAsync();
@@ -262,7 +262,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             catch (Exception ex)
             {
                 LogHelper.LogException(ex, $"下载SauceNAO搜索结果缩略图{thuImgUrl}失败");
-                await context.SendMessage(msg.Text(config.DownloadThuImageFailReply.Replace("<机器人名称>", commonConfig.BotName).Replace("<错误信息>", ex.Message)).Build());
+                await context.SendMessage(msg.Text(config.DownloadThuImgFailReply.Replace("<机器人名称>", commonConfig.BotName).Replace("<错误信息>", ex.Message)).Build());
             }
         }
     }

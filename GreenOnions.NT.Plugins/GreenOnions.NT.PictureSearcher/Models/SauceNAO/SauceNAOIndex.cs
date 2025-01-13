@@ -1,6 +1,6 @@
 ﻿namespace GreenOnions.NT.PictureSearcher.Models.SauceNAO
 {
-    public class SauceNAOIndex
+    internal class SauceNAOIndex
     {
         public int status { get; set; }
         public int parent_id { get; set; }

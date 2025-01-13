@@ -1,6 +1,6 @@
 ﻿namespace GreenOnions.NT.PictureSearcher.Models.SauceNAO
 {
-    public class SauceNAOHeader
+    internal class SauceNAOHeader
     {
         public string user_id { get; set; }
         public string account_type { get; set; }

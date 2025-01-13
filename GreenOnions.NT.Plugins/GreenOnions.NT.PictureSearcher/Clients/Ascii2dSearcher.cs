@@ -9,7 +9,7 @@ using Lagrange.Core.Message;
 
 namespace GreenOnions.NT.PictureSearcher.Clients
 {
-    internal static class Ascii2dClient
+    internal static class Ascii2dSearcher
     {
         public static async Task<double> Search(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl)
         {
@@ -22,14 +22,14 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
             catch (Exception ex)
             {
-                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "Ascii2d").Replace("<错误信息>", ex.Message));
+                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "ascii2d").Replace("<错误信息>", ex.Message));
             }
             return 0;
         }
 
         private static async Task SearchByHttpClient(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl)
         {
-            LogHelper.LogMessage($"通过HttpClient请求Ascii2d搜索{imageUrl}");
+            LogHelper.LogMessage($"通过HttpClient请求ascii2d搜索{imageUrl}");
 
             HttpClientHandler httpClientHandler = new HttpClientHandler();
             if (config.UseProxy && !string.IsNullOrWhiteSpace(commonConfig.ProxyUrl))
@@ -50,14 +50,14 @@ namespace GreenOnions.NT.PictureSearcher.Clients
 
             if (colorResponse.IsSuccessStatusCode)
             {
-                LogHelper.LogMessage($"通过HttpClient请求Ascii2d色合検索成功");
+                LogHelper.LogMessage($"通过HttpClient请求ascii2d色合検索成功");
                 string colorHtml = await colorResponse.Content.ReadAsStringAsync();
                 await AnalysisHtml(commonConfig, config, context, chain, colorHtml);
             }
             else
             {
-                LogHelper.LogError($"通过HttpClient请求Ascii2d色合検索{imageUrl}失败 {(int)colorResponse.StatusCode} {colorResponse.StatusCode}");
-                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "Ascii2d 色合検索").Replace("<错误信息>", $"{(int)colorResponse.StatusCode} {colorResponse.StatusCode}"));
+                LogHelper.LogError($"通过HttpClient请求ascii2d色合検索{imageUrl}失败 {(int)colorResponse.StatusCode} {colorResponse.StatusCode}");
+                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "ascii2d 色合検索").Replace("<错误信息>", $"{(int)colorResponse.StatusCode} {colorResponse.StatusCode}"));
             }
 
             string bovwUrl = colorResponse.RequestMessage!.RequestUri!.AbsoluteUri.Replace("/color/", "/bovw/");
@@ -66,20 +66,20 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             var bovwResponse = await client.SendAsync(bovwRequest);
             if (bovwResponse.IsSuccessStatusCode)
             {
-                LogHelper.LogMessage($"通过HttpClient请求Ascii2d特徴検索成功");
+                LogHelper.LogMessage($"通过HttpClient请求ascii2d特徴検索成功");
                 string bovwHtml = await bovwResponse.Content.ReadAsStringAsync();
                 await AnalysisHtml(commonConfig, config, context, chain, bovwHtml);
             }
             else
             {
-                LogHelper.LogError($"通过HttpClient请求Ascii2d特徴検索{imageUrl}失败 {(int)colorResponse.StatusCode} {colorResponse.StatusCode}");
-                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "Ascii2d 特徴検索").Replace("<错误信息>", $"{(int)colorResponse.StatusCode} {colorResponse.StatusCode}"));
+                LogHelper.LogError($"通过HttpClient请求ascii2d特徴検索{imageUrl}失败 {(int)colorResponse.StatusCode} {colorResponse.StatusCode}");
+                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "ascii2d 特徴検索").Replace("<错误信息>", $"{(int)colorResponse.StatusCode} {colorResponse.StatusCode}"));
             }
         }
 
         private static async Task SearchByChromium(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl)
         {
-            LogHelper.LogMessage($"通过Chromium请求Ascii2d搜索{imageUrl}");
+            LogHelper.LogMessage($"通过Chromium请求ascii2d搜索{imageUrl}");
 
             string colorUrl = await Chromium.GetNavigationUrlAsync($"https://ascii2d.net/search/url/{HttpUtility.UrlEncode(imageUrl)}");
             string bovwUrl = colorUrl.Replace("/color/", "/bovw/");
@@ -87,25 +87,25 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             try
             {
                 string colorHtml = await Chromium.GetStringAsync(colorUrl);
-                LogHelper.LogMessage($"通过Chromium请求Ascii2d色合検索成功");
+                LogHelper.LogMessage($"通过Chromium请求ascii2d色合検索成功");
                 await AnalysisHtml(commonConfig, config, context, chain, colorHtml);
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, $"通过HttpClient请求Ascii2d色合検索{imageUrl}失败");
-                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "Ascii2d 色合検索").Replace("<错误信息>", ex.Message));
+                LogHelper.LogException(ex, $"通过HttpClient请求ascii2d色合検索{imageUrl}失败");
+                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "ascii2d 色合検索").Replace("<错误信息>", ex.Message));
             }
 
             try
             {
                 string bovwHtml = await Chromium.GetStringAsync(bovwUrl);
-                LogHelper.LogMessage($"通过Chromium请求Ascii2d特徴検索成功");
+                LogHelper.LogMessage($"通过Chromium请求ascii2d特徴検索成功");
                 await AnalysisHtml(commonConfig, config, context, chain, bovwHtml);
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, $"通过HttpClient请求Ascii2d特徴検索{imageUrl}失败");
-                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "Ascii2d 特徴検索").Replace("<错误信息>", ex.Message));
+                LogHelper.LogException(ex, $"通过HttpClient请求ascii2d特徴検索{imageUrl}失败");
+                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "ascii2d 特徴検索").Replace("<错误信息>", ex.Message));
             }
         }
 
@@ -124,7 +124,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             int sendCount = Math.Min(config.Ascii2dResultNum, nodes.Count);
             for (int i = 0; i < sendCount; i++)
             {
-                LogHelper.LogMessage($"开始解析第{i}个Ascii2d的搜索结果");
+                LogHelper.LogMessage($"开始解析第{i}个ascii2d的搜索结果");
 
                 string thuImgUrl = $"https://ascii2d.net{nodes[i].SelectSingleNode("div[@class='col-xs-12 col-sm-12 col-md-4 col-xl-4 text-xs-center image-box']/img").Attributes["src"].Value}";
                 HtmlNode? titleNode = nodes[i].SelectSingleNode("div[@class='col-xs-12 col-sm-12 col-md-8 col-xl-8 info-box']/div[@class='detail-box gray-link']/h6/a[1]");
@@ -148,7 +148,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
 
                 msg = msg.Text(sb.ToString());
 
-                if (!config.Ascii2dSendThuImage)  //没有启用Ascii2d发送缩略图
+                if (!config.Ascii2dSendThuImg)  //没有启用Ascii2d发送缩略图
                     continue;
 
                 try
@@ -161,8 +161,8 @@ namespace GreenOnions.NT.PictureSearcher.Clients
                     var resp = await client.GetAsync(thuImgUrl);
                     if (!resp.IsSuccessStatusCode)  //下载缩略图失败
                     {
-                        LogHelper.LogError($"下载Ascii2d搜索结果缩略图{thuImgUrl}失败 {$"{(int)resp.StatusCode} {resp.StatusCode}"}");
-                        msg = msg.Text(config.DownloadThuImageFailReply.Replace("<机器人名称>", commonConfig.BotName).Replace("<错误信息>", $"{(int)resp.StatusCode} {resp.StatusCode}"));
+                        LogHelper.LogError($"下载ascii2d搜索结果缩略图{thuImgUrl}失败 {$"{(int)resp.StatusCode} {resp.StatusCode}"}");
+                        msg = msg.Text(config.DownloadThuImgFailReply.Replace("<机器人名称>", commonConfig.BotName).Replace("<错误信息>", $"{(int)resp.StatusCode} {resp.StatusCode}"));
                         continue;
                     }
                     byte[] img = await resp.Content.ReadAsByteArrayAsync();
@@ -170,12 +170,12 @@ namespace GreenOnions.NT.PictureSearcher.Clients
                 }
                 catch (Exception ex)
                 {
-                    LogHelper.LogException(ex, $"下载Ascii2d搜索结果缩略图{thuImgUrl}失败");
-                    msg = msg.Text(config.DownloadThuImageFailReply.Replace("<机器人名称>", commonConfig.BotName).Replace("<错误信息>", ex.Message));
+                    LogHelper.LogException(ex, $"下载ascii2d搜索结果缩略图{thuImgUrl}失败");
+                    msg = msg.Text(config.DownloadThuImgFailReply.Replace("<机器人名称>", commonConfig.BotName).Replace("<错误信息>", ex.Message));
                 }
             }
-            msg = msg.Text($"(Ascii2d {searchMode})");
-            LogHelper.LogMessage("执行Ascii2d搜索成功");
+            msg = msg.Text($"(ascii2d {searchMode})");
+            LogHelper.LogMessage("执行ascii2d搜索成功");
             await context.SendMessage(msg.Build());
         }
     }
