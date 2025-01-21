@@ -15,7 +15,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
         public static async Task<double> Search(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl)
         {
             LogHelper.LogMessage($"请求trace.moe搜索{imageUrl}");
-            HttpClientHandler httpClientHandler = new HttpClientHandler() { UseProxy = config.UseProxy };
+            using HttpClientHandler httpClientHandler = new HttpClientHandler { UseProxy = config.UseProxy };
             using HttpClient client = new HttpClient(httpClientHandler);
 
             HttpResponseMessage response;

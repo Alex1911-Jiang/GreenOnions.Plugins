@@ -52,7 +52,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
                 content.Add(new StringContent("2"), "output_type");
             }
 
-            HttpClientHandler httpClientHandler = new HttpClientHandler() { UseProxy = config.UseProxy };
+            using HttpClientHandler httpClientHandler = new HttpClientHandler { UseProxy = config.UseProxy };
             using HttpClient client = new HttpClient(httpClientHandler);
             var resp = await client.PostAsync("https://SauceNAO.com/search.php", content);
 
@@ -241,7 +241,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
 
             //高于或等于发送缩略图的相似度
-            HttpClientHandler httpClientHandler = new HttpClientHandler() { UseProxy = config.UseProxy };
+            using HttpClientHandler httpClientHandler = new HttpClientHandler { UseProxy = config.UseProxy };
             using HttpClient client = new HttpClient(httpClientHandler);
             try
             {

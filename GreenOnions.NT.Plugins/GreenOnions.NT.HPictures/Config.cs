@@ -24,9 +24,9 @@ namespace GreenOnions.NT.HPictures
         public bool UseProxy { get; set; } = false;
 
         /// <summary>
-        /// Pixiv代理地址
+        /// Pixiv图片代理地址
         /// </summary>
-        [YamlMember(Description = "Pixiv代理地址")]
+        [YamlMember(Description = "Pixiv图片代理地址")]
         public string PrixvProxy { get; set; } = "i.pixiv.re";
 
         /// <summary>

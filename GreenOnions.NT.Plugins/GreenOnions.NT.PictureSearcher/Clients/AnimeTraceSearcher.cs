@@ -35,7 +35,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
 
         public static async Task<double> Search(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl, string model)
         {
-            HttpClientHandler httpClientHandler = new HttpClientHandler() { UseProxy = config.UseProxy };
+            using HttpClientHandler httpClientHandler = new HttpClientHandler { UseProxy = config.UseProxy };
             using HttpClient httpClient = new HttpClient(httpClientHandler);
 
             Stream img = await httpClient.GetStreamAsync(imageUrl);

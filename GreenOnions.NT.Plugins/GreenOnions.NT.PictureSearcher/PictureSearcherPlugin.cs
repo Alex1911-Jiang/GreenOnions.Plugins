@@ -29,11 +29,9 @@ namespace GreenOnions.NT.PictureSearcher
             _commonConfig = commonConfig;
             if (_pluginPath is null)
                 return;
-            LoadConfig(_pluginPath);
-            if (_config is null)
-                return;
-            _searchOnCommandRegex = new Regex(_config.SearchModeOnCmd.ReplaceTags());
-            _searchOffCommandRegex = new Regex(_config.SearchModeOffCmd.ReplaceTags());
+            Config config = LoadConfig(_pluginPath);
+            _searchOnCommandRegex = new Regex(config.SearchModeOnCmd.ReplaceTags());
+            _searchOffCommandRegex = new Regex(config.SearchModeOffCmd.ReplaceTags());
         }
 
         private Config LoadConfig(string pluginPath)
@@ -138,11 +136,6 @@ namespace GreenOnions.NT.PictureSearcher
                 LogHelper.LogWarning("没有搜图命令匹配式");
                 return;
             }
-
-            if (_commonConfig.DebugMode && chain.GroupUin is not null && !_commonConfig.DebugGroups.Contains(chain.GroupUin.Value))
-                return;
-            if (_commonConfig.DebugMode && chain.GroupUin is null && !_commonConfig.AdminQQ.Contains(chain.FriendUin))
-                return;
 
             bool firstAt = chain.FirstOrDefault() is MentionEntity at && at.Uin == context.BotUin;
             foreach (var item in chain)

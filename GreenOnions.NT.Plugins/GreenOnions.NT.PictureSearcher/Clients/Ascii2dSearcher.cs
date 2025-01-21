@@ -31,7 +31,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
         {
             LogHelper.LogMessage($"通过HttpClient请求ascii2d搜索{imageUrl}");
 
-            HttpClientHandler httpClientHandler = new HttpClientHandler() { UseProxy = config.UseProxy };
+            using HttpClientHandler httpClientHandler = new HttpClientHandler { UseProxy = config.UseProxy };
             using HttpClient client = new HttpClient(httpClientHandler);
             client.DefaultRequestHeaders.UserAgent.TryParseAdd("DotNetRuntime/8.0");
 
@@ -151,7 +151,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
 
                 try
                 {
-                    HttpClientHandler httpClientHandler = new HttpClientHandler() { UseProxy = config.UseProxy };
+                    using HttpClientHandler httpClientHandler = new HttpClientHandler { UseProxy = config.UseProxy };
                     using HttpClient client = new HttpClient(httpClientHandler);
                     client.DefaultRequestHeaders.UserAgent.TryParseAdd("DotNetRuntime/8.0");
                     var resp = await client.GetAsync(thuImgUrl);

@@ -1,9 +1,7 @@
-﻿using System.Net;
-using System.Text;
+﻿using System.Text;
 using GreenOnions.NT.Base;
 using GreenOnions.NT.HPictures.Helpers;
 using GreenOnions.NT.HPictures.Models.Lolicon;
-using GreenOnions.NT.HPictures.Models.Yuban10703;
 using Lagrange.Core;
 using Lagrange.Core.Message;
 using Newtonsoft.Json;
@@ -80,7 +78,7 @@ namespace GreenOnions.NT.HPictures.Clients
                 else
                     msg = MessageBuilder.Group(chain.GroupUin.Value).Forward(chain).Text(sb.ToString());
 
-                HttpClientHandler httpClientHandler = new HttpClientHandler() { UseProxy = config.UseProxy };
+                using HttpClientHandler httpClientHandler = new HttpClientHandler { UseProxy = config.UseProxy };
                 using HttpClient client = new HttpClient(httpClientHandler);
 
                 var resp = await client.GetAsync(item.urls.original);

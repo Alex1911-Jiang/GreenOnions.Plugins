@@ -75,7 +75,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
 
             //高于或等于发送缩略图的相似度
-            HttpClientHandler httpClientHandler = new HttpClientHandler() { UseProxy = config.UseProxy };
+            using HttpClientHandler httpClientHandler = new HttpClientHandler { UseProxy = config.UseProxy };
             using HttpClient client = new HttpClient(httpClientHandler);
             try
             {

@@ -75,7 +75,7 @@ namespace GreenOnions.NT.HPictures.Clients
                 if (config.SendTags)
                     sb.AppendLine($"标签:{string.Join(',', item.tags)}");
 
-                HttpClientHandler httpClientHandler = new HttpClientHandler() { UseProxy = config.UseProxy };
+                using HttpClientHandler httpClientHandler = new HttpClientHandler { UseProxy = config.UseProxy };
                 using HttpClient client = new HttpClient(httpClientHandler);
 
                 byte[] img = await client.GetByteArrayAsync(item.urls.original);

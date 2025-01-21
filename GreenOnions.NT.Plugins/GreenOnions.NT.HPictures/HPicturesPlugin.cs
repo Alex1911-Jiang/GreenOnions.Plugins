@@ -27,10 +27,8 @@ namespace GreenOnions.NT.HPictures
             _commonConfig = commonConfig;
             if (_pluginPath is null)
                 return;
-            LoadConfig(_pluginPath);
-            if (_config is null)
-                return;
-            _commandRegex = new Regex(_config.Command.ReplaceTags());
+            Config config = LoadConfig(_pluginPath);
+            _commandRegex = new Regex(config.Command.ReplaceTags());
         }
 
         private Config LoadConfig(string pluginPath)
@@ -136,11 +134,11 @@ namespace GreenOnions.NT.HPictures
                 }
 
                 //常规色图命令
-                if (!_commandRegex.IsMatch(msg))  //命中常规色图命令
-                    return;
-
                 Match matchHPcitureCmd = _commandRegex.Match(msg);
-
+                if (!matchHPcitureCmd.Success)
+                    return;
+                
+                //命中常规色图命令
                 LogHelper.LogMessage($"{chain.FriendUin}的消息'{msg}'命中了常规色图命令");
                 if (!await CheckPermissions(_commonConfig, _config, chain))  //检查权限
                 {
