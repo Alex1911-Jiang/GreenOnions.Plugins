@@ -36,9 +36,7 @@ namespace GreenOnions.NT.HPictures.Clients
                 if (config.SendTags && item.Tags is not null)
                     sb.AppendLine($"标签:{string.Join(',', item.Tags)}");
 
-                HttpClientHandler httpClientHandler = new HttpClientHandler();
-                if (config.UseProxy && !string.IsNullOrWhiteSpace(commonConfig.ProxyUrl))
-                    httpClientHandler.Proxy = new WebProxy(commonConfig.ProxyUrl) { Credentials = new NetworkCredential(commonConfig.ProxyUserName, commonConfig.ProxyPassword) };
+                HttpClientHandler httpClientHandler = new HttpClientHandler() { UseProxy = config.UseProxy };
                 using HttpClient client = new HttpClient(httpClientHandler);
 
                 byte[] img = await client.GetByteArrayAsync(await item.GetBigImgUrl());

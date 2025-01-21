@@ -49,17 +49,17 @@ namespace GreenOnions.NT.HPictures.Clients
 
             if (restResult is null)
             {
-                await context.ReplyAsync(chain, config.ErrorReply.Replace("<错误信息>", ""));
+                await chain.ReplyAsync(config.ErrorReply.Replace("<错误信息>", ""));
                 yield break;
             }
             if (!string.IsNullOrWhiteSpace(restResult.detail))
             {
-                await context.ReplyAsync(chain, config.ErrorReply.Replace("<错误信息>", restResult.detail));
+                await chain.ReplyAsync(config.ErrorReply.Replace("<错误信息>", restResult.detail));
                 yield break;
             }
             if (restResult.data.Length == 0)
             {
-                await context.ReplyAsync(chain, config.NoResultReply);
+                await chain.ReplyAsync(config.NoResultReply);
                 yield break;
             }
 
@@ -75,9 +75,7 @@ namespace GreenOnions.NT.HPictures.Clients
                 if (config.SendTags)
                     sb.AppendLine($"标签:{string.Join(',', item.tags)}");
 
-                HttpClientHandler httpClientHandler = new HttpClientHandler();
-                if (config.UseProxy && !string.IsNullOrWhiteSpace(commonConfig.ProxyUrl))
-                    httpClientHandler.Proxy = new WebProxy(commonConfig.ProxyUrl) { Credentials = new NetworkCredential(commonConfig.ProxyUserName, commonConfig.ProxyPassword) };
+                HttpClientHandler httpClientHandler = new HttpClientHandler() { UseProxy = config.UseProxy };
                 using HttpClient client = new HttpClient(httpClientHandler);
 
                 byte[] img = await client.GetByteArrayAsync(item.urls.original);

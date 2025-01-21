@@ -48,17 +48,17 @@ namespace GreenOnions.NT.HPictures.Clients
 
             if (restResult is null)
             {
-                await context.ReplyAsync(chain, config.ErrorReply.Replace("<错误信息>", ""));
+                await chain.ReplyAsync(config.ErrorReply.Replace("<错误信息>", ""));
                 yield break;
             }
             if (!string.IsNullOrWhiteSpace(restResult.error))
             {
-                await context.ReplyAsync(chain, config.ErrorReply.Replace("<错误信息>", restResult.error));
+                await chain.ReplyAsync(config.ErrorReply.Replace("<错误信息>", restResult.error));
                 yield break;
             }
             if (restResult.data.Length == 0)
             {
-                await context.ReplyAsync(chain, config.NoResultReply);
+                await chain.ReplyAsync(config.NoResultReply);
                 yield break;
             }
 
@@ -80,9 +80,7 @@ namespace GreenOnions.NT.HPictures.Clients
                 else
                     msg = MessageBuilder.Group(chain.GroupUin.Value).Forward(chain).Text(sb.ToString());
 
-                HttpClientHandler httpClientHandler = new HttpClientHandler();
-                if (config.UseProxy && !string.IsNullOrWhiteSpace(commonConfig.ProxyUrl))
-                    httpClientHandler.Proxy = new WebProxy(commonConfig.ProxyUrl) { Credentials = new NetworkCredential(commonConfig.ProxyUserName, commonConfig.ProxyPassword) };
+                HttpClientHandler httpClientHandler = new HttpClientHandler() { UseProxy = config.UseProxy };
                 using HttpClient client = new HttpClient(httpClientHandler);
 
                 var resp = await client.GetAsync(item.urls.original);

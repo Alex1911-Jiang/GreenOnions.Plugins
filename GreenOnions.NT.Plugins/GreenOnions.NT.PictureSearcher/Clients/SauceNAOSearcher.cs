@@ -24,7 +24,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
             catch (Exception ex)
             {
-                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "SauceNAO").Replace("<错误信息>", ex.Message));
+                await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "SauceNAO").Replace("<错误信息>", ex.Message));
                 return 0;
             }
         }
@@ -52,15 +52,13 @@ namespace GreenOnions.NT.PictureSearcher.Clients
                 content.Add(new StringContent("2"), "output_type");
             }
 
-            using HttpClientHandler httpClientHandler = new HttpClientHandler();
-            if (config.UseProxy && !string.IsNullOrWhiteSpace(commonConfig.ProxyUrl))
-                httpClientHandler.Proxy = new WebProxy(commonConfig.ProxyUrl) { Credentials = new NetworkCredential(commonConfig.ProxyUserName, commonConfig.ProxyPassword) };
+            HttpClientHandler httpClientHandler = new HttpClientHandler() { UseProxy = config.UseProxy };
             using HttpClient client = new HttpClient(httpClientHandler);
             var resp = await client.PostAsync("https://SauceNAO.com/search.php", content);
 
             if (!resp.IsSuccessStatusCode)
             {
-                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "SauceNAO").Replace("<错误信息>", $"{(int)resp.StatusCode} {resp.StatusCode}"));
+                await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "SauceNAO").Replace("<错误信息>", $"{(int)resp.StatusCode} {resp.StatusCode}"));
                 return 0;
             }
 
@@ -94,7 +92,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
             catch (Exception ex)
             {
-                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "SauceNAO").Replace("<错误信息>", ex.Message));
+                await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "SauceNAO").Replace("<错误信息>", ex.Message));
                 return 0;
             }
 
@@ -115,14 +113,14 @@ namespace GreenOnions.NT.PictureSearcher.Clients
                 SauceNAOJsonResult? sauceNAOobj = JsonConvert.DeserializeObject<SauceNAOJsonResult>(json);
                 if (sauceNAOobj is null)
                 {
-                    await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "SauceNAO").Replace("<错误信息>", ""));
+                    await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "SauceNAO").Replace("<错误信息>", ""));
                     return 0;
                 }
                 sauceNAOJsonResult = sauceNAOobj;
             }
             catch (Exception ex)
             {
-                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "SauceNAO").Replace("<错误信息>", ex.Message));
+                await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "SauceNAO").Replace("<错误信息>", ex.Message));
                 return 0;
             }
 
@@ -131,7 +129,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
 
             if (sauceNAOJsonResult.results.Length == 0)
             {
-                await context.ReplyAsync(chain, config.SearchNoResultReply.Replace("<搜索类型>", "SauceNAO"));
+                await chain.ReplyAsync(config.SearchNoResultReply.Replace("<搜索类型>", "SauceNAO"));
                 return 0;
             }
 
@@ -202,7 +200,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
             catch (Exception ex)
             {
-                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "SauceNAO").Replace("<错误信息>", ex.Message));
+                await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "SauceNAO").Replace("<错误信息>", ex.Message));
                 return 0;
             }
 
@@ -243,9 +241,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
 
             //高于或等于发送缩略图的相似度
-            using HttpClientHandler httpClientHandler = new HttpClientHandler();
-            if (config.UseProxy && !string.IsNullOrWhiteSpace(commonConfig.ProxyUrl))
-                httpClientHandler.Proxy = new WebProxy(commonConfig.ProxyUrl) { Credentials = new NetworkCredential(commonConfig.ProxyUserName, commonConfig.ProxyPassword) };
+            HttpClientHandler httpClientHandler = new HttpClientHandler() { UseProxy = config.UseProxy };
             using HttpClient client = new HttpClient(httpClientHandler);
             try
             {
@@ -253,7 +249,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
                 if (!resp.IsSuccessStatusCode)  //下载缩略图失败
                 {
                     LogHelper.LogError($"下载SauceNAO搜索结果缩略图{thuImgUrl}失败 {$"{(int)resp.StatusCode} {resp.StatusCode}"}");
-                    await context.SendMessage(msg.Text(config.DownloadThuImgFailReply.Replace("<机器人名称>", commonConfig.BotName).Replace("<错误信息>", $"{(int)resp.StatusCode} {resp.StatusCode}")).Build());
+                    await context.SendMessage(msg.Text(config.DownloadThuImgFailReply.ReplaceTags().Replace("<错误信息>", $"{(int)resp.StatusCode} {resp.StatusCode}")).Build());
                     return;
                 }
                 byte[] img = await resp.Content.ReadAsByteArrayAsync();
@@ -262,7 +258,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             catch (Exception ex)
             {
                 LogHelper.LogException(ex, $"下载SauceNAO搜索结果缩略图{thuImgUrl}失败");
-                await context.SendMessage(msg.Text(config.DownloadThuImgFailReply.Replace("<机器人名称>", commonConfig.BotName).Replace("<错误信息>", ex.Message)).Build());
+                await context.SendMessage(msg.Text(config.DownloadThuImgFailReply.ReplaceTags().Replace("<错误信息>", ex.Message)).Build());
             }
         }
     }

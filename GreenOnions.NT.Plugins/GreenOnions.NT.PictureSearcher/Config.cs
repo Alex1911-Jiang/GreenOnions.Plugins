@@ -139,19 +139,19 @@ namespace GreenOnions.NT.PictureSearcher
         /// 开启连续搜图命令(正则表达式)
         /// </summary>
         [YamlMember(Description = "开启连续搜图模式命令")]
-        public string SearchModeOnCmd { get; set; } = "<机器人名称>搜[图圖図]";
+        public string SearchModeOnCmd { get; set; } = "<BotName>搜[图圖図]";
 
         /// <summary>
         /// 开启连续搜图功能返回消息
         /// </summary>
         [YamlMember(Description = "进入连续搜图模式回复语")]
-        public string SearchModeOnReply { get; set; } = "了解～请发送图片吧！支持批量噢！\r\n如想退出搜索模式请发送“谢谢<机器人名称>”";
+        public string SearchModeOnReply { get; set; } = "了解～请发送图片吧！支持批量噢！\r\n如想退出搜索模式请发送“谢谢<BotName>”";
 
         /// <summary>
         /// 已在连续搜图模式下返回消息
         /// </summary>
         [YamlMember(Description = "已进入连续搜图模式回复语")]
-        public string SearchModeAlreadyOnReply { get; set; } = "您已经在搜图模式下啦！\r\n如想退出搜索模式请发送“谢谢<机器人名称>”";
+        public string SearchModeAlreadyOnReply { get; set; } = "您已经在搜图模式下啦！\r\n如想退出搜索模式请发送“谢谢<BotName>”";
 
         /// <summary>
         /// 发起搜索时的回复语(正在搜索但未搜索完毕)
@@ -163,13 +163,13 @@ namespace GreenOnions.NT.PictureSearcher
         /// 关闭连续搜图命令(正则表达式)
         /// </summary>
         [YamlMember(Description = "退出连续搜图模式命令")]
-        public string SearchModeOffCmd { get; set; } = "[谢謝][谢謝]<机器人名称>";
+        public string SearchModeOffCmd { get; set; } = "[谢謝][谢謝]<BotName>";
 
         /// <summary>
         /// 连续搜图超时返回消息
         /// </summary>
         [YamlMember(Description = "连续搜图模式超时回复语")]
-        public string SearchModeTimeOutReply { get; set; } = "由于超时，已为您自动退出搜图模式，以后要记得说“谢谢<机器人名称>”来退出搜图模式噢";
+        public string SearchModeTimeOutReply { get; set; } = "由于超时，已为您自动退出搜图模式，以后要记得说“谢谢<BotName>”来退出搜图模式噢";
 
         /// <summary>
         /// 退出连续搜图功能返回消息

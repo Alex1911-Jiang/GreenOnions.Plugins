@@ -15,7 +15,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             if (modelIndex >= config.EnabledAnimeTraceModels.Length)
             {
                 LogHelper.LogError($"配置错误，AnimeTrace搜索次数{modelIndex + 1}大于启用的模型数量{config.EnabledAnimeTraceModels}");
-                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "AnimeTrace").Replace("<错误信息>", "配置错误，AnimeTrace搜索次数大于启用的模型数量"));
+                await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "AnimeTrace").Replace("<错误信息>", "配置错误，AnimeTrace搜索次数大于启用的模型数量"));
                 return 0;
             }
 
@@ -28,16 +28,14 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             catch (Exception ex)
             {
                 LogHelper.LogException(ex, $"AnimeTrace({model}模型)搜图发生异常");
-                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "AnimeTrace").Replace("<错误信息>", ex.Message));
+                await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "AnimeTrace").Replace("<错误信息>", ex.Message));
                 return 0;
             }
         }
 
         public static async Task<double> Search(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl, string model)
         {
-            HttpClientHandler httpClientHandler = new HttpClientHandler();
-            if (config.UseProxy && !string.IsNullOrWhiteSpace(commonConfig.ProxyUrl))
-                httpClientHandler.Proxy = new WebProxy(commonConfig.ProxyUrl) { Credentials = new NetworkCredential(commonConfig.ProxyUserName, commonConfig.ProxyPassword) };
+            HttpClientHandler httpClientHandler = new HttpClientHandler() { UseProxy = config.UseProxy };
             using HttpClient httpClient = new HttpClient(httpClientHandler);
 
             Stream img = await httpClient.GetStreamAsync(imageUrl);
@@ -55,13 +53,13 @@ namespace GreenOnions.NT.PictureSearcher.Clients
 
             if (!result.Success)
             {
-                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "AnimeTrace").Replace("<错误信息>", result.Message));
+                await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "AnimeTrace").Replace("<错误信息>", result.Message));
                 return 0;
             }
 
             if (result.Data.Length == 0)
             {
-                await context.ReplyAsync(chain, config.SearchNoResultReply.Replace("<搜索类型>", "AnimeTrace"));
+                await chain.ReplyAsync(config.SearchNoResultReply.Replace("<搜索类型>", "AnimeTrace"));
                 return 0;
             }
 

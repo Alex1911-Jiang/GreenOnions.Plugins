@@ -33,7 +33,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             if (iqdbResults is null || iqdbResults.Matches.Count == 0)
             {
                 LogHelper.LogMessage($"{hostName}没有搜索到任何结果");
-                await context.ReplyAsync(chain, config.SearchNoResultReply.Replace("<搜索类型>", hostName));
+                await chain.ReplyAsync(config.SearchNoResultReply.Replace("<搜索类型>", hostName));
                 return 0;
             }
 
@@ -75,9 +75,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
 
             //高于或等于发送缩略图的相似度
-            HttpClientHandler httpClientHandler = new HttpClientHandler();
-            if (config.UseProxy && !string.IsNullOrWhiteSpace(commonConfig.ProxyUrl))
-                httpClientHandler.Proxy = new WebProxy(commonConfig.ProxyUrl) { Credentials = new NetworkCredential(commonConfig.ProxyUserName, commonConfig.ProxyPassword) };
+            HttpClientHandler httpClientHandler = new HttpClientHandler() { UseProxy = config.UseProxy };
             using HttpClient client = new HttpClient(httpClientHandler);
             try
             {
@@ -86,7 +84,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
                 var resp = await client.GetAsync(thuImgUrl);
                 if (!resp.IsSuccessStatusCode)  //下载缩略图失败
                 {
-                    await context.SendMessage(msg.Text(config.DownloadThuImgFailReply.Replace("<机器人名称>", commonConfig.BotName).Replace("<错误信息>", $"{(int)resp.StatusCode} {resp.StatusCode}")).Build());
+                    await context.SendMessage(msg.Text(config.DownloadThuImgFailReply.ReplaceTags().Replace("<错误信息>", $"{(int)resp.StatusCode} {resp.StatusCode}")).Build());
                     return firstItem.Similarity;
                 }
                 byte[] img = await resp.Content.ReadAsByteArrayAsync();
@@ -94,7 +92,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
             catch (Exception ex)
             {
-                await context.SendMessage(msg.Text(config.DownloadThuImgFailReply.Replace("<机器人名称>", commonConfig.BotName).Replace("<错误信息>", ex.Message)).Build());
+                await context.SendMessage(msg.Text(config.DownloadThuImgFailReply.ReplaceTags().Replace("<错误信息>", ex.Message)).Build());
             }
             return firstItem.Similarity;
         }

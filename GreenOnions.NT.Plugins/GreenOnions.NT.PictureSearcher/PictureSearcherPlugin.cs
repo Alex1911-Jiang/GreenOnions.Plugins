@@ -32,8 +32,8 @@ namespace GreenOnions.NT.PictureSearcher
             LoadConfig(_pluginPath);
             if (_config is null)
                 return;
-            _searchOnCommandRegex = new Regex(_config.SearchModeOnCmd.Replace("<机器人名称>", commonConfig.BotName));
-            _searchOffCommandRegex = new Regex(_config.SearchModeOffCmd.Replace("<机器人名称>", commonConfig.BotName));
+            _searchOnCommandRegex = new Regex(_config.SearchModeOnCmd.ReplaceTags());
+            _searchOffCommandRegex = new Regex(_config.SearchModeOffCmd.ReplaceTags());
         }
 
         private Config LoadConfig(string pluginPath)
@@ -60,8 +60,8 @@ namespace GreenOnions.NT.PictureSearcher
 
             Config config = LoadConfig(pluginPath);
 
-            _searchOnCommandRegex = new Regex(config.SearchModeOnCmd.Replace("<机器人名称>", commonConfig.BotName));
-            _searchOffCommandRegex = new Regex(config.SearchModeOffCmd.Replace("<机器人名称>", commonConfig.BotName));
+            _searchOnCommandRegex = new Regex(config.SearchModeOnCmd.ReplaceTags());
+            _searchOffCommandRegex = new Regex(config.SearchModeOffCmd.ReplaceTags());
 
             bot.Invoker.OnFriendMessageReceived -= OnFriendMessage;
             bot.Invoker.OnGroupMessageReceived -= OnGroupMessage;
@@ -84,7 +84,7 @@ namespace GreenOnions.NT.PictureSearcher
                 }
                 if (_config is null)
                     continue;
-                await _bot.ReplyAsync(item.Chain, _config.SearchModeTimeOutReply.Replace("<机器人名称>", _commonConfig?.BotName));
+                await item.Chain.ReplyAsync(_config.SearchModeTimeOutReply);
             }
         }
 
@@ -98,7 +98,7 @@ namespace GreenOnions.NT.PictureSearcher
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, "搜图插件发生了不在遇见范围内的异常");
+                LogHelper.LogException(ex, $"{Name}插件发生了不在遇见范围内的异常");
             }
         }
 
@@ -110,12 +110,15 @@ namespace GreenOnions.NT.PictureSearcher
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, "搜图插件发生了不在遇见范围内的异常");
+                LogHelper.LogException(ex, $"{Name}插件发生了不在遇见范围内的异常");
             }
         }
 
         private async Task OnMessage(BotContext context, MessageChain chain)
         {
+            if (!chain.AllowUseIfDebug())
+                return;
+
             if (_commonConfig is null)
             {
                 LogHelper.LogWarning("机器人配置为空");
@@ -189,7 +192,7 @@ namespace GreenOnions.NT.PictureSearcher
             }
 
             if (!string.IsNullOrWhiteSpace(config.SearchingReply))  //开始搜索回复
-                await context.ReplyAsync(chain, config.SearchingReply.Replace("<机器人名称>", commonConfig.BotName));
+                await chain.ReplyAsync(config.SearchingReply);
 
             int animeTracModelIndex = 0;
             foreach (var item in config.EnabledSources)
@@ -216,14 +219,14 @@ namespace GreenOnions.NT.PictureSearcher
             if (user is not null)
             {
                 user.TimeOut = DateTime.Now.AddMinutes(2);  //将搜图超时时间延长到2分钟后
-                await context.ReplyAsync(chain, config.SearchModeAlreadyOnReply.Replace("<机器人名称>", commonConfig.BotName));  //已经在连续搜图模式中回复
+                await chain.ReplyAsync(config.SearchModeAlreadyOnReply);  //已经在连续搜图模式中回复
                 return;
             }
             lock (_searchingUsers)
             {
                 _searchingUsers.Add(new SearchingUser(chain, DateTime.Now.AddMinutes(2)));
             }
-            await context.ReplyAsync(chain, config.SearchModeOnReply.Replace("<机器人名称>", commonConfig.BotName));  //进入连续搜图模式回复
+            await chain.ReplyAsync(config.SearchModeOnReply);  //进入连续搜图模式回复
         }
 
         private async Task SearchOff(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain)
@@ -231,14 +234,14 @@ namespace GreenOnions.NT.PictureSearcher
             SearchingUser? user = GetSearchingUser(chain);
             if (user is null)
             {
-                await context.ReplyAsync(chain, config.SearchModeAlreadyOffReply.Replace("<机器人名称>", commonConfig.BotName));  //没有正在搜图回复
+                await chain.ReplyAsync(config.SearchModeAlreadyOffReply);  //没有正在搜图回复
                 return;
             }
             lock (_searchingUsers)
             {
                 _searchingUsers.Remove(user);
             }
-            await context.ReplyAsync(user.Chain, config.SearchModeOffReply.Replace("<机器人名称>", commonConfig.BotName));  //退出搜图模式回复
+            await user.Chain.ReplyAsync(config.SearchModeOffReply);  //退出搜图模式回复
         }
 
         private SearchingUser? GetSearchingUser(MessageChain chain)

@@ -15,10 +15,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
         public static async Task<double> Search(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl)
         {
             LogHelper.LogMessage($"请求trace.moe搜索{imageUrl}");
-
-            using HttpClientHandler httpClientHandler = new HttpClientHandler();
-            if (config.UseProxy && !string.IsNullOrWhiteSpace(commonConfig.ProxyUrl))
-                httpClientHandler.Proxy = new WebProxy(commonConfig.ProxyUrl) { Credentials = new NetworkCredential(commonConfig.ProxyUserName, commonConfig.ProxyPassword) };
+            HttpClientHandler httpClientHandler = new HttpClientHandler() { UseProxy = config.UseProxy };
             using HttpClient client = new HttpClient(httpClientHandler);
 
             HttpResponseMessage response;
@@ -28,7 +25,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
             catch (Exception ex)
             {
-                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "Trace.moe").Replace("<错误信息>", ex.Message));
+                await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "Trace.moe").Replace("<错误信息>", ex.Message));
                 return 0;
             }
 
@@ -40,20 +37,20 @@ namespace GreenOnions.NT.PictureSearcher.Clients
                 TraceMoeJsonResult? traceMoeObj = JsonConvert.DeserializeObject<TraceMoeJsonResult>(json);
                 if (traceMoeObj is null)
                 {
-                    await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "trace.moe").Replace("<错误信息>", ""));
+                    await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "trace.moe").Replace("<错误信息>", ""));
                     return 0;
                 }
                 traceMoeJsonResult = traceMoeObj;
             }
             catch (Exception ex)
             {
-                await context.ReplyAsync(chain, config.SearchErrorReply.Replace("<搜索类型>", "trace.moe").Replace("<错误信息>", ex.Message));
+                await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "trace.moe").Replace("<错误信息>", ex.Message));
                 return 0;
             }
 
             if (traceMoeJsonResult.result.Length == 0)
             {
-                await context.ReplyAsync(chain, config.SearchNoResultReply.Replace("<搜索类型>", "trace.moe"));
+                await chain.ReplyAsync(config.SearchNoResultReply.Replace("<搜索类型>", "trace.moe"));
                 return 0;
             }
 
@@ -106,7 +103,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
                 var resp = await client.GetAsync(thuImgUrl);
                 if (!resp.IsSuccessStatusCode)  //下载缩略图失败
                 {
-                    await context.SendMessage(msg.Text(config.DownloadThuImgFailReply.Replace("<机器人名称>", commonConfig.BotName).Replace("<错误信息>", $"{(int)resp.StatusCode} {resp.StatusCode}")).Build());
+                    await context.SendMessage(msg.Text(config.DownloadThuImgFailReply.ReplaceTags().Replace("<错误信息>", $"{(int)resp.StatusCode} {resp.StatusCode}")).Build());
                     return similarity;
                 }
                 byte[] img = await resp.Content.ReadAsByteArrayAsync();
@@ -114,7 +111,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
             catch (Exception ex)
             {
-                await context.SendMessage(msg.Text(config.DownloadThuImgFailReply.Replace("<机器人名称>", commonConfig.BotName).Replace("<错误信息>", ex.Message)).Build());
+                await context.SendMessage(msg.Text(config.DownloadThuImgFailReply.ReplaceTags().Replace("<错误信息>", ex.Message)).Build());
             }
             return similarity;
         }
