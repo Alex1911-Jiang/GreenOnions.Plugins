@@ -24,7 +24,7 @@ namespace GreenOnions.NT.PictureSearcher
 
         public string Description => "多平台聚合搜图插件";
 
-        public void OnConfigUpdate(ICommonConfig commonConfig)
+        public void OnConfigUpdated(ICommonConfig commonConfig)
         {
             _commonConfig = commonConfig;
             if (_pluginPath is null)
@@ -47,7 +47,7 @@ namespace GreenOnions.NT.PictureSearcher
             return _config;
         }
 
-        public void OnLoad(string pluginPath, BotContext bot, ICommonConfig commonConfig)
+        public void OnLoaded(string pluginPath, BotContext bot, ICommonConfig commonConfig)
         {
             if (timeOutChecker is not null)
                 timeOutChecker.Dispose();
@@ -96,7 +96,7 @@ namespace GreenOnions.NT.PictureSearcher
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, $"{Name}插件发生了不在遇见范围内的异常");
+                LogHelper.LogException(ex, $"{Name}插件发生了不在预见范围内的异常，错误信息：{ex.Message}");
             }
         }
 
@@ -108,7 +108,7 @@ namespace GreenOnions.NT.PictureSearcher
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, $"{Name}插件发生了不在遇见范围内的异常");
+                LogHelper.LogException(ex, $"{Name}插件发生了不在预见范围内的异常，错误信息：{ex.Message}");
             }
         }
 

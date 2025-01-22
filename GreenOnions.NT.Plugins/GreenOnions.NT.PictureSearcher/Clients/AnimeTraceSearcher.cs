@@ -27,7 +27,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, $"AnimeTrace({model}模型)搜图发生异常");
+                LogHelper.LogException(ex, $"AnimeTrace({model}模型)搜图发生异常，错误信息：{ex.Message}");
                 await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "AnimeTrace").Replace("<错误信息>", ex.Message));
                 return 0;
             }

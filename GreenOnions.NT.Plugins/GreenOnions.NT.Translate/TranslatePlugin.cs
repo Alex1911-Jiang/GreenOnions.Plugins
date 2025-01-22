@@ -18,7 +18,7 @@ namespace GreenOnions.NT.Translate
 
         public string Name => "翻译";
         public string Description => "翻译插件";
-        public void OnConfigUpdate(ICommonConfig commonConfig)
+        public void OnConfigUpdated(ICommonConfig commonConfig)
         {
             _commonConfig = commonConfig;
             if (_pluginPath is null)
@@ -42,7 +42,7 @@ namespace GreenOnions.NT.Translate
             return _config;
         }
 
-        public void OnLoad(string pluginPath, BotContext bot, ICommonConfig commonConfig)
+        public void OnLoaded(string pluginPath, BotContext bot, ICommonConfig commonConfig)
         {
             _pluginPath = pluginPath;
             _commonConfig = commonConfig;
@@ -51,11 +51,6 @@ namespace GreenOnions.NT.Translate
             _translateToChineseCommandRegex = new Regex(config.TranslateToChineseCommand.ReplaceTags());
             _translateToLanguageCommandRegex = new Regex(config.TranslateToLanguageCommand.ReplaceTags());
             _translateFromLanguageToLanguageChineseCommandRegex = new Regex(config.TranslateFromLanguageToLanguageCommand.ReplaceTags());
-
-            bot.Invoker.OnFriendMessageReceived -= OnFriendMessage;
-            bot.Invoker.OnGroupMessageReceived -= OnGroupMessage;
-            bot.Invoker.OnFriendMessageReceived += OnFriendMessage;
-            bot.Invoker.OnGroupMessageReceived += OnGroupMessage;
         }
 
         private async void OnGroupMessage(BotContext context, Lagrange.Core.Event.EventArg.GroupMessageEvent e)
@@ -66,7 +61,7 @@ namespace GreenOnions.NT.Translate
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, $"{Name}插件发生了不在遇见范围内的异常");
+                LogHelper.LogException(ex, $"{Name}插件发生了不在预见范围内的异常，错误信息：{ex.Message}");
             }
         }
 
@@ -80,7 +75,7 @@ namespace GreenOnions.NT.Translate
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, $"{Name}插件发生了不在遇见范围内的异常");
+                LogHelper.LogException(ex, $"{Name}插件发生了不在预见范围内的异常，错误信息：{ex.Message}");
             }
         }
 

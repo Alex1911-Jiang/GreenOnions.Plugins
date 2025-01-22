@@ -42,7 +42,7 @@ namespace GreenOnions.NT.HPictures.Clients
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, $"访问Yuban10703色图API发生错误，请求地址为：{strUrl}");
+                LogHelper.LogException(ex, $"访问Yuban10703色图API发生错误，请求地址为：{strUrl}，错误信息：{ex.Message}");
                 throw;
             }
             Yuban10703RestResult? restResult = JsonConvert.DeserializeObject<Yuban10703RestResult>(respJson);

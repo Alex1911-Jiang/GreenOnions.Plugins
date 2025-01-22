@@ -39,7 +39,7 @@ namespace GreenOnions.NT.HPictures.Clients
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, $"访问{apiName}色图API发生错误，请求地址为：{strUrl}");
+                LogHelper.LogException(ex, $"访问{apiName}色图API发生错误，请求地址为：{strUrl}，错误信息：{ex.Message}");
                 throw;
             }
             LoliconRestResult? restResult = JsonConvert.DeserializeObject<LoliconRestResult>(respJson);

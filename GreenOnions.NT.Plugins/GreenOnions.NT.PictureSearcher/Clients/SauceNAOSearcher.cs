@@ -257,7 +257,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, $"下载SauceNAO搜索结果缩略图{thuImgUrl}失败");
+                LogHelper.LogException(ex, $"下载SauceNAO搜索结果缩略图{thuImgUrl}失败，错误信息：{ex.Message}");
                 await context.SendMessage(msg.Text(config.DownloadThuImgFailReply.ReplaceTags().Replace("<错误信息>", ex.Message)).Build());
             }
         }

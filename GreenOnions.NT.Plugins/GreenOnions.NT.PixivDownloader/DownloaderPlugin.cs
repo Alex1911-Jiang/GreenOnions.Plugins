@@ -16,7 +16,7 @@ namespace GreenOnions.NT.PixivDownloader
 
         public string Name => "Pixiv原图下载器";
         public string Description => "输入Pixiv作品ID下载原图插件";
-        public void OnConfigUpdate(ICommonConfig commonConfig)
+        public void OnConfigUpdated(ICommonConfig commonConfig)
         {
             _commonConfig = commonConfig;
             if (_pluginPath is null)
@@ -38,7 +38,7 @@ namespace GreenOnions.NT.PixivDownloader
             return _config;
         }
 
-        public void OnLoad(string pluginPath, BotContext bot, ICommonConfig commonConfig)
+        public void OnLoaded(string pluginPath, BotContext bot, ICommonConfig commonConfig)
         {
             _pluginPath = pluginPath;
             _commonConfig = commonConfig;
@@ -60,7 +60,7 @@ namespace GreenOnions.NT.PixivDownloader
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, $"{Name}插件发生了不在遇见范围内的异常");
+                LogHelper.LogException(ex, $"{Name}插件发生了不在预见范围内的异常，错误信息：{ex.Message}");
             }
         }
 
@@ -74,7 +74,7 @@ namespace GreenOnions.NT.PixivDownloader
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, $"{Name}插件发生了不在遇见范围内的异常");
+                LogHelper.LogException(ex, $"{Name}插件发生了不在预见范围内的异常，错误信息：{ex.Message}");
             }
         }
 
