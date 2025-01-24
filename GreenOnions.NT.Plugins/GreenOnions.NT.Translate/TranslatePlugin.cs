@@ -51,6 +51,11 @@ namespace GreenOnions.NT.Translate
             _translateToChineseCommandRegex = new Regex(config.TranslateToChineseCommand.ReplaceTags());
             _translateToLanguageCommandRegex = new Regex(config.TranslateToLanguageCommand.ReplaceTags());
             _translateFromLanguageToLanguageChineseCommandRegex = new Regex(config.TranslateFromLanguageToLanguageCommand.ReplaceTags());
+
+            bot.Invoker.OnFriendMessageReceived -= OnFriendMessage;
+            bot.Invoker.OnGroupMessageReceived -= OnGroupMessage;
+            bot.Invoker.OnFriendMessageReceived += OnFriendMessage;
+            bot.Invoker.OnGroupMessageReceived += OnGroupMessage;
         }
 
         private async void OnGroupMessage(BotContext context, Lagrange.Core.Event.EventArg.GroupMessageEvent e)
@@ -173,8 +178,6 @@ namespace GreenOnions.NT.Translate
         {
             if (_config is null)
                 throw new Exception("未配置翻译插件");
-            if (!_config.Enabled)
-                throw new Exception("管理员关闭了翻译功能");
 
             return _config.Engine switch
             {

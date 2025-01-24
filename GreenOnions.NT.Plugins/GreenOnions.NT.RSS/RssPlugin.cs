@@ -23,7 +23,7 @@ namespace GreenOnions.NT.RSS
         private ICommonConfig? _commonConfig;
 
         public string Name => "RSS订阅";
-        public string Description => "RSS订阅插件";
+        public string Description => "RSS订阅转发插件";
         public void OnConfigUpdated(ICommonConfig commonConfig)
         {
             _commonConfig = commonConfig;

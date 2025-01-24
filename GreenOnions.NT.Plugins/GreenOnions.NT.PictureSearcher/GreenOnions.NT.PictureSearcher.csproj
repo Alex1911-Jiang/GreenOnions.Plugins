@@ -22,4 +22,8 @@
     <ProjectReference Include="..\..\..\GreenOnions\GreenOnions.NT\GreenOnions.NT.Base\GreenOnions.NT.Base.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
 </Project>
