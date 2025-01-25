@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.NT.RSS", "Green
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.NT.Translate", "GreenOnions.NT.Translate\GreenOnions.NT.Translate.csproj", "{435BB492-3A81-4750-9251-4F9F79A5D1B1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.NT.CryptocurrencyPrices", "GreenOnions.NT.CryptocurrencyPrices\GreenOnions.NT.CryptocurrencyPrices.csproj", "{581DF2E1-4A8D-484D-A5AA-CBF9A0A50594}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{435BB492-3A81-4750-9251-4F9F79A5D1B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{435BB492-3A81-4750-9251-4F9F79A5D1B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{435BB492-3A81-4750-9251-4F9F79A5D1B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{581DF2E1-4A8D-484D-A5AA-CBF9A0A50594}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{581DF2E1-4A8D-484D-A5AA-CBF9A0A50594}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{581DF2E1-4A8D-484D-A5AA-CBF9A0A50594}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{581DF2E1-4A8D-484D-A5AA-CBF9A0A50594}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
