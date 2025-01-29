@@ -18,6 +18,16 @@ namespace GreenOnions.NT.RSS
         [YamlMember(Description = "备注")]
         public string? Remark { get; set; }
         /// <summary>
+        /// 是否使用代理
+        /// </summary>
+        [YamlMember(Description = "使用代理（机器人主配置中的地址）")]
+        public bool UseProxy { get; set; } = false;
+        /// <summary>
+        /// 获取内容时间间隔(秒)
+        /// </summary>
+        [YamlMember(Description = "获取内容时间间隔（单位：秒，可以填写小数）")]
+        public double ReadInterval { get; set; } = 600.0;
+        /// <summary>
         /// 转发群组
         /// </summary>
         [YamlMember(Description = "期望转发到的群号")]
@@ -60,7 +70,6 @@ namespace GreenOnions.NT.RSS
             "发布时间：<发布时间>",
             "原文地址：<原文地址>",
         ];
-
         /// <summary>
         /// 是否把RSS订阅源返回值作为一个流下载后再解析
         /// </summary>

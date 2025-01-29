@@ -4,15 +4,15 @@ namespace GreenOnions.NT.RSS
 {
     internal class RssResult
     {
-        internal string Url { get; set; }
+        internal string? Url { get; set; }
         /// <summary>
         /// 标题
         /// </summary>
-        internal string Title { get; set; }
+        internal string? Title { get; set; }
         /// <summary>
         /// 文章标题
         /// </summary>
-        internal string InnerTitle { get; set; }
+        internal string? InnerTitle { get; set; }
         /// <summary>
         /// 正文文字部分
         /// </summary>
@@ -32,14 +32,14 @@ namespace GreenOnions.NT.RSS
         /// <summary>
         /// 作者名
         /// </summary>
-        internal string Author { get; set; }
+        internal string? Author { get; set; }
         /// <summary>
         /// 发布日期
         /// </summary>
-        internal DateTime PubDate { get; set; }
+        internal DateTime? PubDate { get; set; } = null;
         /// <summary>
         /// 原文地址
         /// </summary>
-        internal string Link { get; set; }
+        internal string? Link { get; set; }
     }
 }
