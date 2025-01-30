@@ -6,7 +6,7 @@ namespace GreenOnions.NT.HPictures
     internal class Config
     {
         /// <summary>
-        /// 色图完整命令(正则表达式)
+        /// 是否启用色图插件
         /// </summary>
         [YamlMember(Description = "是否启用色图插件")]
         public bool Enabled { get; set; } = false;
