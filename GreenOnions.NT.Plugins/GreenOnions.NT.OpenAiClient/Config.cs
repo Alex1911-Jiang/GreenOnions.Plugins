@@ -34,8 +34,8 @@ namespace GreenOnions.NT.OpenAiClient
         [YamlMember(Description = "备注，可以以<Remark>标签作为替换项放到回复内容或命令的配置中")]
         public string Remark { get; set; } = "";
 
-        [YamlMember(Description = "采样温度，取值范围0-1，越大回复用词越正式")]
-        public float Temperature { get; set; } = 1;
+        [YamlMember(Description = "采样温度，取值范围0-1，越大回复越具有创造性")]
+        public float Temperature { get; set; } = 0.8f;
 
         [YamlMember(Description = "使用代理（机器人主配置中的地址）")]
         public bool UseProxy { get; set; } = false;
@@ -70,7 +70,7 @@ namespace GreenOnions.NT.OpenAiClient
         [YamlMember(Description = "超时自动退出聊天的时间，单位：秒")]
         public int TimeOutSeconds { get; set; } = 600;
 
-        [YamlMember(Description = "移除思考过程（仅DeepSeek有效，移除<think>中的内容）")]
+        [YamlMember(Description = "移除思考过程（<think>中的内容）")]
         public bool RemoveThink { get; set; } = false;
     }
 }
