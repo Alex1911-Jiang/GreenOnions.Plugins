@@ -14,7 +14,7 @@
 您可以在[GreenOnions](https://github.com/Alex1911-Jiang/GreenOnions)中输入：install-plugin 以上插件名称 #来自动下载并安装这些插件
 
 
-### 待移植插件TODO:
+### 待移植/待实现插件TODO:
 
 - [x] GPT客户端
 - [x] ~~GLM客户端~~（懒得写了，可以使用OpenAi客户端插件+OpenAi Api转换器实现对接）
