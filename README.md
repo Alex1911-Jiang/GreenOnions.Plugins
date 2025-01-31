@@ -9,14 +9,16 @@
 3. 随机色图
 4. 翻译
 5. RSS订阅
+6. OpenAi客户端
 
 您可以在[GreenOnions](https://github.com/Alex1911-Jiang/GreenOnions)中输入：install-plugin 以上插件名称 #来自动下载并安装这些插件
 
 
 ### 待移植插件TODO:
 
-- [ ] GPT客户端
-- [ ] GLM客户端
+- [x] GPT客户端
+- [x] ~~GLM客户端~~（懒得写了，可以使用OpenAi客户端插件+OpenAi Api转换器实现对接）
+- [x] DeepSeek客户端（通过OpenAi客户端实现，DeepSeek官方Api和OpenAi一致）
 - [ ] 复读机
 - [ ] 自定义回复器
 - [ ] Http客户端
