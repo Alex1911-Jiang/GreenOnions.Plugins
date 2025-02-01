@@ -211,7 +211,7 @@ namespace GreenOnions.NT.OpenAiClient
                         if (!completionResult.Successful)
                         {
                             LogHelper.LogError($"{chatingUser.Config.Remark} AI聊天失败，{completionResult.Error?.Message}");
-                            await chain.ReplyAsync(_config.ErrorReply.ReplaceConfigTags(chatingUser.Config));
+                            await chain.ReplyAsync(_config.ErrorReply.ReplaceConfigTags(chatingUser.Config, new Exception(completionResult.Error!.Message)));
                             return;
                         }
                         string? result = completionResult.Choices.First().Message.Content;
