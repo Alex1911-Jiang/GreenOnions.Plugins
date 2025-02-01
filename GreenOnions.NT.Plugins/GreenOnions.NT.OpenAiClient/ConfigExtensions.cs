@@ -18,7 +18,7 @@ namespace GreenOnions.NT.OpenAiClient
             }
             text = text.ReplaceTags();
             if (ex is null)
-                return text;
+                return text.Replace("<错误信息>", "");
             return text.Replace("<错误信息>", ex.Message);
         }
     }
