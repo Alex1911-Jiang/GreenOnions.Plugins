@@ -81,7 +81,7 @@ namespace GreenOnions.NT.PictureSearcher
         /// 使用浏览器访问Ascii2d搜索
         /// </summary>
         [YamlMember(Description = "使用浏览器访问Ascii2d搜索（如果遭遇人机验证403请启用）")]
-        public bool Ascii2dUseChromium { get; set; } = true;
+        public bool Ascii2dUseChromium { get; set; } = false;
 
         /// <summary>
         /// Ascii2d显示结果数量
