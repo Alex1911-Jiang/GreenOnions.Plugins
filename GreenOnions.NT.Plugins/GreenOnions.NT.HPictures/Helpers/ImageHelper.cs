@@ -1,4 +1,5 @@
-﻿using SixLabors.ImageSharp;
+﻿using GreenOnions.NT.Base;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace GreenOnions.NT.HPictures.Helpers
@@ -7,12 +8,22 @@ namespace GreenOnions.NT.HPictures.Helpers
     {
         internal static byte[] AntiShielding(this byte[] imgData)
         {
-            using Image img = Image.Load(imgData);
-            using Image<Rgba32> bmp = img.CloneAs<Rgba32>();
-            bmp.AntiShielding();
-            using MemoryStream ms = new MemoryStream();
-            bmp.SaveAsPng(ms);
-            return ms.ToArray();
+            try
+            {
+                using Image img = Image.Load(imgData);
+                using Image<Rgba32> bmp = img.CloneAs<Rgba32>();
+                bmp.AntiShielding();
+                using MemoryStream ms = new MemoryStream();
+                bmp.SaveAsPng(ms);
+                byte[] result = ms.ToArray();
+                LogHelper.LogMessage("反和谐图片成功");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogException(ex, "反和谐图片失败");
+                return imgData;
+            }
         }
 
         internal static void AntiShielding(this Image<Rgba32> bmp)

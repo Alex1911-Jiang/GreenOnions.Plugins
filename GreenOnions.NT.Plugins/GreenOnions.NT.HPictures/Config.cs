@@ -27,7 +27,7 @@ namespace GreenOnions.NT.HPictures
         /// Pixiv图片代理地址
         /// </summary>
         [YamlMember(Description = "Pixiv图片代理地址")]
-        public string PrixvProxy { get; set; } = "i.pixiv.re";
+        public string PixivProxy { get; set; } = "i.pixiv.re";
 
         /// <summary>
         /// 启用的色图图库
@@ -220,6 +220,12 @@ namespace GreenOnions.NT.HPictures
         /// </summary>
         [YamlMember(Description = "单次请求最大图片数量(支持1-20, 不建议超过10, 容易无法撤回)")]
         public int OnceMessageMaxImageCount { get; set; } = 10;
+
+        /// <summary>
+        /// 是否替换Pixiv日期为ID路由
+        /// </summary>
+        [YamlMember(Description = "使用Pixiv Id路由替代图库中本来的作品时间路由")]
+        public bool ReplacePixivDateToIdRoute { get; set; } = true;
 
     }
 }

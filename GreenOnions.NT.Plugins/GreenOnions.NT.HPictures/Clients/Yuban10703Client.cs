@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Text;
+﻿using System.Text;
 using GreenOnions.NT.Base;
 using GreenOnions.NT.HPictures.Helpers;
 using GreenOnions.NT.HPictures.Models.Yuban10703;
@@ -18,7 +17,7 @@ namespace GreenOnions.NT.HPictures.Clients
             string keywordParam = keyword.KeyworkToParams();
             string numParam = $"num={num}";
             string r18Param = $"r18={(r18 ? 1 : 0)}";
-            string proxyParam = $"replace_url=https://{config.PrixvProxy}";
+            string proxyParam = $"replace_url=https://{config.PixivProxy}";
             List<string> requestParams = new(3) { numParam, r18Param, proxyParam };
             if (!string.IsNullOrEmpty(keywordParam))
                 requestParams.Add(keywordParam);
@@ -65,11 +64,24 @@ namespace GreenOnions.NT.HPictures.Clients
 
             foreach (var item in restResult.data)
             {
+                string imgUrl = item.urls.original;
+                if (config.ReplacePixivDateToIdRoute)
+                {
+                    string strIndex = item.page > 0 ? $"-{item.page + 1}" : string.Empty;
+                    string ext = item.urls.original.Substring(item.urls.original.LastIndexOf('.'));
+                    imgUrl = $"https://{config.PixivProxy}/{item.artwork.id}{strIndex}{ext}";
+                    LogHelper.LogMessage($"色图地址由 {item.urls.original} 替换为了 {imgUrl}");
+                }
+                else
+                {
+                    LogHelper.LogMessage($"色图地址 {imgUrl}");
+                }
+
                 StringBuilder sb = new StringBuilder();
                 if (config.SendUrl)
                     sb.AppendLine($"作品页：https://www.pixiv.net/artworks/{item.artwork.id} (p{item.page})");
                 if (config.SendProxyUrl)
-                    sb.AppendLine($"图片代理地址：{item.urls.original}");
+                    sb.AppendLine($"图片代理地址：{imgUrl}");
                 if (config.SendTitle)
                     sb.AppendLine($"标题:{item.artwork.title}\r\n作者:{item.author.name}");
                 if (config.SendTags)
@@ -78,7 +90,7 @@ namespace GreenOnions.NT.HPictures.Clients
                 using HttpClientHandler httpClientHandler = new HttpClientHandler { UseProxy = config.UseProxy };
                 using HttpClient client = new HttpClient(httpClientHandler);
 
-                byte[] img = await client.GetByteArrayAsync(item.urls.original);
+                byte[] img = await client.GetByteArrayAsync(imgUrl);
 
                 if (config.AntiShielding)
                     img = ImageHelper.AntiShielding(img);

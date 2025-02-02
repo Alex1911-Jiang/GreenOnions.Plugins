@@ -15,7 +15,7 @@ namespace GreenOnions.NT.HPictures.Clients
             string keywordParam = keyword.KeyworkToParams();
             string numParam = $"num={num}";
             string r18Param = $"r18={(r18 ? 1 : 0)}";
-            string proxyParam = $"proxy={config.PrixvProxy}";
+            string proxyParam = $"proxy={config.PixivProxy}";
             List<string> requestParams = new(3) { numParam, r18Param, proxyParam };
             if (!string.IsNullOrEmpty(keywordParam))
                 requestParams.Add(keywordParam);
@@ -62,11 +62,24 @@ namespace GreenOnions.NT.HPictures.Clients
 
             foreach (var item in restResult.data)
             {
+                string imgUrl = item.urls.original;
+                if (config.ReplacePixivDateToIdRoute)
+                {
+                    string strIndex = item.p > 0 ? $"-{item.p + 1}" : string.Empty;
+                    string ext = item.urls.original.Substring(item.urls.original.LastIndexOf('.'));
+                    imgUrl = $"https://{config.PixivProxy}/{item.pid}{strIndex}{ext}";
+                    LogHelper.LogMessage($"色图地址由 {item.urls.original} 替换为了 {imgUrl}");
+                }
+                else
+                {
+                    LogHelper.LogMessage($"色图地址 {imgUrl}");
+                }
+
                 StringBuilder sb = new StringBuilder();
                 if (config.SendUrl)
                     sb.AppendLine($"作品页：https://www.pixiv.net/artworks/{item.pid} (p{item.p})");
                 if (config.SendProxyUrl)
-                    sb.AppendLine($"图片代理地址：{item.urls.original}");
+                    sb.AppendLine($"图片代理地址：{imgUrl}");
                 if (config.SendTitle)
                     sb.AppendLine($"标题:{item.title}\r\n作者:{item.author}");
                 if (config.SendTags)
@@ -81,7 +94,7 @@ namespace GreenOnions.NT.HPictures.Clients
                 using HttpClientHandler httpClientHandler = new HttpClientHandler { UseProxy = config.UseProxy };
                 using HttpClient client = new HttpClient(httpClientHandler);
 
-                var resp = await client.GetAsync(item.urls.original);
+                var resp = await client.GetAsync(imgUrl);
 
                 if (!resp.IsSuccessStatusCode)
                     yield return msg.Text(config.DownloadFailReply.Replace("<错误信息>", $"{(int)resp.StatusCode} {resp.StatusCode}"));
