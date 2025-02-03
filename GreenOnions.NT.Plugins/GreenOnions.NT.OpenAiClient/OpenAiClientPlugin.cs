@@ -1,13 +1,12 @@
-﻿using System.Text.RegularExpressions;
-using Betalgo.Ranul.OpenAI;
-using Betalgo.Ranul.OpenAI.Managers;
-using Betalgo.Ranul.OpenAI.ObjectModels.RequestModels;
-using Betalgo.Ranul.OpenAI.ObjectModels.ResponseModels;
+﻿using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
 using GreenOnions.NT.Base;
+using GreenOnions.NT.OpenAiClient.Models;
 using Lagrange.Core;
 using Lagrange.Core.Event.EventArg;
 using Lagrange.Core.Message;
 using Lagrange.Core.Message.Entity;
+using Newtonsoft.Json;
 
 namespace GreenOnions.NT.OpenAiClient
 {
@@ -136,7 +135,7 @@ namespace GreenOnions.NT.OpenAiClient
                         if (string.IsNullOrWhiteSpace(config.Domain))
                             continue;
 
-                        Regex regexStart = new Regex(config.StartCommand.ReplaceConfigTags(config));
+                        Regex regexStart = new Regex(config.StartCommand.ReplaceConfigTags(config), RegexOptions.IgnoreCase);
                         Match matchStart = regexStart.Match(msgCmd);
                         if (!matchStart.Success)
                             continue;
@@ -187,6 +186,9 @@ namespace GreenOnions.NT.OpenAiClient
                         return;
                     }
 
+                    //重置超时时间
+                    chatingUser.TimeOut = DateTime.Now.AddSeconds(chatingUser.Config.TimeOutSeconds);
+
                     if (!chatingUser.Config.MaintainContext)  //如果设定为不保持上下文，则清空上下文并重新添加System
                     {
                         chatingUser.ChatMessages.Clear();
@@ -195,37 +197,71 @@ namespace GreenOnions.NT.OpenAiClient
                     }
 
                     //聊天
-                    chatingUser.ChatMessages.Add(ChatMessage.FromUser(msg));
                     using HttpClientHandler handler = new HttpClientHandler { UseProxy = chatingUser.Config.UseProxy };
                     using HttpClient client = new HttpClient(handler);
-                    using OpenAIService openAiService = new(new OpenAIOptions()
-                    {
-                        ApiKey = chatingUser.Config.ApiKey!,
-                        DefaultModelId = chatingUser.Config.ModelId!,
-                        BaseDomain = chatingUser.Config.Domain!,
-                    }, client);
-
                     try
                     {
-                        var completionResult = await openAiService.ChatCompletion.CreateCompletion(new ChatCompletionCreateRequest { Messages = chatingUser.ChatMessages, Temperature = chatingUser.Config.Temperature, Stream = false });
-                        if (!completionResult.Successful)
+                        List<ChatMessage> chatMessages = chatingUser.ChatMessages.ToList();  //创建一个副本添加本次对话内容，避免在聊天失败时将本次的对话添加到上下文
+                        chatMessages.Add(ChatMessage.FromUser(msg));
+
+                        using StringContent content = new ChatRequest
                         {
-                            LogHelper.LogError($"{chatingUser.Config.Remark} AI聊天失败，{completionResult.Error?.Message}");
-                            await chain.ReplyAsync(_config.ErrorReply.ReplaceConfigTags(chatingUser.Config, new Exception(completionResult.Error!.Message)));
+                            model = chatingUser.Config.ModelId!,
+                            messages = chatMessages,
+                            temperature = chatingUser.Config.Temperature,
+
+                        }.ToJsonContent();
+
+                        using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, chatingUser.Config.Domain!.DomainToUrl()) { Content = content };
+                        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", chatingUser.Config.ApiKey);
+                        HttpResponseMessage responseMessage = await client.SendAsync(request);
+                        if (!responseMessage.IsSuccessStatusCode)
+                        {
+                            string errorMessage = "";
+                            try
+                            {
+                                errorMessage = await responseMessage.Content.ReadAsStringAsync();
+                            }
+                            catch
+                            {
+                            }
+                            LogHelper.LogError($"{chatingUser.Config.Remark}聊天失败，{(int)responseMessage.StatusCode} {responseMessage.StatusCode} {errorMessage}");
+                            await chain.ReplyAsync(_config.ErrorReply.ReplaceConfigTags(chatingUser.Config, new Exception($"{(int)responseMessage.StatusCode} {responseMessage.StatusCode} {errorMessage}")));
                             return;
                         }
-                        string? result = completionResult.Choices.First().Message.Content;
-                        if (string.IsNullOrWhiteSpace(result))
+
+                        string responseJson = await responseMessage.Content.ReadAsStringAsync();
+                        ChatResponse? response = JsonConvert.DeserializeObject<ChatResponse>(responseJson);
+
+                        if (response is null)
                         {
-                            LogHelper.LogWarning($"{chatingUser.Config.Remark} AI聊天没有返回内容，错误信息：{completionResult.Error?.Message}");
+                            LogHelper.LogError($"{chatingUser.Config.Remark}聊天错误，解析Json失败 {responseJson}");
+                            await chain.ReplyAsync(_config.ErrorReply.ReplaceConfigTags(chatingUser.Config));
                             return;
                         }
-                        LogHelper.LogMessage($"{chatingUser.Config.Remark} AI聊天返回内容：{result}");
-                        string output = result;
+
+                        if (response.error is not null)
+                        {
+                            LogHelper.LogError($"{chatingUser.Config.Remark}聊天失败，{response.error.code} {response.error.message}");
+                            await chain.ReplyAsync(_config.ErrorReply.ReplaceConfigTags(chatingUser.Config, new Exception($"{response.error.code} {response.error.message}")));
+                            return;
+                        }
+
+                        if (response.choices is null)
+                        {
+                            LogHelper.LogError($"{chatingUser.Config.Remark}聊天错误，返回choices为空");
+                            await chain.ReplyAsync(_config.ErrorReply.ReplaceConfigTags(chatingUser.Config));
+                            return;
+                        }
+
+                        string output = response.choices.First().message.content;
+                        string result = output;
+                        LogHelper.LogMessage($"{chatingUser.Config.Remark} AI聊天返回内容：{output}");
                         if (chatingUser.Config.RemoveThink && output.StartsWith("<think>"))  //移除DeepSeek思考过程
-                            output = output.Substring(output.IndexOf("</think>") + "</think>".Length).TrimStart();
+                            result = output.Substring(output.IndexOf("</think>") + "</think>".Length).TrimStart();
                         await chain.ReplyAsync(output);
-                        chatingUser.ChatMessages.Add(ChatMessage.FromAssistant(result));
+                        chatingUser.ChatMessages = chatMessages;
+                        chatingUser.ChatMessages.Add(ChatMessage.FromAssistant(output));
                     }
                     catch (Exception ex)
                     {

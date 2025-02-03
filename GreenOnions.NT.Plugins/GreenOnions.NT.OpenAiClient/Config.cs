@@ -22,7 +22,7 @@ namespace GreenOnions.NT.OpenAiClient
 
     internal class ChatConfig
     {
-        [YamlMember(Description = "地址 例：https://api.openai.com/ 注意结尾要带/")]
+        [YamlMember(Description = "地址 例：https://api.openai.com/ 注意Api提供商地址结尾是否带/")]
         public string? Domain { get; set; }
 
         [YamlMember(Description = "API-Key")]

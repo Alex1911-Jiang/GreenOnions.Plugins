@@ -1,4 +1,4 @@
-﻿using Betalgo.Ranul.OpenAI.ObjectModels.RequestModels;
+﻿using GreenOnions.NT.OpenAiClient.Models;
 using Lagrange.Core.Message;
 
 namespace GreenOnions.NT.OpenAiClient
