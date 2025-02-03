@@ -24,9 +24,15 @@ namespace GreenOnions.NT.HPictures
         public bool UseProxy { get; set; } = false;
 
         /// <summary>
+        /// Pixiv图片路由
+        /// </summary>
+        [YamlMember(Description = "Pixiv图片路由（.cat/.re/.nl）")]
+        public string PixivRoute { get; set; } = "pixiv.re";
+
+        /// <summary>
         /// Pixiv图片代理地址
         /// </summary>
-        [YamlMember(Description = "Pixiv图片代理地址")]
+        [YamlMember(Description = "Pixiv图片代理地址（建议与路由同步修改）")]
         public string PixivProxy { get; set; } = "i.pixiv.re";
 
         /// <summary>
@@ -212,7 +218,7 @@ namespace GreenOnions.NT.HPictures
         /// <summary>
         /// 色图次数限制记录类型
         /// </summary>
-        [YamlMember(Description = "次数限制记录类型")]
+        [YamlMember(Description = "次数限制记录类型（Frequency：记次，Number：记张）")]
         public LimitType LimitType { get; set; } = LimitType.Frequency;
 
         /// <summary>
@@ -220,12 +226,5 @@ namespace GreenOnions.NT.HPictures
         /// </summary>
         [YamlMember(Description = "单次请求最大图片数量(支持1-20, 不建议超过10, 容易无法撤回)")]
         public int OnceMessageMaxImageCount { get; set; } = 10;
-
-        /// <summary>
-        /// 是否替换Pixiv日期为ID路由
-        /// </summary>
-        [YamlMember(Description = "使用Pixiv Id路由替代图库中本来的作品时间路由")]
-        public bool ReplacePixivDateToIdRoute { get; set; } = true;
-
     }
 }

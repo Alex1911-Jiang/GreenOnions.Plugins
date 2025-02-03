@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
 using GreenOnions.NT.Base;
 using GreenOnions.NT.HPictures.Helpers;
 using GreenOnions.NT.HPictures.Models.Yuban10703;
@@ -35,7 +36,8 @@ namespace GreenOnions.NT.HPictures.Clients
                 }
                 else
                 {
-                    using HttpClient client = new HttpClient();
+                    using HttpClientHandler handler = new HttpClientHandler { UseProxy = config.UseProxy };
+                    using HttpClient client = new HttpClient(handler);
                     respJson = await client.GetStringAsync(strUrl);
                 }
             }
@@ -65,16 +67,22 @@ namespace GreenOnions.NT.HPictures.Clients
             foreach (var item in restResult.data)
             {
                 string imgUrl = item.urls.original;
-                if (config.ReplacePixivDateToIdRoute)
+
+                using HttpClientHandler httpClientHandler = new HttpClientHandler { UseProxy = config.UseProxy };
+                using HttpClient client = new HttpClient(httpClientHandler);
+
+                string strIndex = item.page > 0 ? $"-{item.page + 1}" : string.Empty;
+                Queue<string> exts = new Queue<string>([".jpg", ".png", ".gif"]);
+
+                LogHelper.LogMessage($"色图地址 {imgUrl}");
+                HttpResponseMessage imgResponse = await client.GetAsync(imgUrl);
+                HttpStatusCode originalCode = imgResponse.StatusCode;
+                while (!imgResponse.IsSuccessStatusCode && exts.Count > 0)
                 {
-                    string strIndex = item.page > 0 ? $"-{item.page + 1}" : string.Empty;
-                    string ext = item.urls.original.Substring(item.urls.original.LastIndexOf('.'));
-                    imgUrl = $"https://{config.PixivProxy}/{item.artwork.id}{strIndex}{ext}";
-                    LogHelper.LogMessage($"色图地址由 {item.urls.original} 替换为了 {imgUrl}");
-                }
-                else
-                {
-                    LogHelper.LogMessage($"色图地址 {imgUrl}");
+                    string ext = exts.Dequeue();
+                    imgUrl = $"https://{config.PixivRoute}/{item.artwork.id}{strIndex}{ext}";
+                    LogHelper.LogMessage($"{config.PixivRoute}发生错误{imgResponse.StatusCode}，尝试将色图地址替换为 {imgUrl}");
+                    imgResponse = await client.GetAsync(imgUrl);
                 }
 
                 StringBuilder sb = new StringBuilder();
@@ -87,10 +95,13 @@ namespace GreenOnions.NT.HPictures.Clients
                 if (config.SendTags)
                     sb.AppendLine($"标签:{string.Join(',', item.tags)}");
 
-                using HttpClientHandler httpClientHandler = new HttpClientHandler { UseProxy = config.UseProxy };
-                using HttpClient client = new HttpClient(httpClientHandler);
+                if (!imgResponse.IsSuccessStatusCode)
+                {
+                    await chain.ReplyAsync(config.DownloadFailReply.Replace("<错误信息>", $"{(int)originalCode} {originalCode}"));
+                    yield break;
+                }
 
-                byte[] img = await client.GetByteArrayAsync(imgUrl);
+                byte[] img = await imgResponse.Content.ReadAsByteArrayAsync();
 
                 if (config.AntiShielding)
                     img = ImageHelper.AntiShielding(img);

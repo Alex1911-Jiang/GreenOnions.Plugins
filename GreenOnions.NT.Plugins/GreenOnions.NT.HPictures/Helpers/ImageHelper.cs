@@ -17,6 +17,8 @@ namespace GreenOnions.NT.HPictures.Helpers
                 bmp.SaveAsPng(ms);
                 byte[] result = ms.ToArray();
                 LogHelper.LogMessage("反和谐图片成功");
+                if (SngletonInstance.Config?.DebugMode == true)
+                    File.WriteAllBytes("反和谐.png", result);
                 return result;
             }
             catch (Exception ex)
