@@ -11,7 +11,6 @@ namespace GreenOnions.NT.PictureSearcher
 {
     public class PictureSearcherPlugin : IPlugin
     {
-        private BotContext? _bot;
         private Regex? _searchOnCommandRegex;
         private Regex? _searchOffCommandRegex;
         private Config? _config;
@@ -53,7 +52,6 @@ namespace GreenOnions.NT.PictureSearcher
                 timeOutChecker.Dispose();
 
             _pluginPath = pluginPath;
-            _bot = bot;
             _commonConfig = commonConfig;
 
             Config config = LoadConfig(pluginPath);
@@ -71,8 +69,6 @@ namespace GreenOnions.NT.PictureSearcher
 
         private async void CheckTimeOut(object? state)
         {
-            if (_bot is null)
-                return;
             SearchingUser[] timeOutUsers = _searchingUsers.Where(u => DateTime.Now > u.TimeOut).ToArray();
             foreach (var item in timeOutUsers)
             {
