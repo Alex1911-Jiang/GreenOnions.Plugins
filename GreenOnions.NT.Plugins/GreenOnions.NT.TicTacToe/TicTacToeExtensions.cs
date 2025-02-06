@@ -1,6 +1,7 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing;
 using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
@@ -79,7 +80,8 @@ namespace GreenOnions.NT.TicTacToe
         internal static async Task<byte[]> ToBytesArrayAsync(this Image<Rgb24> img)
         {
             using MemoryStream ms = new MemoryStream();
-            await img.SaveAsBmpAsync(ms);
+            BmpEncoder bmpEncoder = new BmpEncoder() { SupportTransparency = false };
+            await bmpEncoder.EncodeAsync(img, ms);
             return ms.ToArray();
         }
     }

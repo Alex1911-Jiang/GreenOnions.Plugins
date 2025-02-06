@@ -164,7 +164,7 @@ namespace GreenOnions.NT.TicTacToe
                     byte[] img;
                     try
                     {
-                        img = await client.GetByteArrayAsync(image.ImageUrl);
+                        img = await client.GetByteArrayAsync(image.ImageUrl.Replace("https://multimedia.nt.qq.com.cn", "http://multimedia.nt.qq.com.cn"));
                         if (img.Length == 0 || img.All(b => b == 0))
                             throw new Exception("图片为空");
                     }
@@ -189,31 +189,31 @@ namespace GreenOnions.NT.TicTacToe
                 {
                     case MoveValidities.Invalid:
                         await chain.ReplyAsync(config.NoMoveReply);
-                        break;
+                        return;
                     case MoveValidities.MultiSelection:
                         await chain.ReplyAsync(config.IllegalMoveReply);
-                        break;
+                        return;
                     case MoveValidities.Occupied:
                         await chain.ReplyAsync(config.MoveFailReply);
-                        break;
+                        return;
                 }
-                return;
             }
             ScoreTypes score = session.GetScore();
             if (score == ScoreTypes.NoResult)
                 session.ComputerMove();
             score = session.GetScore();
 
+            byte[] result = await session.GetImageBytes();
+
             MessageBuilder msg;
             if (chain.GroupUin is not null)
-                msg = MessageBuilder.Group(chain.GroupUin.Value);
+                msg = MessageBuilder.Group(chain.GroupUin.Value).Forward(chain).Image(result);
             else
-                msg = MessageBuilder.Friend(chain.FriendUin);
-            byte[] result = await session.GetImageBytes();
+                msg = MessageBuilder.Friend(chain.FriendUin).Image(result);
 
             if (score == ScoreTypes.NoResult)
             {
-                await bot.SendMessage(msg.Image(result).Build());
+                await bot.SendMessage(msg.Build());
                 return;
             }
 
@@ -235,7 +235,7 @@ namespace GreenOnions.NT.TicTacToe
                     msg.Text(config.BotWonReply.ReplaceTags());
                     break;
             }
-            await bot.SendMessage(msg.Image(result).Build());
+            await bot.SendMessage(msg.Build());
         }
 
         /// <summary>
