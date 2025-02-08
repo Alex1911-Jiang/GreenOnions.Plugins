@@ -2,6 +2,7 @@
 {
     internal class Choices
     {
-        public ChatMessage message { get; set; }
+        public ChatMessage? message { get; set; }
+        public ChatDelta? delta { get; set; }
     }
 }

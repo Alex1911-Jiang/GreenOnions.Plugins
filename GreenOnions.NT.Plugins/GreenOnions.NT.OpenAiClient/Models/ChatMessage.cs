@@ -10,5 +10,6 @@
 
         public Role role { get; } = role;
         public string content { get; } = content;
+        public string? reasoning_content { get; set; }
     }
 }

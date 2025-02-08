@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using System.Text;
 using System.Text.RegularExpressions;
 using GreenOnions.NT.Base;
 using GreenOnions.NT.OpenAiClient.Models;
@@ -132,7 +133,7 @@ namespace GreenOnions.NT.OpenAiClient
                             continue;
                         if (string.IsNullOrWhiteSpace(config.ModelId))
                             continue;
-                        if (string.IsNullOrWhiteSpace(config.Domain))
+                        if (string.IsNullOrWhiteSpace(config.Url))
                             continue;
 
                         Regex regexStart = new Regex(config.StartCommand.ReplaceConfigTags(config), RegexOptions.IgnoreCase);
@@ -201,67 +202,123 @@ namespace GreenOnions.NT.OpenAiClient
                     using HttpClient client = new HttpClient(handler);
                     try
                     {
-                        List<ChatMessage> chatMessages = chatingUser.ChatMessages.ToList();  //创建一个副本添加本次对话内容，避免在聊天失败时将本次的对话添加到上下文
-                        chatMessages.Add(ChatMessage.FromUser(msg));
+                        List<ChatMessage> nowChatMessages = chatingUser.ChatMessages.ToList();  //创建一个副本添加本次对话内容，避免在聊天失败时将本次的对话添加到上下文
+                        nowChatMessages.Add(ChatMessage.FromUser(msg));
 
                         using StringContent content = new ChatRequest
                         {
                             model = chatingUser.Config.ModelId!,
-                            messages = chatMessages,
+                            messages = nowChatMessages,
                             temperature = chatingUser.Config.Temperature,
+                            stream = chatingUser.Config.Stream,
 
                         }.ToJsonContent();
 
-                        using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, chatingUser.Config.Domain!.DomainToUrl()) { Content = content };
+                        using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, chatingUser.Config.Url!.DomainToUrl()) { Content = content };
+                        request.Headers.Accept.TryParseAdd("application/json");
                         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", chatingUser.Config.ApiKey);
                         HttpResponseMessage responseMessage = await client.SendAsync(request);
                         if (!responseMessage.IsSuccessStatusCode)
                         {
-                            string errorMessage = "";
                             try
                             {
-                                errorMessage = await responseMessage.Content.ReadAsStringAsync();
+                                string errorMessage = await responseMessage.Content.ReadAsStringAsync();
+                                var errorObject = JsonConvert.DeserializeObject<ChatResponse>(errorMessage);
+                                LogHelper.LogError($"{chatingUser.Config.Remark}聊天失败，{errorObject?.error?.code}");
+                                await chain.ReplyAsync(_config.ErrorReply.ReplaceConfigTags(chatingUser.Config, new Exception($"{errorObject?.error?.message}")));
                             }
                             catch
                             {
+                                LogHelper.LogError($"{chatingUser.Config.Remark}聊天失败，{(int)responseMessage.StatusCode} {responseMessage.StatusCode}");
+                                await chain.ReplyAsync(_config.ErrorReply.ReplaceConfigTags(chatingUser.Config, new Exception($"{(int)responseMessage.StatusCode} {responseMessage.StatusCode}")));
                             }
-                            LogHelper.LogError($"{chatingUser.Config.Remark}聊天失败，{(int)responseMessage.StatusCode} {responseMessage.StatusCode} {errorMessage}");
-                            await chain.ReplyAsync(_config.ErrorReply.ReplaceConfigTags(chatingUser.Config, new Exception($"{(int)responseMessage.StatusCode} {responseMessage.StatusCode} {errorMessage}")));
                             return;
                         }
 
-                        string responseJson = await responseMessage.Content.ReadAsStringAsync();
-                        ChatResponse? response = JsonConvert.DeserializeObject<ChatResponse>(responseJson);
-
-                        if (response is null)
+                        StringBuilder? multiOutput = new StringBuilder();
+                        if (chatingUser.Config.Stream)
                         {
-                            LogHelper.LogError($"{chatingUser.Config.Remark}聊天错误，解析Json失败 {responseJson}");
-                            await chain.ReplyAsync(_config.ErrorReply.ReplaceConfigTags(chatingUser.Config));
-                            return;
+                            Console.WriteLine($"{chatingUser.Config.Remark}流式响应回复：");
+                            await using var stream = await responseMessage.Content.ReadAsStreamAsync();
+                            using StreamReader reader = new(stream);
+                            StringBuilder contentBuilder = new StringBuilder();
+                            StringBuilder reasoningBuilder = new StringBuilder();
+                            while (true)
+                            {
+                                string? line = await reader.ReadLineAsync();
+                                if (line is null)
+                                    break;
+                                if (line == ": keep-alive")
+                                    continue;
+                                if (!line.StartsWith("data: ")) 
+                                    continue;
+                                string jsonData = line["data: ".Length..];
+                                if (jsonData == "[DONE]")
+                                    break;
+                                var responseObject = JsonConvert.DeserializeObject<ChatResponse>(jsonData);
+                                if (!string.IsNullOrWhiteSpace(responseObject?.choices?[0].delta?.reasoning_content))
+                                {
+                                    Console.Write(responseObject?.choices?.FirstOrDefault()?.delta?.reasoning_content);
+                                    reasoningBuilder.Append(responseObject?.choices?.FirstOrDefault()?.delta?.reasoning_content);
+                                }
+                                if (!string.IsNullOrWhiteSpace(responseObject?.choices?[0].delta?.content))
+                                {
+                                    Console.WriteLine(responseObject?.choices?.FirstOrDefault()?.delta?.content);
+                                    contentBuilder.Append(responseObject?.choices?.FirstOrDefault()?.delta?.content);
+                                }
+                            }
+                            if (reasoningBuilder.Length > 0)
+                                multiOutput.AppendLine($"<think>\r\n{reasoningBuilder}\r\n</think>");
+                            if (contentBuilder.Length > 0)
+                                multiOutput.AppendLine(contentBuilder.ToString());
                         }
-
-                        if (response.error is not null)
+                        else
                         {
-                            LogHelper.LogError($"{chatingUser.Config.Remark}聊天失败，{response.error.code} {response.error.message}");
-                            await chain.ReplyAsync(_config.ErrorReply.ReplaceConfigTags(chatingUser.Config, new Exception($"{response.error.code} {response.error.message}")));
-                            return;
+                            string responseJson = await responseMessage.Content.ReadAsStringAsync();
+                            if (string.IsNullOrWhiteSpace(responseJson))
+                                goto IL_Empty;
+
+                            ChatResponse? response = JsonConvert.DeserializeObject<ChatResponse>(responseJson);
+                            if (response is null)
+                            {
+                                LogHelper.LogError($"{chatingUser.Config.Remark}聊天错误，解析Json失败 {responseJson}");
+                                await chain.ReplyAsync(_config.ErrorReply.ReplaceConfigTags(chatingUser.Config));
+                                return;
+                            }
+
+                            if (response.error is not null)
+                            {
+                                LogHelper.LogError($"{chatingUser.Config.Remark}聊天失败，{response.error.code} {response.error.message}");
+                                await chain.ReplyAsync(_config.ErrorReply.ReplaceConfigTags(chatingUser.Config, new Exception($"{response.error.code} {response.error.message}")));
+                                return;
+                            }
+
+                            string? responseReasoningContent = response.choices?.FirstOrDefault()?.message?.reasoning_content;
+                            string? responseContent = response.choices?.FirstOrDefault()?.message?.content;
+
+                            if (!string.IsNullOrWhiteSpace(responseReasoningContent))
+                                multiOutput.AppendLine($"<think>\r\n{responseReasoningContent}\r\n</think>");
+                            if (!string.IsNullOrWhiteSpace(responseContent))
+                                multiOutput.AppendLine(responseContent);
                         }
 
-                        if (response.choices is null)
+                    IL_Empty:
+                        string outputMsg = multiOutput.ToString();
+                        if (string.IsNullOrWhiteSpace(outputMsg))
                         {
-                            LogHelper.LogError($"{chatingUser.Config.Remark}聊天错误，返回choices为空");
-                            await chain.ReplyAsync(_config.ErrorReply.ReplaceConfigTags(chatingUser.Config));
+                            LogHelper.LogError($"{chatingUser.Config.Remark}聊天错误，接口返回内容为空");
+                            await chain.ReplyAsync(_config.ErrorReply.ReplaceConfigTags(chatingUser.Config, new Exception($"服务器繁忙，请稍后再试。")));
                             return;
                         }
 
-                        string output = response.choices.First().message.content;
-                        string result = output;
-                        LogHelper.LogMessage($"{chatingUser.Config.Remark} AI聊天返回内容：{output}");
-                        if (chatingUser.Config.RemoveThink && output.StartsWith("<think>"))  //移除DeepSeek思考过程
-                            result = output.Substring(output.IndexOf("</think>") + "</think>".Length).TrimStart();
-                        await chain.ReplyAsync(output);
-                        chatingUser.ChatMessages = chatMessages;
-                        chatingUser.ChatMessages.Add(ChatMessage.FromAssistant(output));
+                        string result = outputMsg;
+                        LogHelper.LogMessage($"{chatingUser.Config.Remark} AI聊天返回内容：{multiOutput}");
+                        if (chatingUser.Config.RemoveThink && outputMsg.StartsWith("<think>"))  //移除DeepSeek思考过程
+                            result = outputMsg.Substring(outputMsg.IndexOf("</think>") + "</think>".Length).TrimStart();
+                        await chain.ReplyAsync(result);
+
+                        nowChatMessages.Add(ChatMessage.FromAssistant(multiOutput.ToString()));
+                        chatingUser.ChatMessages = nowChatMessages;
                     }
                     catch (Exception ex)
                     {

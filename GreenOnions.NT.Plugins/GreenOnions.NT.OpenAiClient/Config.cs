@@ -22,8 +22,8 @@ namespace GreenOnions.NT.OpenAiClient
 
     internal class ChatConfig
     {
-        [YamlMember(Description = "地址 例：https://api.openai.com/ 注意Api提供商地址结尾是否带/")]
-        public string? Domain { get; set; }
+        [YamlMember(Description = "地址 例：https://api.openai.com/v1/chat/completions/")]
+        public string? Url { get; set; }
 
         [YamlMember(Description = "API-Key")]
         public string? ApiKey { get; set; }
@@ -72,5 +72,8 @@ namespace GreenOnions.NT.OpenAiClient
 
         [YamlMember(Description = "移除思考过程（<think>中的内容）")]
         public bool RemoveThink { get; set; } = false;
+
+        [YamlMember(Description = "处理流式响应（对于思考时间会超过15秒的模型，如DeepSeek-R1，请启用此选项）")]
+        public bool Stream { get; set; } = false;
     }
 }
