@@ -13,10 +13,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Binance.Net" Version="10.18.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\GreenOnions\GreenOnions.NT\GreenOnions.NT.Base\GreenOnions.NT.Base.csproj" />
   </ItemGroup>
 

@@ -2,6 +2,7 @@
 using Binance.Net.Enums;
 using GreenOnions.NT.Base;
 using Lagrange.Core;
+using Lagrange.Core.Common.Interface.Api;
 using Lagrange.Core.Event.EventArg;
 using Lagrange.Core.Message;
 using Lagrange.Core.Message.Entity;
@@ -48,8 +49,18 @@ namespace GreenOnions.NT.CryptocurrencyPrices
             Config config = LoadConfig(pluginPath);
 
             bot.Invoker.OnGroupMessageReceived += OnGroupMessage;
+            bot.Invoker.OnBotOnlineEvent += Invoker_OnBotOnlineEvent;
 
-            BinanceHelper.AutoGetPrice(bot, config);
+        }
+
+        private void Invoker_OnBotOnlineEvent(BotContext context, BotOnlineEvent e)
+        {
+            if (_config is null)
+            {
+                LogHelper.LogError("插件配置为空");
+                return;
+            }
+            BinanceHelper.AutoGetPrice(context, _config);
         }
 
         private async void OnGroupMessage(BotContext context, GroupMessageEvent e)
@@ -68,6 +79,12 @@ namespace GreenOnions.NT.CryptocurrencyPrices
 
         private async Task OnMessage(BotContext context, MessageChain chain)
         {
+            if (SngletonInstance.Bot is null)
+            {
+                LogHelper.LogError("未构建机器人实例，请先登录");
+                return;
+            }
+
             if (!chain.AllowUseIfDebug())
                 return;
 
@@ -146,7 +163,14 @@ namespace GreenOnions.NT.CryptocurrencyPrices
                             output.AppendLine(top10);
                         }
                     }
-                    await chain.ReplyAsync(output.ToString());
+
+                    MessageChain msg = MessageBuilder.Group(chain.GroupUin.Value).Forward(chain).Text(output.ToString()).Build();
+                    MessageResult result = await SngletonInstance.Bot.SendMessage(msg);
+                    if (_config.RecallSecond > 0)
+                    {
+                        LogHelper.LogMessage($"{_config.RecallSecond} 秒后撤回消息");
+                        _ = Task.Delay(_config.RecallSecond * 1000).ContinueWith(async _ => await SngletonInstance.Bot.RecallGroupMessage(chain.GroupUin.Value, result));
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -160,7 +184,13 @@ namespace GreenOnions.NT.CryptocurrencyPrices
                 try
                 {
                     var binance24Hr = await BinanceHelper.GetTickerAsync(symbol);
-                    await chain.ReplyAsync(binance24Hr);
+                    MessageChain msg = MessageBuilder.Group(chain.GroupUin.Value).Forward(chain).Text(binance24Hr).Build();
+                    MessageResult result = await SngletonInstance.Bot.SendMessage(msg);
+                    if (_config.RecallSecond > 0)
+                    {
+                        LogHelper.LogMessage($"{_config.RecallSecond} 秒后撤回消息");
+                        _ = Task.Delay(_config.RecallSecond * 1000).ContinueWith(async _ => await SngletonInstance.Bot.RecallGroupMessage(chain.GroupUin.Value, result));
+                    }
                 }
                 catch (Exception ex)
                 {

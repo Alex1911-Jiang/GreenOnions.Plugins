@@ -10,6 +10,9 @@ namespace GreenOnions.NT.CryptocurrencyPrices
         [YamlMember(Description = "新币上线时推送通知的群号")]
         public uint[] NewSymbolNotifyGroups { get; set; } = [];
 
+        [YamlMember(Description = "撤回时间，单位：秒")]
+        public int RecallSecond { get; set; } = 30;
+
         [YamlMember(Description = "将中文替换为货币名称的列表")]
         public Dictionary<string, string> ReplaceSymbol { get; set; } = new()
         {
