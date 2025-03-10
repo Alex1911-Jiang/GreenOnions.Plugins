@@ -89,8 +89,6 @@ namespace GreenOnions.NT.CryptocurrencyPrices
                     }
                 }
 
-                LogHelper.LogMessage($"已记录 {SpotPrices.Count} 秒的数据");
-
                 while (SpotPrices.Count > 4 * 60 * 60 + 5)
                     SpotPrices.Remove(SpotPrices.Keys.First());
             });

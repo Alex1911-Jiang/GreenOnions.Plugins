@@ -13,8 +13,6 @@ namespace GreenOnions.NT.MessageNotifyApi
         private Config? _config;
         private string? _pluginPath;
         private ICommonConfig? _commonConfig;
-        private HttpListener _listener = new HttpListener();
-        private Task? _listenerTask;
 
         public string Name => "消息通知";
 
@@ -26,9 +24,6 @@ namespace GreenOnions.NT.MessageNotifyApi
             if (_pluginPath is null)
                 return;
             Config config = LoadConfig(_pluginPath);
-            StopListen();
-            _listenerTask = StartListen(config, _commonConfig);
-
         }
 
         private Config LoadConfig(string pluginPath)
@@ -50,83 +45,81 @@ namespace GreenOnions.NT.MessageNotifyApi
             _commonConfig = commonConfig;
 
             Config config = LoadConfig(pluginPath);
-            StopListen();
-            _listenerTask = StartListen(config, commonConfig);
+            Task.Delay(5000).ContinueWith(_ => StartListen(config, commonConfig));
         }
 
-        private async void StopListen()
+        internal async void StartListen(Config config, ICommonConfig commonConfig)
         {
-            if (!_listener.IsListening)
-                return;
-            _listener.Stop();
-            _listener.Close();
-            if (_listenerTask is not null)
-                await _listenerTask;
-        }   
-
-        internal async Task StartListen(Config config, ICommonConfig commonConfig)
-        {
-            LogHelper.LogMessage($"准备启动消息通知服务");
-            string url = $"http://{config.ListenIp}:{config.ListenPort}/";
-            _listener.Prefixes.Clear();
-            _listener.Prefixes.Add(url);
-            _listener.Start();
-            LogHelper.LogMessage($"已启动消息通知服务在 {url}");
-            while (_listener.IsListening)
+            while (true)
             {
-                HttpListenerContext context = await _listener.GetContextAsync();
-                if (SngletonInstance.Bot is null)
-                {
-                    LogHelper.LogError("机器人实例未启动，无法发送消息，请重启机器人");
-                    context.Response.Close();
-                    continue;
-                }
+                using HttpListener listener = new HttpListener();
                 try
                 {
-                    var request = context.Request;
-                    var response = context.Response;
-
-                    if (request.HttpMethod != "POST")
+                    string url = $"http://{config.ListenIp}:{config.ListenPort}/";
+                    listener.Prefixes.Clear();
+                    listener.Prefixes.Add(url);
+                    listener.Start();
+                    LogHelper.LogMessage($"已启动消息通知服务在 {url}");
+                    HttpListenerContext context = await listener.GetContextAsync();
+                    if (SngletonInstance.Bot is null)
                     {
-                        response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
-                        response.Close();
-                        return;
+                        LogHelper.LogError("机器人实例未启动，无法发送消息，请重启机器人");
+                        context.Response.Close();
+                        continue;
                     }
-
-                    using var reader = new StreamReader(request.InputStream, Encoding.UTF8);
-                    string body = await reader.ReadToEndAsync();
-
-                    RequestModel? requestModel = JsonConvert.DeserializeObject<RequestModel>(body);
-                    if (requestModel is null)
+                    try
                     {
-                        response.StatusCode = (int)HttpStatusCode.BadRequest;
-                        response.Close();
-                        return;
-                    }
+                        var request = context.Request;
+                        var response = context.Response;
 
-                    if (config.AdminOnly && !commonConfig.AdminQQ.Contains(requestModel.Target))
+                        if (request.HttpMethod != "POST")
+                        {
+                            response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
+                            response.Close();
+                            return;
+                        }
+
+                        using var reader = new StreamReader(request.InputStream, Encoding.UTF8);
+                        string body = await reader.ReadToEndAsync();
+
+                        RequestModel? requestModel = JsonConvert.DeserializeObject<RequestModel>(body);
+                        if (requestModel is null)
+                        {
+                            response.StatusCode = (int)HttpStatusCode.BadRequest;
+                            response.Close();
+                            return;
+                        }
+
+                        if (config.AdminOnly && !commonConfig.AdminQQ.Contains(requestModel.Target))
+                        {
+                            response.StatusCode = (int)HttpStatusCode.Forbidden;
+                            response.Close();
+                            return;
+                        }
+
+                        MessageBuilder msg = MessageBuilder.Friend(requestModel.Target);
+                        msg.Text(requestModel.Message);
+                        await SngletonInstance.Bot.SendMessage(msg.Build());
+
+                        // 设置响应
+                        response.StatusCode = (int)HttpStatusCode.OK;
+                        response.ContentLength64 = 0;
+                    }
+                    catch (Exception ex)
                     {
-                        response.StatusCode = (int)HttpStatusCode.Forbidden;
-                        response.Close();
-                        return;
+                        LogHelper.LogException(ex, $"处理消息通知请求时发生异常，{ex.Message}");
                     }
-
-                    MessageBuilder msg = MessageBuilder.Friend(requestModel.Target);
-                    msg.Text(requestModel.Message);
-                    await SngletonInstance.Bot.SendMessage(msg.Build());
-
-                    // 设置响应
-                    response.StatusCode = (int)HttpStatusCode.OK;
-                    response.ContentLength64 = 0;
+                    finally
+                    {
+                        context.Response.Close();
+                    }
                 }
                 catch (Exception ex)
                 {
-                    LogHelper.LogException(ex, $"处理消息通知请求时发生异常，{ex.Message}");
+                    LogHelper.LogException(ex, $"启动通知监听接口失败：{ex.Message}");
                 }
-                finally
-                {
-                    context.Response.Close();
-                }
+                listener.Stop();
+                listener.Close();
             }
         }
     }
