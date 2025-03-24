@@ -188,6 +188,8 @@ namespace GreenOnions.NT.PythonInvoker
                         return;
                     }
 
+                    LogHelper.LogMessage($"{config.Remark}调用Python完毕，开始上传文件");
+
                     if (config.ReadFileMode == ReadFileModes.Raw)
                     {
                         bool uploaded;
