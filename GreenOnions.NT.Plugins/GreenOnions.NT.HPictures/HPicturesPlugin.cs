@@ -292,7 +292,7 @@ namespace GreenOnions.NT.HPictures
 
             if (chain.GroupUin is null && !config.AllowPrivateMessage)//私聊 并且不允许私聊
             {
-                LogHelper.LogMessage($"没有启动私聊色图，不响应私聊色图命令");
+                LogHelper.LogMessage($"没有启用私聊色图，不响应私聊色图命令");
                 return false;
             }
 

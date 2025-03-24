@@ -204,19 +204,19 @@ namespace GreenOnions.NT.PythonInvoker
                         }
                         if (uploaded)
                         {
-                            LogHelper.LogMessage($"上传{config.ReadFileName}至{target}成功");
+                            LogHelper.LogMessage($"上传{config.ReadFileName.Replace("<参数>", param)}至{target}成功");
                         }
                         else
                         {
-                            LogHelper.LogWarning($"上传{config.ReadFileName}至{target}失败");
-                            await chain.ReplyAsync(config.ErrorReply.ReplaceConfigTags(config, new Exception($"上传文件{config.ReadFileName}到被拒绝")));
+                            LogHelper.LogWarning($"上传{config.ReadFileName.Replace("<参数>", param)}至{target}失败");
+                            await chain.ReplyAsync(config.ErrorReply.ReplaceConfigTags(config, new Exception($"上传文件{config.ReadFileName.Replace("<参数>", param)}到被拒绝")));
                         }
                         return;
                     }
 
                     MessageBuilder builder;
                     if (chain.GroupUin is not null)
-                        builder = MessageBuilder.Group(chain.GroupUin.Value);
+                        builder = MessageBuilder.Group(chain.GroupUin.Value).Forward(chain);
                     else
                         builder = MessageBuilder.Friend(chain.FriendUin);
 
