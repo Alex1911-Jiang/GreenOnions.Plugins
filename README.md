@@ -19,11 +19,11 @@
 - [x] GPT客户端
 - [x] ~~GLM客户端~~（懒得写了，可以使用OpenAi客户端插件+OpenAi Api转换器实现对接）
 - [x] DeepSeek客户端（通过OpenAi客户端实现，DeepSeek官方Api和OpenAi一致）
+- [x] Python调用器（沙雕群友要求用来调用[Python API For JMComic](https://github.com/hect0x7/JMComic-Crawler-Python)）
 - [ ] 复读机
 - [ ] 自定义回复器
 - [ ] Http客户端
 - [ ] 猜歌小游戏
-- [ ] Novel画图客户端
 - [ ] 萌娘百科舰C整点报时
 - [x] 井字棋小游戏 ~~（由于比较有挑战性就先做了）~~
 - [ ] 必应Copilot客户端？
