@@ -194,6 +194,7 @@ namespace GreenOnions.NT.PictureSearcher
                     SearcherSources.IqdbAnime => await IqdbSearcher.SearchAnime(commonConfig, config, context, chain, imageUrl),
                     SearcherSources.Iqdb3d => await IqdbSearcher.Search3d(commonConfig, config, context, chain, imageUrl),
                     SearcherSources.AnimeTrace => await AnimeTraceSearcher.Search(commonConfig, config, context, chain, imageUrl, animeTracModelIndex++),
+                    SearcherSources.Soutubot => await SoutubotSearcher.Search(commonConfig, config, context, chain, imageUrl),
                     _ => throw new NotImplementedException("不支持的搜索引擎"),
                 };
                 

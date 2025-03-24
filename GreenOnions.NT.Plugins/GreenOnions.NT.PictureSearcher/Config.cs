@@ -20,8 +20,8 @@ namespace GreenOnions.NT.PictureSearcher
         /// <summary>
         /// 启用的搜图引擎
         /// </summary>
-        [YamlMember(Description = "启用的搜图引擎（同时决定搜索顺序，支持 SauceNAO、IqdbAnime、Iqdb3d、TraceMoe、Ascii2d、AnimeTrace ）")]
-        public SearcherSources[] EnabledSources { get; set; } = [SearcherSources.SauceNAO, SearcherSources.IqdbAnime, SearcherSources.Ascii2d];
+        [YamlMember(Description = "启用的搜图引擎（同时决定搜索顺序，支持 SauceNAO、IqdbAnime、Iqdb3d、TraceMoe、Ascii2d、AnimeTrace、Soutubot）")]
+        public SearcherSources[] EnabledSources { get; set; } = [SearcherSources.SauceNAO, SearcherSources.IqdbAnime, SearcherSources.Soutubot, SearcherSources.Ascii2d];
 
         /// <summary>
         /// AnimeTrace搜图实使用的模型

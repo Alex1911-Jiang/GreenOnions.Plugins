@@ -8,5 +8,6 @@
         IqdbAnime,
         Iqdb3d,
         AnimeTrace,
+        Soutubot,
     }
 }

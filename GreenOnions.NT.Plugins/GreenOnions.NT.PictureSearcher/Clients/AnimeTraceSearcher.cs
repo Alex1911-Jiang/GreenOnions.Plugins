@@ -38,18 +38,8 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             using HttpClientHandler httpClientHandler = new HttpClientHandler { UseProxy = config.UseProxy };
             using HttpClient httpClient = new HttpClient(httpClientHandler);
 
-            Stream img = await httpClient.GetStreamAsync(imageUrl);
-
             AnimeTraceClient client = new AnimeTraceClient(model, httpClient);
-            AnimeTraceResult result = await client.RecognizeAsync(img, true);
-
-            foreach (var item in result.Data)
-            {
-                Console.WriteLine($"动画名称：{item.CartoonName}");
-                Console.WriteLine($"准确度：{item.AccPercent}");
-                Console.WriteLine($"角色名称：" + item.Name);
-                Console.WriteLine();
-            }
+            AnimeTraceResult result = await client.SearchByUrlAsync(imageUrl, true);
 
             if (!result.Success)
             {
@@ -65,16 +55,12 @@ namespace GreenOnions.NT.PictureSearcher.Clients
 
             StringBuilder sb = new StringBuilder();
 
-            double similarity = 0;
             foreach (var item in result.Data)
             {
-                if (item.AccPercent > similarity)
-                    similarity = item.AccPercent;
-                similarity = item.AccPercent;
+                var character = item.Character.First();
 
-                sb.AppendLine($"动画名称：{item.CartoonName}");
-                sb.AppendLine($"相似度：{similarity * 100:0.00}%");
-                sb.AppendLine($"角色名称：" + item.Name);
+                sb.AppendLine($"动画名称：{character.Work}");
+                sb.AppendLine($"角色名称：" + character.Character);
                 sb.AppendLine();
             }
             sb.AppendLine("(AnimeTrace)");
@@ -90,7 +76,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
 
             await context.SendMessage(msg.Build());
 
-            return similarity * 100;
+            return 0;
         }
     }
 }

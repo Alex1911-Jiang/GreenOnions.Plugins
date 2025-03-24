@@ -1,0 +1,31 @@
+# 是否启用Python调用器
+enabled: true
+# 命令配置
+inovkers:
+- # 发起调用命令
+  command: <BotName>jm (?<参数>.+)
+  # 执行的Python脚本内容
+  script: >-
+    import jmcomic
+
+    option = jmcomic.create_option_by_file('jm.yml')
+
+    jmcomic.download_album(<参数>, option)
+  # 备注信息（只用于自己记忆）
+  remark: 禁漫天堂
+  # 执行完成后读取文件并发送时将文件视为：None=不读取文件（同时忽略ReadFileName参数），Text=文本，Image=图片，Video=视频，Aduio=音频，Raw=不解析文件直接上传
+  readFileMode: Raw
+  # 执行完成后读取文件路径
+  readFileName: <参数>.pdf
+  # 开始调用时的回复语
+  invokingReply: 
+  # 调用完成后的回复语（如果有完成后要读取的文件，此消息会在发送文件之前发送）
+  invokedReply: 
+  # 发生错误的回复语
+  errorReply: 下载失败。<错误信息>
+  # 白名单群
+  whiteGroup: []
+  # 仅限白名单群使用
+  whiteGroupOnly: false
+  # 允许私聊使用
+  allowPrivateMessage: true
