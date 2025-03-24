@@ -1,0 +1,6 @@
+plugins:
+  after_photo:
+    - plugin: img2pdf
+      kwargs:
+        pdf_dir:  # pdf存放文件夹
+        filename_rule: Pid 
