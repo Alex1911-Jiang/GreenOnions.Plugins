@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.NT.ExportGroupM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.NT.MessageNotifyApi", "GreenOnions.NT.MessageNotifyApi\GreenOnions.NT.MessageNotifyApi.csproj", "{56BE9A68-FD6E-47BC-8ADF-29A0F85D3125}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.NT.PythonInvoker", "GreenOnions.NT.PythonInvoker\GreenOnions.NT.PythonInvoker.csproj", "{C64DB639-9725-4D62-BBAA-DC3A45709BC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{56BE9A68-FD6E-47BC-8ADF-29A0F85D3125}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56BE9A68-FD6E-47BC-8ADF-29A0F85D3125}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56BE9A68-FD6E-47BC-8ADF-29A0F85D3125}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C64DB639-9725-4D62-BBAA-DC3A45709BC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C64DB639-9725-4D62-BBAA-DC3A45709BC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C64DB639-9725-4D62-BBAA-DC3A45709BC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C64DB639-9725-4D62-BBAA-DC3A45709BC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
