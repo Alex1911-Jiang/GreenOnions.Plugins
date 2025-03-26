@@ -46,6 +46,19 @@ namespace GreenOnions.NT.PythonInvoker
             _pluginPath = pluginPath;
             _commonConfig = commonConfig;
 
+            string jmConfig = Path.Combine(pluginPath, "jm.yml");
+            if (!File.Exists(jmConfig))
+            {
+                File.WriteAllText(jmConfig, @"
+plugins:
+  after_photo:
+    - plugin: img2pdf
+      kwargs:
+        pdf_dir:  
+        filename_rule: Pid 
+");
+            }
+
             Config config = LoadConfig(pluginPath);
 
             bot.Invoker.OnFriendMessageReceived -= OnFriendMessage;
@@ -143,6 +156,15 @@ namespace GreenOnions.NT.PythonInvoker
                         await chain.ReplyAsync(reply.ReplaceConfigTags(config));
                     }
 
+                    string fileName = Path.Combine(_pluginPath!, config.ReadFileName);
+
+                    if (File.Exists(fileName))
+                    {
+                        LogHelper.LogMessage($"{config.Remark}尝试下载的目标文件{fileName}已存在，直接发送");
+                        await UploadFile(config, context, chain, fileName, param);
+                        return;
+                    }
+
                     try
                     {
                         string script = config.Script;
@@ -176,8 +198,6 @@ namespace GreenOnions.NT.PythonInvoker
                         LogHelper.LogError($"{config.Remark}未配置调用Python完成后读取的文件路径");
                         await chain.ReplyAsync(config.ErrorReply.ReplaceConfigTags(config, new Exception("未配置文件路径")));
                     }
-                    string fileName = Path.Combine(_pluginPath!, config.ReadFileName);
-
                     if (!string.IsNullOrWhiteSpace(param))
                         fileName = fileName.Replace("<参数>", param);
 
@@ -189,59 +209,85 @@ namespace GreenOnions.NT.PythonInvoker
                     }
 
                     LogHelper.LogMessage($"{config.Remark}调用Python完毕，开始上传文件");
-
-                    if (config.ReadFileMode == ReadFileModes.Raw)
-                    {
-                        bool uploaded;
-                        uint target;
-                        if (chain.GroupUin is not null)
-                        {
-                            target = chain.GroupUin.Value;
-                            uploaded = await context.GroupFSUpload(chain.GroupUin.Value, new FileEntity(fileName));
-                        }
-                        else
-                        {
-                            target = chain.FriendUin;
-                            uploaded = await context.UploadFriendFile(chain.FriendUin, new FileEntity(fileName));
-                        }
-                        if (uploaded)
-                        {
-                            LogHelper.LogMessage($"上传{config.ReadFileName.Replace("<参数>", param)}至{target}成功");
-                        }
-                        else
-                        {
-                            LogHelper.LogWarning($"上传{config.ReadFileName.Replace("<参数>", param)}至{target}失败");
-                            await chain.ReplyAsync(config.ErrorReply.ReplaceConfigTags(config, new Exception($"上传文件{config.ReadFileName.Replace("<参数>", param)}被拒绝")));
-                        }
-                        return;
-                    }
-
-                    MessageBuilder builder;
-                    if (chain.GroupUin is not null)
-                        builder = MessageBuilder.Group(chain.GroupUin.Value).Forward(chain);
-                    else
-                        builder = MessageBuilder.Friend(chain.FriendUin);
-
-                    switch (config.ReadFileMode)
-                    {
-                        case ReadFileModes.Text:
-                            string text = File.ReadAllText(fileName);
-                            builder.Text(text);
-                            break;
-                        case ReadFileModes.Image:
-                            builder.Image(fileName);
-                            break;
-                        case ReadFileModes.Video:
-                            builder.Video(fileName);
-                            break;
-                        case ReadFileModes.Audio:
-                            builder.Record(fileName);
-                            break;
-                    }
-                    await context.SendMessage(builder.Build());
+                    await UploadFile(config, context, chain, fileName, param);
                     return;
                 }
             }
+        }
+
+        private async Task UploadFile(ConfigItem config, BotContext context, MessageChain chain, string fileName, string param)
+        {
+            if (config.ReadFileMode == ReadFileModes.Raw)
+            {
+                while (true)
+                {
+                    FileInfo fi = new FileInfo(fileName);
+                    if (fi.Length == 0)
+                    {
+                        Console.WriteLine($"文件 {fileName} 长度为0，等待50毫秒后重试");
+                        await Task.Delay(50);
+                        continue;
+                    }
+                    try
+                    {
+                        using FileStream fs = fi.OpenRead();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"文件 {fileName} 打开失败，{ex.Message}，等待50毫秒后重试");
+                        await Task.Delay(50);
+                        continue;
+                    }
+                    break;
+                }
+
+                bool uploaded;
+                uint target;
+                if (chain.GroupUin is not null)
+                {
+                    target = chain.GroupUin.Value;
+                    uploaded = await context.GroupFSUpload(chain.GroupUin.Value, new FileEntity(fileName));
+                }
+                else
+                {
+                    target = chain.FriendUin;
+                    uploaded = await context.UploadFriendFile(chain.FriendUin, new FileEntity(fileName));
+                }
+                if (uploaded)
+                {
+                    LogHelper.LogMessage($"上传{config.ReadFileName.Replace("<参数>", param)}至{target}成功");
+                }
+                else
+                {
+                    LogHelper.LogWarning($"上传{config.ReadFileName.Replace("<参数>", param)}至{target}失败");
+                    await chain.ReplyAsync(config.ErrorReply.ReplaceConfigTags(config, new Exception($"上传文件{config.ReadFileName.Replace("<参数>", param)}被拒绝")));
+                }
+                return;
+            }
+
+            MessageBuilder builder;
+            if (chain.GroupUin is not null)
+                builder = MessageBuilder.Group(chain.GroupUin.Value).Forward(chain);
+            else
+                builder = MessageBuilder.Friend(chain.FriendUin);
+
+            switch (config.ReadFileMode)
+            {
+                case ReadFileModes.Text:
+                    string text = File.ReadAllText(fileName);
+                    builder.Text(text);
+                    break;
+                case ReadFileModes.Image:
+                    builder.Image(fileName);
+                    break;
+                case ReadFileModes.Video:
+                    builder.Video(fileName);
+                    break;
+                case ReadFileModes.Audio:
+                    builder.Record(fileName);
+                    break;
+            }
+            await context.SendMessage(builder.Build());
         }
 
         private async Task<string> ExecutePythonAsync(string script)

@@ -17,13 +17,4 @@
     <ProjectReference Include="..\..\..\GreenOnions\GreenOnions.NT\GreenOnions.NT.Base\GreenOnions.NT.Base.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="config.yml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="jm.yml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

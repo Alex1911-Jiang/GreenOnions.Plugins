@@ -11,22 +11,22 @@ namespace GreenOnions.NT.PythonInvoker
         /// 命令配置
         /// </summary>
         [YamlMember(Description = "命令配置")]
-        public List<ConfigItem> Inovkers { get; set; } = new();
-//        {
-//            new()
-//            {
-//                Command = "<BotName>jm (?<参数>.+)",
-//                Script = @"import jmcomic
-//option = jmcomic.create_option_by_file('jm.yml')
-//jmcomic.download_album(<参数>, option)",
-//                ReadFileMode = ReadFileModes.Raw,
-//                ReadFileName = "<参数>.pdf",
-//                Remark = "禁漫天堂",
-//                InvokingReply = "开始下载<参数>",
-//                InvokedReply = "<参数>下载完成",
-//                ErrorReply = "下载失败。<错误信息>"
-//            }
-//        };
+        public List<ConfigItem> Inovkers { get; set; } = new()
+        {
+            new ()
+            {
+                Command = "<BotName>jm (?<参数>.+)",
+                Script = @"import jmcomic
+option = jmcomic.create_option_by_file('jm.yml')
+jmcomic.download_album(<参数>, option)",
+                ReadFileMode = ReadFileModes.Raw,
+                ReadFileName = "<参数>.pdf",
+                Remark = "禁漫天堂",
+                InvokingReply = "开始下载<参数>",
+                InvokedReply = "<参数>下载完成",
+                ErrorReply = "下载失败。<错误信息>"
+            }
+};
     }
 
     public class ConfigItem
