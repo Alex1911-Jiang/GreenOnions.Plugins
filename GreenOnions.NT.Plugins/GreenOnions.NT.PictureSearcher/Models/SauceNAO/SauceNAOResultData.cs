@@ -2,7 +2,7 @@
 {
     internal class SauceNAOResultData
     {
-        public string[] ext_urls { get; set; }
+        public string[]? ext_urls { get; set; }
         public string? title { get; set; }
         public string? pixiv_id { get; set; }
         public string? member_name { get; set; }

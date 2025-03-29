@@ -22,7 +22,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, $"搜图bot酱搜图发生异常，错误信息：{ex.Message}");
+                LogHelper.LogException(ex, $"搜图bot酱搜图发生异常，错误信息：{ex.Message}，搜索地址：{imageUrl}");
                 await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "搜图bot酱").Replace("<错误信息>", ex.Message));
                 return 0;
             }

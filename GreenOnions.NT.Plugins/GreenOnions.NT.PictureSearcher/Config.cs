@@ -64,12 +64,18 @@ namespace GreenOnions.NT.PictureSearcher
         /// <summary>
         /// SauceNAO Api-Key
         /// </summary>
-        [YamlMember(Description = "SauceNAO Api-Key")]
+        [YamlMember(Description = "SauceNAO Api-Key（支持多个，随机使用）")]
         public HashSet<string> SauceNAOApiKey { get; set; } = new HashSet<string>();
 
         #endregion -- SauceNAO --
 
         #region -- Ascii2d --
+
+        /// <summary>
+        /// Ascii2d的地址
+        /// </summary>
+        [YamlMember(Description = "Ascii2d的地址（如果你部署了Cloudflare代理或Ascii2d专用代理请修改此配置，例：https://github.com/Tsuk1ko/cq-picsearcher-bot/issues/478#issuecomment-2509644040）")]
+        public string Ascii2dHost { get; set; } = "https://ascii2d.net/";
 
         /// <summary>
         /// Ascii2d是否发送缩略图

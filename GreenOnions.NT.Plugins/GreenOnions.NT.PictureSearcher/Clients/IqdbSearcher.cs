@@ -14,12 +14,30 @@ namespace GreenOnions.NT.PictureSearcher.Clients
     {
         public static async Task<double> SearchAnime(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl)
         {
-            return await Search(commonConfig, config, context, chain, imageUrl, IqdbModes.Anime);
+            try
+            {
+                return await Search(commonConfig, config, context, chain, imageUrl, IqdbModes.Anime);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogException(ex, $"Iqdb搜图错误，错误信息：{ex.Message}，搜索地址：{imageUrl}");
+                await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "ascii2d").Replace("<错误信息>", ex.Message));
+            }
+            return 0;
         }
 
         public static async Task<double> Search3d(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl)
         {
-            return await Search(commonConfig, config, context, chain, imageUrl, IqdbModes.ThreeDimensional);
+            try
+            {
+                return await Search(commonConfig, config, context, chain, imageUrl, IqdbModes.ThreeDimensional);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogException(ex, $"Iqdb3d搜图错误，错误信息：{ex.Message}，搜索地址：{imageUrl}");
+                await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "ascii2d").Replace("<错误信息>", ex.Message));
+            }
+            return 0;
         }
 
         private static async Task<double> Search(ICommonConfig commonConfig, Config config, BotContext context, MessageChain chain, string imageUrl, IqdbModes mode)

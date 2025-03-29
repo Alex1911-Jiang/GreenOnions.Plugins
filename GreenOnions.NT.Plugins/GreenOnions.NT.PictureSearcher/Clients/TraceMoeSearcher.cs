@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Text;
+﻿using System.Text;
 using System.Web;
 using GreenOnions.NT.Base;
 using GreenOnions.NT.PictureSearcher.Models.TraceMoe;
@@ -25,6 +24,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
             catch (Exception ex)
             {
+                LogHelper.LogException(ex, $"Trace.Moe搜图发生异常，错误信息：{ex.Message}，搜索地址：{imageUrl}");
                 await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "Trace.moe").Replace("<错误信息>", ex.Message));
                 return 0;
             }
@@ -37,13 +37,13 @@ namespace GreenOnions.NT.PictureSearcher.Clients
                 TraceMoeJsonResult? traceMoeObj = JsonConvert.DeserializeObject<TraceMoeJsonResult>(json);
                 if (traceMoeObj is null)
                 {
-                    await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "trace.moe").Replace("<错误信息>", ""));
-                    return 0;
+                    throw new Exception("搜索结果解析失败");
                 }
                 traceMoeJsonResult = traceMoeObj;
             }
             catch (Exception ex)
             {
+                LogHelper.LogException(ex, $"Trace.Moe搜图发生异常，错误信息：{ex.Message}，搜索地址：{imageUrl}");
                 await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "trace.moe").Replace("<错误信息>", ex.Message));
                 return 0;
             }

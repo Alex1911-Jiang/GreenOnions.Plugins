@@ -24,6 +24,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
             catch (Exception ex)
             {
+                LogHelper.LogException(ex, $"SauceNAO搜图错误，错误信息：{ex.Message}，搜索地址：{imageUrl}");
                 await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "SauceNAO").Replace("<错误信息>", ex.Message));
                 return 0;
             }
@@ -139,7 +140,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             //缩略图地址
             string thuImgUrl = result.header.thumbnail;
             //作品地址
-            string[] ext_urls = result.data.ext_urls;
+            string[]? ext_urls = result.data.ext_urls;
 
             string? title = result.data.title;
             string? pixiv_id = result.data.pixiv_id;
@@ -153,7 +154,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             string? source = result.data.source;
 
             StringBuilder sb = new StringBuilder();
-            foreach (var item in ext_urls)
+            foreach (var item in ext_urls ?? [])
                 sb.AppendLine($"作品页：{item}");
 
             if (!string.IsNullOrEmpty(source))
@@ -189,6 +190,13 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             try
             {
                 HtmlNode resultNode = sauceNAOdoc.DocumentNode.SelectSingleNode("//div[@id='middle']/div[@class='result'][1]/table[@class='resulttable']");
+                if (resultNode is null)
+                {
+                    bool noResult = sauceNAOdoc.DocumentNode.SelectSingleNode("//div[@id='result-hidden-notification']") is not null;
+                    LogHelper.LogMessage($"SauceNAO没有搜索到任何结果");
+                    await chain.ReplyAsync(config.SearchNoResultReply.Replace("<搜索类型>", "SauceNAO"));
+                    return 0;
+                }
                 thuImgUrl = HttpUtility.HtmlDecode(resultNode.SelectSingleNode("//td[@class='resulttableimage']/div[@class='resultimage']/a[@class='linkify']/img[@id='resImage0']").Attributes["src"].Value);
                 similarityText = resultNode.SelectSingleNode("//td[@class='resulttablecontent']/div[@class='resultmatchinfo']/div[@class='resultsimilarityinfo']").InnerText;
                 title = resultNode.SelectSingleNode("//td[@class='resulttablecontent']/div[@class='resultcontent']/div[@class='resulttitle']/strong")?.InnerText;
