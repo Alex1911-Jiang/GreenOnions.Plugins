@@ -45,7 +45,16 @@ namespace GreenOnions.NT.ExportGroupMembers
 
         private static string SanitizeSheetName(this string originalName)
         {
-            string sanitized = Regex.Replace(originalName, @"[\\/\?:*\[\]]", "_");
+            if (string.IsNullOrEmpty(originalName))
+                return "Sheet";
+
+            Regex invalidCharRegex = new Regex(@"[^\u4e00-\u9fa5a-zA-Z0-9]", RegexOptions.Compiled);
+
+            var sanitized = invalidCharRegex.Replace(originalName, "");
+
+            if (sanitized.Length == 0)
+                return "Sheet";
+
             return sanitized.Length <= 31 ? sanitized : sanitized.Substring(0, 31);
         }
 
