@@ -114,7 +114,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, $"通过HttpClient请求ascii2d色合検索{imageUrl}失败，错误信息：{ex.Message}");
+                LogHelper.LogException(ex, $"通过Chromium请求ascii2d色合検索{imageUrl}失败，错误信息：{ex.Message}");
                 await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "ascii2d 色合検索").Replace("<错误信息>", ex.Message));
             }
 
@@ -126,7 +126,7 @@ namespace GreenOnions.NT.PictureSearcher.Clients
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, $"通过HttpClient请求ascii2d特徴検索{imageUrl}失败，错误信息：{ex.Message}");
+                LogHelper.LogException(ex, $"通过Chromium请求ascii2d特徴検索{imageUrl}失败，错误信息：{ex.Message}");
                 await chain.ReplyAsync(config.SearchErrorReply.Replace("<搜索类型>", "ascii2d 特徴検索").Replace("<错误信息>", ex.Message));
             }
         }
