@@ -20,6 +20,7 @@
 - [x] ~~GLM客户端~~（懒得写了，可以使用OpenAi客户端插件+OpenAi Api转换器实现对接）
 - [x] DeepSeek客户端（通过OpenAi客户端实现，DeepSeek官方Api和OpenAi一致）
 - [x] Python调用器（沙雕群友要求用来调用[Python API For JMComic](https://github.com/hect0x7/JMComic-Crawler-Python)）
+- [x] 消息转发器（搬💩机器人）
 - [ ] 复读机
 - [ ] 自定义回复器
 - [ ] Http客户端
