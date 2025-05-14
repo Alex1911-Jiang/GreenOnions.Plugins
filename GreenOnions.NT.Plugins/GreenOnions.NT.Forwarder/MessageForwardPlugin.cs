@@ -41,34 +41,34 @@ namespace GreenOnions.NT.Forwarder
                 {
                     FromFriendUin = 100,
                     ToFriendUin = 101,
-                    Remark = "第一个好友"
+                    Remark = "第1个好友"
                 });
                 exampleConfig.Friend.Add(new FriendForwardSettings
                 {
                     FromFriendUin = 200,
                     ToFriendUin = 201,
-                    Remark = "第二个好友"
+                    Remark = "第2个好友"
                 });
                 exampleConfig.Group.Add(new GroupForwardSettings
                 {
                     FromGroupUin = 3000,
                     FromMemberUin = 100,
                     ToGroupUin = 4000,
-                    Remark = "第一个群的第一个群友"
+                    Remark = "第1个群的第1个群友"
                 });
                 exampleConfig.Group.Add(new GroupForwardSettings
                 {
                     FromGroupUin = 3000,
                     FromMemberUin = 101,
                     ToGroupUin = 4000,
-                    Remark = "第一个群的第一个群友"
+                    Remark = "第1个群的第2个群友"
                 });
                 exampleConfig.Group.Add(new GroupForwardSettings
                 {
                     FromGroupUin = 4000,
                     FromMemberUin = 103,
                     ToGroupUin = 5000,
-                    Remark = "第二个群的第一个群友"
+                    Remark = "第2个群的第1个群友"
                 });
                 File.WriteAllText(configPath, YamlConvert.SerializeObject(exampleConfig));
                 LogHelper.LogMessage("消息转发插件配置文件不存在，已生成默认配置文件，请修改后执行重读配置文件命令或重启机器人");
