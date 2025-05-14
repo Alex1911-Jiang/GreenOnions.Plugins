@@ -122,23 +122,22 @@ namespace GreenOnions.NT.Forwarder
 
                 foreach (var entity in e.Chain)
                 {
-                    if (string.IsNullOrEmpty(forwarderConfig.Format))
+                    MessageBuilder builder = MessageBuilder.Group(forwarderConfig.ToGroupUin);
+                    string format = forwarderConfig.Format ?? "";
+                    string[] prefixAndSuffix = format.Split("<Message>");
+                    if (prefixAndSuffix.Length == 2)
                     {
-                        MessageChain message = MessageBuilder.Group(forwarderConfig.ToGroupUin).Add(entity).Build();
-                        await context.SendMessage(message);
-                    }
-                    else if (entity is TextEntity textEntity)
-                    {
-                        string messageText = _config.ForwardToAdminFormat.Replace("<FriendNickName>", e.Chain.FriendInfo?.Nickname).Replace("<FriendUin>", e.Chain.FriendUin.ToString()).Replace("<Message>", textEntity.Text);
-                        MessageChain message = MessageBuilder.Group(forwarderConfig.ToGroupUin).Text(messageText).Build();
-                        await context.SendMessage(message);
+                        string prefix = prefixAndSuffix.First().Replace("<MemberNickName>", e.Chain.GroupMemberInfo?.MemberName).Replace("<MemberUin>", e.Chain.FriendUin.ToString());
+                        string suffix = prefixAndSuffix.Last().Replace("<MemberNickName>", e.Chain.GroupMemberInfo?.MemberName).Replace("<MemberUin>", e.Chain.FriendUin.ToString());
+                        builder.Text(prefix);
+                        builder.Add(entity);
+                        builder.Text(suffix);
                     }
                     else
                     {
-                        string prefix = _config.ForwardToAdminFormat.Replace("<FriendNickName>", e.Chain.FriendInfo?.Nickname).Replace("<FriendUin>", e.Chain.FriendUin.ToString()).Replace("<Message>", "");
-                        MessageChain message = MessageBuilder.Group(forwarderConfig.ToGroupUin).Text(prefix).Add(entity).Build();
-                        await context.SendMessage(message);
+                        builder.Add(entity);
                     }
+                    await context.SendMessage(builder.Build());
                 }
             }
             catch (Exception ex)
@@ -187,18 +186,22 @@ namespace GreenOnions.NT.Forwarder
             {
                 foreach (var admin in commonConfig.AdminQQ)
                 {
-                    if (entity is TextEntity textEntity)
+                    MessageBuilder builder = MessageBuilder.Friend(admin);
+                    string format = config.ForwardToAdminFormat ?? "";
+                    string[] prefixAndSuffix = format.Split("<Message>");
+                    if (prefixAndSuffix.Length == 2)
                     {
-                        string messageText = config.ForwardToAdminFormat.Replace("<FriendNickName>", e.Chain.FriendInfo?.Nickname).Replace("<FriendUin>", e.Chain.FriendUin.ToString()).Replace("<Message>", textEntity.Text);
-                        MessageChain message = MessageBuilder.Friend(admin).Text(messageText).Build();
-                        await context.SendMessage(message);
+                        string prefix = prefixAndSuffix.First().Replace("<FriendNickName>", e.Chain.FriendInfo?.Nickname).Replace("<FriendUin>", e.Chain.FriendUin.ToString());
+                        string suffix = prefixAndSuffix.Last().Replace("<FriendNickName>", e.Chain.FriendInfo?.Nickname).Replace("<FriendUin>", e.Chain.FriendUin.ToString());
+                        builder.Text(prefix);
+                        builder.Add(entity);
+                        builder.Text(suffix);
                     }
                     else
                     {
-                        string prefix = config.ForwardToAdminFormat.Replace("<FriendNickName>", e.Chain.FriendInfo?.Nickname).Replace("<FriendUin>", e.Chain.FriendUin.ToString()).Replace("<Message>", "");
-                        MessageChain message = MessageBuilder.Friend(admin).Text(prefix).Add(entity).Build();
-                        await context.SendMessage(message);
+                        builder.Add(entity);
                     }
+                    await context.SendMessage(builder.Build());
                 }
             }
         }
@@ -211,21 +214,22 @@ namespace GreenOnions.NT.Forwarder
 
             foreach (var entity in e.Chain)
             {
-                if (string.IsNullOrEmpty(forwarderConfig.Format))
+                MessageBuilder builder = MessageBuilder.Friend(forwarderConfig.ToFriendUin);
+                string format = forwarderConfig.Format ?? "";
+                string[] prefixAndSuffix = format.Split("<Message>");
+                if (prefixAndSuffix.Length == 2)
                 {
-                    MessageChain message = MessageBuilder.Friend(forwarderConfig.ToFriendUin).Add(entity).Build();
-                    await context.SendMessage(message);
-                }
-                else if (entity is TextEntity textEntity)
-                {
-                    string forwardText = config.ForwardToAdminFormat.Replace("<FriendNickName>", e.Chain.FriendInfo?.Nickname).Replace("<FriendUin>", e.Chain.FriendUin.ToString()).Replace("<Message>", textEntity.Text);
-                    await context.SendMessage(MessageBuilder.Friend(forwarderConfig.ToFriendUin).Text(forwardText).Build());
+                    string prefix = prefixAndSuffix.First().Replace("<FriendNickName>", e.Chain.FriendInfo?.Nickname).Replace("<FriendUin>", e.Chain.FriendUin.ToString());
+                    string suffix = prefixAndSuffix.Last().Replace("<FriendNickName>", e.Chain.FriendInfo?.Nickname).Replace("<FriendUin>", e.Chain.FriendUin.ToString());
+                    builder.Text(prefix);
+                    builder.Add(entity);
+                    builder.Text(suffix);
                 }
                 else
                 {
-                    string prefix = config.ForwardToAdminFormat.Replace("<FriendNickName>", e.Chain.FriendInfo?.Nickname).Replace("<FriendUin>", e.Chain.FriendUin.ToString()).Replace("<Message>", "");
-                    await context.SendMessage(MessageBuilder.Friend(forwarderConfig.ToFriendUin).Text(prefix).Add(entity).Build());
+                    builder.Add(entity);
                 }
+                await context.SendMessage(builder.Build());
             }
         }
 
