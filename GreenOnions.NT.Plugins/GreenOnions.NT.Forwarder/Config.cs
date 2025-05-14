@@ -14,7 +14,7 @@ namespace GreenOnions.NT.Forwarder
         /// 回复私聊消息命令
         /// </summary>
         [YamlMember(Description = "回复私聊消息命令")]
-        public string ReplyFriendCommand { get; set; } = "回复(?<Uin>\\d{5,19})[;：](?<Message>.+)";
+        public string ReplyFriendCommand { get; set; } = @"回复(?<Uin>\d{5,19})[;：](?<Message>.+)";
 
         /// <summary>
         /// 是否转发所有私聊消息到管理员

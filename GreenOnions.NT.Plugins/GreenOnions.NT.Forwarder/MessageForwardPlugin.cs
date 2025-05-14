@@ -82,7 +82,9 @@ namespace GreenOnions.NT.Forwarder
             _pluginPath = pluginPath;
             _commonConfig = commonConfig;
 
-            LoadConfig(pluginPath);
+            Config config = LoadConfig(pluginPath);
+
+            _replyRegex = new Regex(config.ReplyFriendCommand);
 
             bot.Invoker.OnFriendMessageReceived -= OnFriendMessage;
             bot.Invoker.OnGroupMessageReceived -= OnGroupMessage;
