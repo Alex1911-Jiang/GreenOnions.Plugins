@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.NT.MessageNotif
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.NT.PythonInvoker", "GreenOnions.NT.PythonInvoker\GreenOnions.NT.PythonInvoker.csproj", "{C64DB639-9725-4D62-BBAA-DC3A45709BC1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.NT.Forwarder", "GreenOnions.NT.Forwarder\GreenOnions.NT.Forwarder.csproj", "{EBE9C867-8B25-4E2E-8629-4706487EBABD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,10 @@ Global
 		{C64DB639-9725-4D62-BBAA-DC3A45709BC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C64DB639-9725-4D62-BBAA-DC3A45709BC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C64DB639-9725-4D62-BBAA-DC3A45709BC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBE9C867-8B25-4E2E-8629-4706487EBABD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBE9C867-8B25-4E2E-8629-4706487EBABD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBE9C867-8B25-4E2E-8629-4706487EBABD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBE9C867-8B25-4E2E-8629-4706487EBABD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
