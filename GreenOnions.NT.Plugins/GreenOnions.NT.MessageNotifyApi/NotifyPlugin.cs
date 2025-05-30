@@ -108,15 +108,18 @@ namespace GreenOnions.NT.MessageNotifyApi
 
                     if (config.AdminOnly && !commonConfig.AdminQQ.Contains(requestModel.Target))
                     {
-                        LogHelper.LogWarning($"收到的消息请求转发到的QQ号：{requestModel.Target} 不在管理员列表中：{string.Join(',', commonConfig.AdminQQ)}，内容：{requestModel.Message}");
+                        LogHelper.LogWarning($"收到的消息请求转发到的QQ号：{requestModel.Target} 不在管理员列表中：{string.Join(',', commonConfig.AdminQQ)}，内容：'{requestModel.Message}'，是否有图片：{requestModel.Image is not null}");
                         context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                         context.Response.Close();
                         continue;
                     }
 
-                    Console.WriteLine($"向：{requestModel.Target}，发送消息：{requestModel.Message}");
+                    Console.WriteLine($"向：{requestModel.Target}，发送消息：{requestModel.Message}，是否有图片：{requestModel.Image is not null}");
                     MessageBuilder msg = MessageBuilder.Friend(requestModel.Target);
-                    msg.Text(requestModel.Message);
+                    if (!string.IsNullOrEmpty(requestModel.Message))
+                        msg.Text(requestModel.Message);
+                    if (requestModel.Image is not null)
+                        msg.Image(requestModel.Image);
                     await SngletonInstance.Bot.SendMessage(msg.Build());
 
                     // 设置响应
