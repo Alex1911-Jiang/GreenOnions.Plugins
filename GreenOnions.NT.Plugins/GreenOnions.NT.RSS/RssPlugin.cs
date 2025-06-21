@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 using GreenOnions.NT.Base;
@@ -248,7 +249,7 @@ namespace GreenOnions.NT.RSS
                 { "<文章标题>", !string.IsNullOrWhiteSpace(result.InnerTitle) },
                 { "<正文>", !string.IsNullOrWhiteSpace(result.Text.ToString()) },
                 { "<图片>", result.ImageUrls.Count > 0 },
-                { "<视频>", result.ImageUrls.Count > 0 },
+                { "<视频>", result.VideoUrls.Count > 0 },
                 { "<图片地址>", result.ImageUrls.Count > 0 },
                 { "<视频地址>", result.VideoUrls.Count > 0 },
                 { "<嵌入页面地址>", result.IFrameUrls.Count > 0 },
@@ -271,7 +272,7 @@ namespace GreenOnions.NT.RSS
                 { "<文章标题>", async msg => await Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(result.InnerTitle) ? "" : result.InnerTitle))},
                 { "<正文>", async msg => await Task.FromResult(msg.Text(result.Text.ToString()))},
                 { "<图片>", async msg => await AddImages(item, result.ImageUrls, msg) },
-                { "<视频>", async msg => await AddImages(item, result.VideoUrls, msg) },
+                { "<视频>", async msg => await AddVideoes(item, result.VideoUrls, msg) },
                 { "<图片地址>", async msg => await Task.FromResult(msg.Text(string.Join("\n",result.ImageUrls)))},
                 { "<视频地址>", async msg => await Task.FromResult(msg.Text(string.Join("\n",result.VideoUrls)))},
                 { "<嵌入页面地址>", async msg => await Task.FromResult(msg.Text(string.Join("\n",result.IFrameUrls)))},
@@ -359,7 +360,7 @@ namespace GreenOnions.NT.RSS
                 }
                 catch (Exception ex)
                 {
-                    LogHelper.LogException(ex, $"RSS订阅插件中下载视频失败，错误信息：{ex.Message}");
+                    LogHelper.LogException(ex, $"RSS订阅插件中下载视频 {url} 失败，错误信息：{ex.Message}");
                     msg.Text("（下载视频失败）");
                 }
             }
@@ -430,6 +431,12 @@ namespace GreenOnions.NT.RSS
         private async Task<XmlDocument> GetXmlDocument(SubscriptionItem item)
         {
             XmlDocument xmlDoc = new();
+
+            ////测试用，不访问地址，读取本地文件解析
+            //string xml = File.ReadAllText("sasakirico.xml");
+            //xmlDoc.LoadXml(xml);
+            //return xmlDoc;
+
             using HttpClientHandler handler = new() { UseProxy = item.UseProxy };
             using HttpClient client = new(handler);
             using HttpRequestMessage request = new(HttpMethod.Get, item.Url);

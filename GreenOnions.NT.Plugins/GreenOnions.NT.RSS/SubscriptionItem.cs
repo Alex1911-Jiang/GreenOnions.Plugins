@@ -40,7 +40,7 @@ namespace GreenOnions.NT.RSS
         /// <summary>
         /// 过滤模式
         /// </summary>
-        [YamlMember(Description = "过滤模式 支持 Disabled = 不过滤（总是发送），SendWhenAny = 包含任一时发送，SendWhenAll = 包含所有时发送，NotSendWhenAny = 包含任一不发送，NotSendWhenAll")]
+        [YamlMember(Description = "过滤模式 支持 Disabled = 不过滤（总是发送），SendWhenAny = 包含任一时发送，SendWhenAll = 包含所有时发送，NotSendWhenAny = 包含任一不发送，NotSendWhenAll = 包含所有时不发送")]
         public FilterModes FilterMode { get; set; } = FilterModes.Disabled;
         /// <summary>
         /// 过滤词
