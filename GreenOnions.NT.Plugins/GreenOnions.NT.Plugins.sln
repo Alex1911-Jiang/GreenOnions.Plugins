@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.NT.PythonInvoke
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.NT.Forwarder", "GreenOnions.NT.Forwarder\GreenOnions.NT.Forwarder.csproj", "{EBE9C867-8B25-4E2E-8629-4706487EBABD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenOnions.NT.WakeOnLan", "GreenOnions.NT.WakeOnLan\GreenOnions.NT.WakeOnLan.csproj", "{560BEBE4-A337-4E5C-8B51-EACBDA247BAC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,10 @@ Global
 		{EBE9C867-8B25-4E2E-8629-4706487EBABD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBE9C867-8B25-4E2E-8629-4706487EBABD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBE9C867-8B25-4E2E-8629-4706487EBABD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{560BEBE4-A337-4E5C-8B51-EACBDA247BAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{560BEBE4-A337-4E5C-8B51-EACBDA247BAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{560BEBE4-A337-4E5C-8B51-EACBDA247BAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{560BEBE4-A337-4E5C-8B51-EACBDA247BAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
