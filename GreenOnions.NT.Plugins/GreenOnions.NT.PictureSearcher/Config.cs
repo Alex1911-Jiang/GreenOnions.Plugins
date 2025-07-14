@@ -21,7 +21,7 @@ namespace GreenOnions.NT.PictureSearcher
         /// 启用的搜图引擎
         /// </summary>
         [YamlMember(Description = "启用的搜图引擎（同时决定搜索顺序，支持 SauceNAO、IqdbAnime、Iqdb3d、TraceMoe、Ascii2d、AnimeTrace、Soutubot）")]
-        public SearcherSources[] EnabledSources { get; set; } = [SearcherSources.SauceNAO, SearcherSources.IqdbAnime, SearcherSources.Soutubot, SearcherSources.Ascii2d];
+        public SearcherSources[] EnabledSources { get; set; } = [SearcherSources.SauceNAO, SearcherSources.IqdbAnime, SearcherSources.Soutubot];
 
         /// <summary>
         /// AnimeTrace搜图实使用的模型
@@ -87,7 +87,7 @@ namespace GreenOnions.NT.PictureSearcher
         /// 使用浏览器访问Ascii2d搜索
         /// </summary>
         [YamlMember(Description = "使用浏览器访问Ascii2d搜索（如果遭遇人机验证403请启用）")]
-        public bool Ascii2dUseChromium { get; set; } = false;
+        public bool Ascii2dUseChromium { get; set; } = true;
 
         /// <summary>
         /// Ascii2d显示结果数量

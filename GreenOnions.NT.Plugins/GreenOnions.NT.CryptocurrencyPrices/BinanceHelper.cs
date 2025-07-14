@@ -89,7 +89,7 @@ namespace GreenOnions.NT.CryptocurrencyPrices
                     }
                 }
 
-                while (SpotPrices.Count > 4 * 60 * 60 + 5)
+                while (SpotPrices.Count > 1 * 60 * 60 + 5)
                     SpotPrices.Remove(SpotPrices.Keys.First());
             });
         }
@@ -183,7 +183,7 @@ namespace GreenOnions.NT.CryptocurrencyPrices
             { "5mr", new TimeData{ Second = 5 * 60, Text = "5min涨跌幅榜", Side = PositionSide.Both, ShowCommand = true, } },
             { "30mr", new TimeData{ Second = 30 * 60, Text = "30min涨跌幅榜", Side = PositionSide.Both, ShowCommand = false, } },
             { "1hr", new TimeData{ Second = 60 * 60, Text = "1h涨跌幅榜", Side = PositionSide.Both, ShowCommand = true, } },
-            { "4hr", new TimeData{ Second = 4 * 60 * 60, Text = "4h涨跌幅榜", Side = PositionSide.Both, ShowCommand = true, } },
+            //{ "4hr", new TimeData{ Second = 4 * 60 * 60, Text = "4h涨跌幅榜", Side = PositionSide.Both, ShowCommand = true, } },
             { "24hr", new TimeData{ Second = 24 * 60 * 60, Text = "24h涨跌幅榜", Side = PositionSide.Both, ShowCommand = true, } },
 
             { "5srl", new TimeData{ Second = 5, Text = "5s涨幅榜", Side = PositionSide.Long, ShowCommand = false, } },
@@ -192,7 +192,7 @@ namespace GreenOnions.NT.CryptocurrencyPrices
             { "5mrl", new TimeData{ Second = 5 * 60, Text = "5min涨幅榜", Side = PositionSide.Long, ShowCommand = true, } },
             { "30mrl", new TimeData{ Second = 30 * 60, Text = "30min涨幅榜", Side = PositionSide.Long, ShowCommand = false, } },
             { "1hrl", new TimeData{ Second = 60 * 60, Text = "1h涨幅榜", Side = PositionSide.Long, ShowCommand = true, } },
-            { "4hrl", new TimeData{ Second = 4 * 60 * 60, Text = "4h涨幅榜", Side = PositionSide.Long, ShowCommand = true, } },
+            //{ "4hrl", new TimeData{ Second = 4 * 60 * 60, Text = "4h涨幅榜", Side = PositionSide.Long, ShowCommand = true, } },
             { "24hrl", new TimeData{ Second = 24 * 60 * 60, Text = "24h涨幅榜", Side = PositionSide.Long, ShowCommand = true, } },
 
             { "5srs", new TimeData{ Second = 5, Text = "5s跌幅榜", Side = PositionSide.Short, ShowCommand = false, } },
@@ -201,7 +201,7 @@ namespace GreenOnions.NT.CryptocurrencyPrices
             { "5mrs", new TimeData{ Second = 5 * 60, Text = "5min跌幅榜", Side = PositionSide.Short, ShowCommand = true, } },
             { "30mrs", new TimeData{ Second = 30 * 60, Text = "30min跌幅榜", Side = PositionSide.Short, ShowCommand = false, } },
             { "1hrs", new TimeData{ Second = 60 * 60, Text = "1h跌幅榜", Side = PositionSide.Short, ShowCommand = true, } },
-            { "4hrs", new TimeData{ Second = 4 * 60 * 60, Text = "4h跌幅榜", Side = PositionSide.Short, ShowCommand = true, } },
+            //{ "4hrs", new TimeData{ Second = 4 * 60 * 60, Text = "4h跌幅榜", Side = PositionSide.Short, ShowCommand = true, } },
             { "24hrs", new TimeData{ Second = 24 * 60 * 60, Text = "24h跌幅榜", Side = PositionSide.Short, ShowCommand = true, } },
         };
     }
