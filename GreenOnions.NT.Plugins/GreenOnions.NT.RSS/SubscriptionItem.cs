@@ -7,11 +7,26 @@ namespace GreenOnions.NT.RSS
     /// </summary>
     internal class SubscriptionItem
     {
+        public static bool operator ==(SubscriptionItem left, SubscriptionItem right) => left.Url == right.Url;
+        public static bool operator !=(SubscriptionItem left, SubscriptionItem right) => left.Url != right.Url;
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is not SubscriptionItem theOther)
+                return false;
+            return Url == theOther.Url;
+        }
+
+        public override int GetHashCode()
+        {
+            return Url.GetHashCode();
+        }
+
         /// <summary>
         /// 订阅地址
         /// </summary>
         [YamlMember(Description = "订阅地址")]
-        public string? Url { get; set; }
+        public string Url { get; set; }
         /// <summary>
         /// 备注
         /// </summary>
