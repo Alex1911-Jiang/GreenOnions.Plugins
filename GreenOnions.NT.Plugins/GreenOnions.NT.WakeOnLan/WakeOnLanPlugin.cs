@@ -83,7 +83,7 @@ public class WakeOnLanPlugin : IPlugin
         }
         if (_config is null)
         {
-            LogHelper.LogWarning("消息转发插件配置为空");
+            LogHelper.LogWarning($"{Name}插件配置为空");
             return false;
         }
         
