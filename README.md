@@ -10,6 +10,8 @@
 4. 翻译
 5. RSS订阅
 6. OpenAi客户端
+7. 井字棋小游戏
+8. 消息转发器
 
 您可以在[GreenOnions](https://github.com/Alex1911-Jiang/GreenOnions)中输入：install-plugin 以上插件名称 #来自动下载并安装这些插件
 
