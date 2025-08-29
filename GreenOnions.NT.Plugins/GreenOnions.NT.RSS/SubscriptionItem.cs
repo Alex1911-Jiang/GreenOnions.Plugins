@@ -33,10 +33,15 @@ namespace GreenOnions.NT.RSS
         [YamlMember(Description = "备注")]
         public string? Remark { get; set; }
         /// <summary>
-        /// 是否使用代理
+        /// 是否使用代理订阅
         /// </summary>
-        [YamlMember(Description = "使用代理（机器人主配置中的地址）")]
+        [YamlMember(Description = "使用代理订阅（机器人主配置中的地址）")]
         public bool UseProxy { get; set; } = false;
+        /// <summary>
+        /// 是否使用代理下载媒体资源
+        /// </summary>
+        [YamlMember(Description = "是否使用代理下载媒体资源（图片、视频等）")]
+        public bool UseProxyDownloadMedia { get; set; } = false;
         /// <summary>
         /// 获取内容时间间隔(秒)
         /// </summary>

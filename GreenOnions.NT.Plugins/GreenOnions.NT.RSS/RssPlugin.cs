@@ -328,7 +328,7 @@ namespace GreenOnions.NT.RSS
 
         private async Task AddImages(SubscriptionItem item, List<string> imgUrls, MessageBuilder msg)
         {
-            using HttpClientHandler handler = new HttpClientHandler { UseProxy = item.UseProxy };
+            using HttpClientHandler handler = new HttpClientHandler { UseProxy = item.UseProxyDownloadMedia };
             using HttpClient client = new HttpClient(handler);
 
             foreach (var url in imgUrls)
@@ -340,7 +340,7 @@ namespace GreenOnions.NT.RSS
                 }
                 catch (Exception ex)
                 {
-                    LogHelper.LogException(ex, $"RSS订阅插件中下载图片失败，错误信息：{ex.Message}");
+                    LogHelper.LogException(ex, $"RSS订阅插件中下载图片失败，错误信息：{ex.Message}，图片地址：{url}");
                     msg.Text("（下载图片失败）");
                 }
             }
@@ -348,7 +348,7 @@ namespace GreenOnions.NT.RSS
 
         private async Task AddVideoes(SubscriptionItem item, List<string> imgUrls, MessageBuilder msg)
         {
-            using HttpClientHandler handler = new HttpClientHandler { UseProxy = item.UseProxy };
+            using HttpClientHandler handler = new HttpClientHandler { UseProxy = item.UseProxyDownloadMedia };
             using HttpClient client = new HttpClient(handler);
 
             foreach (var url in imgUrls)
@@ -395,7 +395,7 @@ namespace GreenOnions.NT.RSS
             if (string.IsNullOrWhiteSpace(result.Url))
                 return;
             string roomId = result.Url[(result.Url.LastIndexOf("/room/") + "/room/".Length)..];
-            using HttpClientHandler handler = new HttpClientHandler { UseProxy = config.UseProxy };
+            using HttpClientHandler handler = new HttpClientHandler { UseProxy = config.UseProxyDownloadMedia };
             using HttpClient client = new HttpClient(handler);
             try
             {
