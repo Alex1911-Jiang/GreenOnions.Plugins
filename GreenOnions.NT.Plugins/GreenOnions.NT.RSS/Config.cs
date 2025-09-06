@@ -9,6 +9,7 @@ namespace GreenOnions.NT.RSS
         /// </summary>
         [YamlMember(Description = "启用RSS订阅转发")]
         public bool Enabled { get; set; } = true;
+
         /// <summary>
         /// 订阅的地址和需要转发到的QQ或群列表
         /// </summary>
@@ -21,5 +22,11 @@ namespace GreenOnions.NT.RSS
                 Remark = "初音ミク 公式",
             }
         };
+
+        /// <summary>
+        /// 是否以上传文件方式发送视频
+        /// </summary>
+        [YamlMember(Description = "是否以上传文件方式发送视频")]
+        public bool SendVideoAsFile { get; set; } = false;
     }
 }

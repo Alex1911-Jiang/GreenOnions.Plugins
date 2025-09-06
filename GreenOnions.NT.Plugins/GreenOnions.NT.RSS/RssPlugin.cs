@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
@@ -9,6 +10,7 @@ using Lagrange.Core;
 using Lagrange.Core.Common.Interface.Api;
 using Lagrange.Core.Event.EventArg;
 using Lagrange.Core.Message;
+using Lagrange.Core.Message.Entity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -50,6 +52,9 @@ namespace GreenOnions.NT.RSS
 
         public void OnLoaded(string pluginPath, BotContext bot, ICommonConfig commonConfig)
         {
+            string vdoCacheDir = Path.Combine(pluginPath, "Videos");
+            Directory.CreateDirectory(vdoCacheDir);
+
             _pluginPath = pluginPath;
             _bot = bot;
             _commonConfig = commonConfig;
@@ -132,10 +137,10 @@ namespace GreenOnions.NT.RSS
             if (!_config.Enabled)  //没有启用RSS订阅插件
                 return;
 
-            await GetAllRssXmlPipe(item, _bot, _commonConfig);
+            await GetAllRssXmlPipe(item, _bot, _commonConfig, _config);
         }
 
-        private async Task GetAllRssXmlPipe(SubscriptionItem item, BotContext bot, ICommonConfig commonConfig)
+        private async Task GetAllRssXmlPipe(SubscriptionItem item, BotContext bot, ICommonConfig commonConfig, Config config)
         {
             if (string.IsNullOrWhiteSpace(item.Url))
             {
@@ -160,11 +165,11 @@ namespace GreenOnions.NT.RSS
                 return;
             }
 
-            await DeserializeXmlPipe(bot, commonConfig, doc, item);
+            await DeserializeXmlPipe(bot, commonConfig, config, doc, item);
         }
 
 
-        private async Task DeserializeXmlPipe(BotContext bot, ICommonConfig commonConfig, XmlDocument doc, SubscriptionItem item)
+        private async Task DeserializeXmlPipe(BotContext bot, ICommonConfig commonConfig, Config config, XmlDocument doc, SubscriptionItem item)
         {
             string url = item.Url!;
             foreach (RssResult rssResult in DeserializeDocument(doc, url))  //只查找第一篇文章
@@ -196,7 +201,32 @@ namespace GreenOnions.NT.RSS
                     }
 
                     MessageBuilder msg = MessageBuilder.Group(group);
-                    await AddMessagePipe(item, rssResult, msg);
+                    await AddMessagePipe(config, item, rssResult, msg, async vdoUrls =>
+                    {
+                        using HttpClientHandler handler = new HttpClientHandler { UseProxy = item.UseProxyDownloadMedia };
+                        using HttpClient client = new HttpClient(handler);
+                        foreach (var vdoUrl in vdoUrls)
+                        {
+                            byte[] vdo = await client.GetByteArrayAsync(vdoUrl);
+                            LogHelper.LogDebug($"上传视频文件到{group}群 ");
+                            if (vdo.Length > 4 * 1024 * 1024)
+                            {
+                                string vdoCacheDir = Path.Combine(_pluginPath!, "Videos");
+                                using MD5 md5 = MD5.Create();
+                                string fileMd5 = ToHexString(md5.ComputeHash(vdo));
+                                string safeFileName = $"{fileMd5}.mp4";
+                                string fileName = Path.Combine(vdoCacheDir, safeFileName);
+                                File.WriteAllBytes(fileName, vdo);
+                                LogHelper.LogDebug($"下载 {url} 视频成功，开始作为文件上传 {safeFileName}");
+                                await bot.GroupFSUpload(group, new FileEntity(fileName));
+                            }
+                            else
+                            {
+                                string fileName = "video.mp4";
+                                await bot.GroupFSUpload(group, new FileEntity(vdo, fileName));
+                            }
+                        }
+                    });
                     await bot.SendMessage(msg.Build());
                 }
                 foreach (var friend in item.SendToFriends)
@@ -208,7 +238,31 @@ namespace GreenOnions.NT.RSS
                     }
 
                     MessageBuilder msg = MessageBuilder.Friend(friend);
-                    await AddMessagePipe(item, rssResult, msg);
+                    await AddMessagePipe(config, item, rssResult, msg, async vdoUrls =>
+                    {
+                        using HttpClientHandler handler = new HttpClientHandler { UseProxy = item.UseProxyDownloadMedia };
+                        using HttpClient client = new HttpClient(handler);
+                        foreach (var vdoUrl in vdoUrls)
+                        {
+                            byte[] vdo = await client.GetByteArrayAsync(vdoUrl);
+                            if (vdo.Length > 4 * 1024 * 1024)
+                            {
+                                string vdoCacheDir = Path.Combine(_pluginPath!, "Videos");
+                                using MD5 md5 = MD5.Create();
+                                string fileMd5 = ToHexString(md5.ComputeHash(vdo));
+                                string safeFileName = $"{fileMd5}.mp4";
+                                string fileName = Path.Combine(vdoCacheDir, safeFileName);
+                                File.WriteAllBytes(fileName, vdo);
+                                LogHelper.LogDebug($"下载 {url} 视频成功，开始作为文件上传 {safeFileName}");
+                                await bot.UploadFriendFile(friend, new FileEntity(fileName));
+                            }
+                            else
+                            {
+                                string fileName = "video.mp4";
+                                await bot.UploadFriendFile(friend, new FileEntity(vdo, fileName));
+                            }
+                        }
+                    });
                     await bot.SendMessage(msg.Build());
                 }
 
@@ -216,6 +270,14 @@ namespace GreenOnions.NT.RSS
                 LogHelper.LogMessage($"已推送 {item.Remark}（{item.Url}）更新");
                 break;
             }
+        }
+
+        private string ToHexString(byte[] data)
+        {
+            StringBuilder str = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
+                str.Append(data[i].ToString("X2"));
+            return str.ToString();
         }
 
         private string[] Split(string format, IEnumerable<string> tags)
@@ -235,7 +297,7 @@ namespace GreenOnions.NT.RSS
            return parts.ToArray();
         }
 
-        private async Task AddMessagePipe(SubscriptionItem item, RssResult result, MessageBuilder msg)
+        private async Task AddMessagePipe(Config config, SubscriptionItem item, RssResult result, MessageBuilder msg,  Func<List<string>, Task> UploadFile)
         {
             Dictionary<string, bool> needRelpaceTags = new()
             {
@@ -272,7 +334,6 @@ namespace GreenOnions.NT.RSS
                 { "<文章标题>", async msg => await Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(result.InnerTitle) ? "" : result.InnerTitle))},
                 { "<正文>", async msg => await Task.FromResult(msg.Text(result.Text.ToString()))},
                 { "<图片>", async msg => await AddImages(item, result.ImageUrls, msg) },
-                { "<视频>", async msg => await AddVideoes(item, result.VideoUrls, msg) },
                 { "<图片地址>", async msg => await Task.FromResult(msg.Text(string.Join("\n",result.ImageUrls)))},
                 { "<视频地址>", async msg => await Task.FromResult(msg.Text(string.Join("\n",result.VideoUrls)))},
                 { "<嵌入页面地址>", async msg => await Task.FromResult(msg.Text(string.Join("\n",result.IFrameUrls)))},
@@ -282,6 +343,14 @@ namespace GreenOnions.NT.RSS
                 { "<发布时间>", async msg => await Task.FromResult(msg.Text(result.PubDate is null ? "" : result.PubDate.Value.ToString("yyyy-MM-dd HH:mm:ss")))},
                 { "<原文地址>", async msg => await Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(result.Link) ? "" : result.Link))},
             };
+            if (config.SendVideoAsFile)
+            {
+                relpaceTags.Add("<视频>", async msg => await UploadFile(result.VideoUrls));
+            }
+            else
+            {
+                relpaceTags.Add("<视频>", async msg => await AddVideoes(item, result.VideoUrls, msg));
+            }
 
             foreach (var temp in item.Format)
             {
@@ -325,7 +394,6 @@ namespace GreenOnions.NT.RSS
                 msg.Text("\n");
             }
         }
-
         private async Task AddImages(SubscriptionItem item, List<string> imgUrls, MessageBuilder msg)
         {
             using HttpClientHandler handler = new HttpClientHandler { UseProxy = item.UseProxyDownloadMedia };
@@ -346,17 +414,32 @@ namespace GreenOnions.NT.RSS
             }
         }
 
-        private async Task AddVideoes(SubscriptionItem item, List<string> imgUrls, MessageBuilder msg)
+        private async Task AddVideoes(SubscriptionItem item, List<string> vdoUrls, MessageBuilder msg)
         {
             using HttpClientHandler handler = new HttpClientHandler { UseProxy = item.UseProxyDownloadMedia };
             using HttpClient client = new HttpClient(handler);
 
-            foreach (var url in imgUrls)
+            foreach (var url in vdoUrls)
             {
                 try
                 {
                     byte[] vdo = await client.GetByteArrayAsync(url);
-                    msg.Video(vdo);
+                    if (vdo.Length > 4 * 1024 * 1024)
+                    {
+                        string vdoCacheDir = Path.Combine(_pluginPath!, "Videos");
+                        using MD5 md5 = MD5.Create();
+                        string fileMd5 = ToHexString(md5.ComputeHash(vdo));
+                        string safeFileName = $"{fileMd5}.mp4";
+                        string fileName = Path.Combine(vdoCacheDir, safeFileName);
+                        File.WriteAllBytes(fileName, vdo);
+                        LogHelper.LogDebug($"下载 {url} 视频成功，开始上传视频 {safeFileName}");
+                        msg.Video(fileName);
+                    }
+                    else
+                    {
+                        LogHelper.LogDebug($"上传视频 {url}");
+                        msg.Video(vdo);
+                    }
                 }
                 catch (Exception ex)
                 {
