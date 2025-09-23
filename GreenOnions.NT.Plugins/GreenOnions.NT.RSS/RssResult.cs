@@ -4,6 +4,22 @@ namespace GreenOnions.NT.RSS
 {
     internal class RssResult
     {
+        public static bool operator ==(RssResult left, RssResult right) => left.InnerTitle == right.InnerTitle;
+        public static bool operator !=(RssResult left, RssResult right) => left.InnerTitle != right.InnerTitle;
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is not RssResult theOther)
+                return false;
+            return InnerTitle == theOther.InnerTitle;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = InnerTitle.GetHashCode();
+            return hashCode;
+        }
+
         internal string? Url { get; set; }
         /// <summary>
         /// 标题
@@ -12,7 +28,7 @@ namespace GreenOnions.NT.RSS
         /// <summary>
         /// 文章标题
         /// </summary>
-        internal string? InnerTitle { get; set; }
+        internal string InnerTitle { get; set; }
         /// <summary>
         /// 正文文字部分
         /// </summary>

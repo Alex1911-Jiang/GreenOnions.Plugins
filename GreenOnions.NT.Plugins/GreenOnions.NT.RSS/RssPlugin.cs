@@ -1,7 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 using GreenOnions.NT.Base;
@@ -18,8 +17,8 @@ namespace GreenOnions.NT.RSS
 {
     public class RssPlugin : IPlugin
     {
-        private Dictionary<string, string> _rssSendRecord = new Dictionary<string, string>();
-        private Dictionary<string, Timer> _subscribers = new Dictionary<string, Timer>();
+        private readonly Dictionary<string, RssResult[]> _rssSendRecord = [];
+        private readonly Dictionary<string, Timer> _subscribers = [];
         private Config? _config;
         private string? _pluginPath;
         private BotContext? _bot;
@@ -45,7 +44,6 @@ namespace GreenOnions.NT.RSS
                 _config = YamlConvert.DeserializeObject<Config>(yamlConfig);
             }
             _config ??= new Config();
-            var json = JsonConvert.SerializeObject(_config);
             File.WriteAllText(configPath, YamlConvert.SerializeObject(_config));
             return _config;
         }
@@ -80,9 +78,9 @@ namespace GreenOnions.NT.RSS
             {
                 if (string.IsNullOrWhiteSpace(item.Url))
                     continue;
-                if (_subscribers.ContainsKey(item.Url))
+                if (_subscribers.TryGetValue(item.Url, out Timer? value))
                 {
-                    _subscribers[item.Url].Dispose();
+                    value.Dispose();
                     _subscribers.Remove(item.Url);
                 }
 
@@ -92,17 +90,21 @@ namespace GreenOnions.NT.RSS
                     continue;
                 }
 
-                Timer timer = new Timer(RssReaderPipe, item, 0, Convert.ToInt64(item.ReadInterval * 1000));
+                Timer timer = new(RssReaderPipe, item, 0, Convert.ToInt64(item.ReadInterval * 1000));
                 _subscribers.Add(item.Url, timer);
                 subscribeCount++;
+                LogHelper.LogMessage($"已启动对 {item.Url} 的RSS订阅");
             }
-            LogHelper.LogMessage($"{subscribeCount}个RSS订阅线程已启动");
+            LogHelper.LogMessage($"成功启动{subscribeCount}个RSS订阅线程");
         }
 
         private void StopReadRss()
         {
             foreach (var item in _subscribers)
+            {
                 item.Value.Dispose();
+                LogHelper.LogMessage($"已停止对 {item} 的RSS订阅");
+            }
             _subscribers.Clear();
             _rssSendRecord.Clear();
         }
@@ -168,28 +170,30 @@ namespace GreenOnions.NT.RSS
             await DeserializeXmlPipe(bot, commonConfig, config, doc, item);
         }
 
-
         private async Task DeserializeXmlPipe(BotContext bot, ICommonConfig commonConfig, Config config, XmlDocument doc, SubscriptionItem item)
         {
             string url = item.Url!;
-            foreach (RssResult rssResult in DeserializeDocument(doc, url))  //只查找第一篇文章
+            RssResult[] nowRssResults = [.. DeserializeDocument(doc, url)];
+
+            if (!_rssSendRecord.TryGetValue(url, out RssResult[]? oldRssResults))
             {
-                if (!_rssSendRecord.ContainsKey(url))
-                {
-                    LogHelper.LogMessage($"首次读取到RSS订阅对象 {item.Remark}（{item.Url}）的内容，仅作为变更对比依据，不发送");
-                    _rssSendRecord.Add(url, rssResult.InnerTitle!);
-                    break;
-                }
+                LogHelper.LogMessage($"首次读取到RSS订阅对象 {item.Remark}（{item.Url}）的内容，仅作为变更对比依据，不发送");
+                oldRssResults = nowRssResults;
+                _rssSendRecord.Add(url, oldRssResults);
+                return;
+            }
 
-                if (rssResult.InnerTitle == _rssSendRecord[url])
-                    break;  //没有新内容
+            IEnumerable<RssResult> newRssResults = nowRssResults.Except(oldRssResults);
 
+            foreach (RssResult rssResult in newRssResults)
+            {
                 if (!FilterMessage(item, rssResult.InnerTitle!, rssResult.Text.ToString()))
                 {
                     LogHelper.LogMessage($"{item.Remark}（{url}）的 {rssResult.PubDate} 新内容由于触发过滤规则而不发送");
-                    _rssSendRecord[url] = rssResult.InnerTitle!;  //记录更新为最新的标题
-                    break;
+                    continue;
                 }
+
+                var vdoFiles = DownloadFile(item, rssResult);
 
                 //内容变更，发送内容
                 foreach (var group in item.SendToGroups)
@@ -201,33 +205,30 @@ namespace GreenOnions.NT.RSS
                     }
 
                     MessageBuilder msg = MessageBuilder.Group(group);
-                    await AddMessagePipe(config, item, rssResult, msg, async vdoUrls =>
+                    await AddMessagePipe(item, rssResult, msg);
+
+                    await bot.SendMessage(msg.Build());  //发送消息
+
+                    if (rssResult.VideoUrls.Count == 0)  //文章中没有视频链接
+                        continue;
+                    if (!item.Format.Any(l => l is not null && l.Contains("<视频>")))  //排版中不需要发送视频
+                        continue;
+
+                    if (config.SendVideoAsFile)
                     {
-                        using HttpClientHandler handler = new HttpClientHandler { UseProxy = item.UseProxyDownloadMedia };
-                        using HttpClient client = new HttpClient(handler);
-                        foreach (var vdoUrl in vdoUrls)
+                        await foreach (byte[] file in vdoFiles)
                         {
-                            byte[] vdo = await client.GetByteArrayAsync(vdoUrl);
+                            FileEntity fileEntity = BuildFileEntity(file);
                             LogHelper.LogDebug($"上传视频文件到{group}群 ");
-                            if (vdo.Length > 4 * 1024 * 1024)
-                            {
-                                string vdoCacheDir = Path.Combine(_pluginPath!, "Videos");
-                                using MD5 md5 = MD5.Create();
-                                string fileMd5 = ToHexString(md5.ComputeHash(vdo));
-                                string safeFileName = $"{fileMd5}.mp4";
-                                string fileName = Path.Combine(vdoCacheDir, safeFileName);
-                                File.WriteAllBytes(fileName, vdo);
-                                LogHelper.LogDebug($"下载 {url} 视频成功，开始作为文件上传 {safeFileName}");
-                                await bot.GroupFSUpload(group, new FileEntity(fileName));
-                            }
-                            else
-                            {
-                                string fileName = "video.mp4";
-                                await bot.GroupFSUpload(group, new FileEntity(vdo, fileName));
-                            }
+                            await bot.GroupFSUpload(group, fileEntity);
                         }
-                    });
-                    await bot.SendMessage(msg.Build());
+                    }
+                    else
+                    {
+                        MessageBuilder vdoMsg = MessageBuilder.Group(group);
+                        await AddVideoes(item, rssResult.VideoUrls, vdoMsg);
+                        await bot.SendMessage(vdoMsg.Build());  //发送消息
+                    }
                 }
                 foreach (var friend in item.SendToFriends)
                 {
@@ -238,43 +239,71 @@ namespace GreenOnions.NT.RSS
                     }
 
                     MessageBuilder msg = MessageBuilder.Friend(friend);
-                    await AddMessagePipe(config, item, rssResult, msg, async vdoUrls =>
+                    await AddMessagePipe(item, rssResult, msg);
+
+                    await bot.SendMessage(msg.Build());  //发送消息
+
+                    if (rssResult.VideoUrls.Count == 0)  //文章中没有视频链接
+                        continue;
+                    if (!item.Format.Any(l => l is not null && l.Contains("<视频>")))  //排版中不需要发送视频
+                        continue;
+
+                    if (config.SendVideoAsFile)
                     {
-                        using HttpClientHandler handler = new HttpClientHandler { UseProxy = item.UseProxyDownloadMedia };
-                        using HttpClient client = new HttpClient(handler);
-                        foreach (var vdoUrl in vdoUrls)
+                        await foreach (byte[] file in vdoFiles)
                         {
-                            byte[] vdo = await client.GetByteArrayAsync(vdoUrl);
-                            if (vdo.Length > 4 * 1024 * 1024)
-                            {
-                                string vdoCacheDir = Path.Combine(_pluginPath!, "Videos");
-                                using MD5 md5 = MD5.Create();
-                                string fileMd5 = ToHexString(md5.ComputeHash(vdo));
-                                string safeFileName = $"{fileMd5}.mp4";
-                                string fileName = Path.Combine(vdoCacheDir, safeFileName);
-                                File.WriteAllBytes(fileName, vdo);
-                                LogHelper.LogDebug($"下载 {url} 视频成功，开始作为文件上传 {safeFileName}");
-                                await bot.UploadFriendFile(friend, new FileEntity(fileName));
-                            }
-                            else
-                            {
-                                string fileName = "video.mp4";
-                                await bot.UploadFriendFile(friend, new FileEntity(vdo, fileName));
-                            }
+                            FileEntity fileEntity = BuildFileEntity(file);
+                            LogHelper.LogDebug($"上传视频文件给{friend}好友 ");
+                            await bot.UploadFriendFile(friend, fileEntity);
                         }
-                    });
-                    await bot.SendMessage(msg.Build());
+                    }
+                    else
+                    {
+                        MessageBuilder vdoMsg = MessageBuilder.Friend(friend);
+                        await AddVideoes(item, rssResult.VideoUrls, vdoMsg);
+                        await bot.SendMessage(vdoMsg.Build());  //发送消息
+                    }
                 }
 
-                _rssSendRecord[url] = rssResult.InnerTitle!;  //更新最新标题（由于部分源没有发布时间字段，使用标题判断是否变更）
                 LogHelper.LogMessage($"已推送 {item.Remark}（{item.Url}）更新");
-                break;
+            }
+            _rssSendRecord[url] = nowRssResults;
+        }
+
+        private async IAsyncEnumerable<byte[]> DownloadFile(SubscriptionItem item, RssResult rssResult)
+        {
+            using HttpClientHandler handler = new() { UseProxy = item.UseProxyDownloadMedia };
+            using HttpClient client = new(handler);
+            foreach (var vdoUrl in rssResult.VideoUrls)
+            {
+                byte[] vdo = await client.GetByteArrayAsync(vdoUrl);
+                LogHelper.LogDebug($"下载 {vdoUrl} 视频成功");
+                yield return vdo;
+            }
+        }
+
+        private FileEntity BuildFileEntity(byte[] vdo)
+        {
+            if (vdo.Length > 4 * 1024 * 1024)
+            {
+                string vdoCacheDir = Path.Combine(_pluginPath!, "Videos");
+                string fileMd5 = ToHexString(MD5.HashData(vdo));
+                string safeFileName = $"{fileMd5}.mp4";
+                string fileName = Path.Combine(vdoCacheDir, safeFileName);
+                File.WriteAllBytes(fileName, vdo);
+                LogHelper.LogDebug($"开始将视频作为文件上传 {safeFileName}");
+                return new FileEntity(fileName);
+            }
+            else
+            {
+                string fileName = "video.mp4";
+                return new FileEntity(vdo, fileName);
             }
         }
 
         private string ToHexString(byte[] data)
         {
-            StringBuilder str = new StringBuilder();
+            StringBuilder str = new();
             for (int i = 0; i < data.Length; i++)
                 str.Append(data[i].ToString("X2"));
             return str.ToString();
@@ -283,21 +312,21 @@ namespace GreenOnions.NT.RSS
         private string[] Split(string format, IEnumerable<string> tags)
         {
             string pattern = string.Join("|", tags);
-            List<string> parts = new List<string>();
+            List<string> parts = [];
             int lastIndex = 0;
             foreach (Match match in Regex.Matches(format, pattern))
             {
                 if (match.Index > lastIndex)
-                    parts.Add(format.Substring(lastIndex, match.Index - lastIndex));
+                    parts.Add(format[lastIndex..match.Index]);
                 parts.Add(match.Value);
                 lastIndex = match.Index + match.Length;
             }
             if (lastIndex < format.Length)
-                parts.Add(format.Substring(lastIndex));
-           return parts.ToArray();
+                parts.Add(format[lastIndex..]);
+           return [.. parts];
         }
 
-        private async Task AddMessagePipe(Config config, SubscriptionItem item, RssResult result, MessageBuilder msg,  Func<List<string>, Task> UploadFile)
+        private async Task AddMessagePipe(SubscriptionItem item, RssResult result, MessageBuilder msg)
         {
             Dictionary<string, bool> needRelpaceTags = new()
             {
@@ -324,33 +353,26 @@ namespace GreenOnions.NT.RSS
 
             Dictionary<string, Func<MessageBuilder, Task>> relpaceTags = new()
             {
-                { "<标题>", async msg => await Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(result.Title) ? "" : result.Title))},
-                { "<订阅地址>", async msg => await Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(item.Url) ? "" : item.Url))},
-                { "<Url>", async msg => await Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(item.Url) ? "" : item.Url))},
-                { "<url>", async msg => await Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(item.Url) ? "" : item.Url))},
-                { "<备注>", async msg => await Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(item.Remark) ? "" : item.Remark))},
-                { "<remark>", async msg => await Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(item.Remark) ? "" : item.Remark))},
-                { "<Remark>", async msg => await Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(item.Remark) ? "" : item.Remark))},
-                { "<文章标题>", async msg => await Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(result.InnerTitle) ? "" : result.InnerTitle))},
-                { "<正文>", async msg => await Task.FromResult(msg.Text(result.Text.ToString()))},
-                { "<图片>", async msg => await AddImages(item, result.ImageUrls, msg) },
-                { "<图片地址>", async msg => await Task.FromResult(msg.Text(string.Join("\n",result.ImageUrls)))},
-                { "<视频地址>", async msg => await Task.FromResult(msg.Text(string.Join("\n",result.VideoUrls)))},
-                { "<嵌入页面地址>", async msg => await Task.FromResult(msg.Text(string.Join("\n",result.IFrameUrls)))},
-                { "<正文翻译>", async msg => await Translate(result.Text.ToString(), msg)},
-                { "<B站直播封面>", async msg => await BilibiliLiveCover(item, result, msg)},
-                { "<作者>", async msg => await Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(result.Author) ? "" : result.Author))},
-                { "<发布时间>", async msg => await Task.FromResult(msg.Text(result.PubDate is null ? "" : result.PubDate.Value.ToString("yyyy-MM-dd HH:mm:ss")))},
-                { "<原文地址>", async msg => await Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(result.Link) ? "" : result.Link))},
+                { "<标题>", msg => Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(result.Title) ? "" : result.Title))},
+                { "<订阅地址>", msg =>  Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(item.Url) ? "" : item.Url))},
+                { "<Url>", msg => Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(item.Url) ? "" : item.Url))},
+                { "<url>", msg => Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(item.Url) ? "" : item.Url))},
+                { "<备注>", msg =>  Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(item.Remark) ? "" : item.Remark))},
+                { "<remark>", msg => Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(item.Remark) ? "" : item.Remark))},
+                { "<Remark>", msg => Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(item.Remark) ? "" : item.Remark))},
+                { "<文章标题>", msg => Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(result.InnerTitle) ? "" : result.InnerTitle))},
+                { "<正文>", msg => Task.FromResult(msg.Text(result.Text.ToString()))},
+                { "<图片>", msg => AddImages(item, result.ImageUrls, msg) },
+                { "<视频>",msg => Task.FromResult("") },
+                { "<图片地址>", msg => Task.FromResult(msg.Text(string.Join("\n",result.ImageUrls)))},
+                { "<视频地址>", msg => Task.FromResult(msg.Text(string.Join("\n",result.VideoUrls)))},
+                { "<嵌入页面地址>", msg => Task.FromResult(msg.Text(string.Join("\n",result.IFrameUrls)))},
+                { "<正文翻译>", msg => Translate(result.Text.ToString(), msg)},
+                { "<B站直播封面>", msg => BilibiliLiveCover(item, result, msg)},
+                { "<作者>", msg => Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(result.Author) ? "" : result.Author))},
+                { "<发布时间>", msg => Task.FromResult(msg.Text(result.PubDate is null ? "" : result.PubDate.Value.ToString("yyyy-MM-dd HH:mm:ss")))},
+                { "<原文地址>", msg => Task.FromResult(msg.Text(string.IsNullOrWhiteSpace(result.Link) ? "" : result.Link))},
             };
-            if (config.SendVideoAsFile)
-            {
-                relpaceTags.Add("<视频>", async msg => await UploadFile(result.VideoUrls));
-            }
-            else
-            {
-                relpaceTags.Add("<视频>", async msg => await AddVideoes(item, result.VideoUrls, msg));
-            }
 
             foreach (var temp in item.Format)
             {
@@ -394,10 +416,11 @@ namespace GreenOnions.NT.RSS
                 msg.Text("\n");
             }
         }
+
         private async Task AddImages(SubscriptionItem item, List<string> imgUrls, MessageBuilder msg)
         {
-            using HttpClientHandler handler = new HttpClientHandler { UseProxy = item.UseProxyDownloadMedia };
-            using HttpClient client = new HttpClient(handler);
+            using HttpClientHandler handler = new() { UseProxy = item.UseProxyDownloadMedia };
+            using HttpClient client = new(handler);
 
             foreach (var url in imgUrls)
             {
@@ -416,8 +439,8 @@ namespace GreenOnions.NT.RSS
 
         private async Task AddVideoes(SubscriptionItem item, List<string> vdoUrls, MessageBuilder msg)
         {
-            using HttpClientHandler handler = new HttpClientHandler { UseProxy = item.UseProxyDownloadMedia };
-            using HttpClient client = new HttpClient(handler);
+            using HttpClientHandler handler = new() { UseProxy = item.UseProxyDownloadMedia };
+            using HttpClient client = new(handler);
 
             foreach (var url in vdoUrls)
             {
@@ -427,8 +450,7 @@ namespace GreenOnions.NT.RSS
                     if (vdo.Length > 4 * 1024 * 1024)
                     {
                         string vdoCacheDir = Path.Combine(_pluginPath!, "Videos");
-                        using MD5 md5 = MD5.Create();
-                        string fileMd5 = ToHexString(md5.ComputeHash(vdo));
+                        string fileMd5 = ToHexString(MD5.HashData(vdo));
                         string safeFileName = $"{fileMd5}.mp4";
                         string fileName = Path.Combine(vdoCacheDir, safeFileName);
                         File.WriteAllBytes(fileName, vdo);
@@ -478,8 +500,8 @@ namespace GreenOnions.NT.RSS
             if (string.IsNullOrWhiteSpace(result.Url))
                 return;
             string roomId = result.Url[(result.Url.LastIndexOf("/room/") + "/room/".Length)..];
-            using HttpClientHandler handler = new HttpClientHandler { UseProxy = config.UseProxyDownloadMedia };
-            using HttpClient client = new HttpClient(handler);
+            using HttpClientHandler handler = new() { UseProxy = config.UseProxyDownloadMedia };
+            using HttpClient client = new(handler);
             try
             {
                 var apiResponse = await client.GetAsync($@"https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom?room_id={roomId}");
@@ -513,12 +535,15 @@ namespace GreenOnions.NT.RSS
 
         private async Task<XmlDocument> GetXmlDocument(SubscriptionItem item)
         {
+            string xml;
             XmlDocument xmlDoc = new();
 
-            ////测试用，不访问地址，读取本地文件解析
-            //string xml = File.ReadAllText("sasakirico.xml");
-            //xmlDoc.LoadXml(xml);
-            //return xmlDoc;
+//            //测试用，不访问地址，读取本地文件解析
+//#if DEBUG
+//            xml = File.ReadAllText("aimi_sound.xml");
+//            xmlDoc.LoadXml(xml);
+//            return xmlDoc;
+//#endif
 
             using HttpClientHandler handler = new() { UseProxy = item.UseProxy };
             using HttpClient client = new(handler);
@@ -531,7 +556,6 @@ namespace GreenOnions.NT.RSS
                 LogHelper.LogError($"{item.Url}获取RSS错误 {(int)response.StatusCode} {response.StatusCode}");
                 throw new Exception($"{(int)response.StatusCode} {response.StatusCode}");
             }
-            string xml;
             if (item.IsStreamSource)
             {
                 byte[] buffer = await response.Content.ReadAsByteArrayAsync();
@@ -585,7 +609,7 @@ namespace GreenOnions.NT.RSS
                 if (!node.HasChildNodes)
                     continue;
 
-                XmlNode? noteDate = node.ChildNodes.OfType<XmlNode>().Where(n => n.Name.ToLower() == "pubdate").FirstOrDefault();
+                XmlNode? noteDate = node.ChildNodes.OfType<XmlNode>().Where(n => n.Name.Equals("pubdate", StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
                 if (noteDate is null)
                     continue;
 
@@ -595,10 +619,12 @@ namespace GreenOnions.NT.RSS
 
                 HtmlDocument htmlDoc;
                 DateTime pubDate = pubDate = DateTime.Parse(noteDate.InnerText);
-                RssResult result = new RssResult();
-                result.Url = url;
-                result.Title = title;
-                result.PubDate = pubDate;
+                RssResult result = new()
+                {
+                    Url = url,
+                    Title = title,
+                    PubDate = pubDate
+                };
                 foreach (XmlNode subNode in node.ChildNodes)
                 {
                     switch (subNode.Name.ToLower())
@@ -611,11 +637,11 @@ namespace GreenOnions.NT.RSS
                             htmlDoc.LoadHtml(subNode.InnerText);
                             foreach (var itemNode in htmlDoc.DocumentNode.ChildNodes)
                             {
-                                RssBody body = new RssBody();
+                                RssBody body = new();
                                 HtmlToRssBody(itemNode, body);
                                 if (result.Text.Length > 0)
                                     result.Text.AppendLine();
-                                result.Text.Append(body.Text.ToString());
+                                result.Text.Append(body.Text);
                                 result.ImageUrls.AddRange(body.ImageUrls);
                                 result.VideoUrls.AddRange(body.VideoUrls);
                                 result.IFrameUrls.AddRange(body.IFrameUrls);
@@ -676,12 +702,14 @@ namespace GreenOnions.NT.RSS
                 if (!node.HasChildNodes)
                     continue;
 
-                XmlNode? noteDate = node.ChildNodes.OfType<XmlNode>().Where(n => n.Name.ToLower() == "pubdate").FirstOrDefault();
-                noteDate ??= node.ChildNodes.OfType<XmlNode>().Where(n => n.Name.ToLower() == "updated").FirstOrDefault();
+                XmlNode? noteDate = node.ChildNodes.OfType<XmlNode>().Where(n => n.Name.Equals("pubdate", StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+                noteDate ??= node.ChildNodes.OfType<XmlNode>().Where(n => n.Name.Equals("updated", StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
 
-                RssResult result = new RssResult();
-                result.Url = url;
-                result.Title = title;
+                RssResult result = new()
+                {
+                    Url = url,
+                    Title = title
+                };
 
                 if (noteDate is not null)
                 {
@@ -697,9 +725,9 @@ namespace GreenOnions.NT.RSS
                             break;
                         case "description":
                         case "content":
-                            HtmlDocument htmlDoc = new HtmlDocument();
+                            HtmlDocument htmlDoc = new();
                             htmlDoc.LoadHtml(subNode.InnerText);
-                            RssBody body = new RssBody();
+                            RssBody body = new ();
                             HtmlToRssBody(htmlDoc.DocumentNode, body);
                             if (result.Text.Length > 0)
                                 result.Text.AppendLine();
